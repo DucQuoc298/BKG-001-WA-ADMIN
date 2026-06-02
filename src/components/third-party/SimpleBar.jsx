@@ -23,7 +23,7 @@ const SimpleBarStyle = styled(SimpleBar)(({ theme }) => ({
   maxHeight: '100%',
   '& .simplebar-scrollbar': {
     '&:before': {
-      background: withAlpha(theme.vars.palette.grey[500], 0.48)
+      background: withAlpha(theme.palette.grey[500], 0.48)
     },
     '&.simplebar-visible:before': {
       opacity: 1

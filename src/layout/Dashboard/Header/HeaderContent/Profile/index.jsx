@@ -76,7 +76,7 @@ export default function Profile() {
           sx={(theme) => ({
             p: 0.25,
             borderRadius: 1,
-            '&:focus-visible': { outline: `2px solid ${theme.vars.palette.secondary.dark}`, outlineOffset: 2 }
+            '&:focus-visible': { outline: `2px solid ${theme.palette.secondary.dark}`, outlineOffset: 2 }
           })}
           aria-label="open profile"
           ref={anchorRef}
@@ -107,7 +107,7 @@ export default function Profile() {
       >
         {({ TransitionProps }) => (
           <Transitions type="grow" position="top-right" in={open} {...TransitionProps}>
-            <Paper sx={(theme) => ({ boxShadow: theme.vars.customShadows.z1, width: 290, minWidth: 240, maxWidth: { xs: 250, md: 290 } })}>
+            <Paper sx={(theme) => ({ boxShadow: theme.customShadows.z1, width: 290, minWidth: 240, maxWidth: { xs: 250, md: 290 } })}>
               <ClickAwayListener onClickAway={handleClose}>
                 <MainCard elevation={0} border={false} content={false}>
                   <CardContent sx={{ px: 2.5, pt: 3 }}>

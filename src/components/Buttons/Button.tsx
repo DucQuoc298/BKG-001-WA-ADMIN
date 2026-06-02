@@ -1,0 +1,38 @@
+import React, { memo } from "react";
+import { Button as MuiButton, ButtonProps, SxProps, useTheme } from "@mui/material";
+import createStyle from "./styles";
+import { IThemeMode } from "types";
+
+type IButtonIcon = ButtonProps & {
+  text?: string;
+};
+
+const Button = ({
+  text = "",
+  variant = "contained",
+  sx,
+  ...props
+}: IButtonIcon) => {
+  const styles = createStyle();
+  const theme = useTheme();
+  const sxBtn = (
+     {
+       ...(props.startIcon || props.endIcon ? styles.buttonIcon : styles.button),
+       ...sx,
+       ...(variant === "outlined" && { "&:hover": { color: theme.palette.mode === IThemeMode.DARK ? theme.palette.primary.light : theme.palette.primary.main }}),
+       ...(variant === "contained" && {color: 'white'}),
+      }
+  ) as SxProps;
+  return (
+    <MuiButton 
+    {...props} 
+    disableElevation
+    variant={variant} 
+    sx={sxBtn}
+    >
+      {text}
+    </MuiButton>
+  );
+};
+
+export default memo(Button);
