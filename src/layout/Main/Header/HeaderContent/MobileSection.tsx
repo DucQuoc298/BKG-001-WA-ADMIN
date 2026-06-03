@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // material-ui
 import AppBar from '@mui/material/AppBar';
@@ -21,14 +21,14 @@ import MoreOutlined from '@ant-design/icons/MoreOutlined';
 
 export default function MobileSection() {
   const [open, setOpen] = useState(false);
-  const anchorRef = useRef(null);
+  const anchorRef = useRef<HTMLButtonElement | null>(null);
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+  const handleClose = (event: MouseEvent | TouchEvent) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target as Node)) {
       return;
     }
 
@@ -38,7 +38,7 @@ export default function MobileSection() {
   const prevOpen = useRef(open);
   useEffect(() => {
     if (prevOpen.current === true && open === false) {
-      anchorRef.current.focus();
+      anchorRef.current?.focus();
     }
 
     prevOpen.current = open;
@@ -83,8 +83,8 @@ export default function MobileSection() {
         }}
       >
         {({ TransitionProps }) => (
-          <Transitions type="fade" in={open} {...TransitionProps}>
-            <Paper sx={(theme) => ({ boxShadow: theme.customShadows.z1 })}>
+          <Transitions ref={anchorRef} type="fade" in={open} {...TransitionProps}>
+            <Paper sx={(theme) => ({  })}>
               <ClickAwayListener onClickAway={handleClose}>
                 <AppBar color="inherit">
                   <Toolbar>

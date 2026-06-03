@@ -4,7 +4,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-
+import React from 'react';
 // project imports
 import AnimateButton from 'components/@extended/AnimateButton';
 import MainCard from 'components/MainCard';

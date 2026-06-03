@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 // material-ui
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -11,7 +11,7 @@ import HeaderContent from './HeaderContent';
 import IconButton from 'components/@extended/IconButton';
 
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
-import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from 'config';
+import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from 'themes/config';
 
 // assets
 import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined';
@@ -23,7 +23,7 @@ export default function Header() {
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 
   const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const drawerOpen = menuMaster?.isDashboardDrawerOpened;
 
   // header content
   const headerContent = useMemo(() => <HeaderContent />, []);
@@ -51,14 +51,17 @@ export default function Header() {
 
   // app-bar params
   const appBar = {
-    position: 'fixed',
-    color: 'inherit',
     elevation: 0,
     sx: {
       borderBottom: '1px solid',
       borderBottomColor: 'divider',
       zIndex: 1200,
-      width: { xs: '100%', lg: drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : `calc(100% - ${MINI_DRAWER_WIDTH}px)` }
+      width: { 
+        xs: '100%', 
+        lg: drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : `calc(100% - ${MINI_DRAWER_WIDTH}px)`, 
+        position: 'fixed',
+        color: 'inherit',
+      }
     }
   };
 

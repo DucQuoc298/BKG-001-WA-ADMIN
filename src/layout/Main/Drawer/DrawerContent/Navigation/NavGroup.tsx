@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-
+import React from 'react';
 // material-ui
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
@@ -13,7 +13,7 @@ import { useGetMenuMaster } from 'api/menu';
 
 export default function NavGroup({ item }) {
   const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const drawerOpen = menuMaster?.isDashboardDrawerOpened;
 
   const navCollapse = item.children?.map((menuItem) => {
     switch (menuItem.type) {

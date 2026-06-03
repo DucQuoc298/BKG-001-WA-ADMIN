@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
-
+import React from 'react';
 // project imports
 import DrawerHeaderStyled from './DrawerHeaderStyled';
-import Logo from 'components/logo';
+// import Logo from 'components/logo';
 
 // ==============================|| DRAWER HEADER ||============================== //
 
-export default function DrawerHeader({ open }) {
+export default function DrawerHeader({ open }: { open: boolean }) {
   return (
     <DrawerHeaderStyled
       open={open}
@@ -18,7 +18,7 @@ export default function DrawerHeader({ open }) {
         paddingLeft: open ? '24px' : 0
       }}
     >
-      <Logo isIcon={!open} sx={{ width: open ? 'auto' : 35, height: 35 }} />
+      {/* <Logo isIcon={!open} sx={{ width: open ? 'auto' : 35, height: 35 }} /> */}
     </DrawerHeaderStyled>
   );
 }

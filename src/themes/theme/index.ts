@@ -4,6 +4,7 @@ import { colors } from "@mui/material";
 import { buildGrey } from "themes/palette";
 import { IThemeMode } from "types";
 import tinycolor from "tinycolor2";
+import CustomShadows from "themes/custom-shadows";
 interface IColorDefault {
   primary: string; //#1976D2
   secondary: string; // '#21303f';
@@ -107,7 +108,6 @@ const lightColors = { grey: buildGrey(IThemeMode.LIGHT) };
 const darkColors = { grey: buildGrey(IThemeMode.DARK) };
 const lightPaletteColor = Default(lightColors);
 const darkPaletteColor = Default(darkColors);
-
 export const themes = {
   [IThemeMode.LIGHT]: {
     palette: {
@@ -136,6 +136,7 @@ export const themes = {
         secondary: "#8c8c8c"
       },
       ...lightPaletteColor,
+      customShadows: CustomShadows(lightPaletteColor),
       // contrastText: "#ffffff",
     },
     colors: {
@@ -161,6 +162,7 @@ export const themes = {
         secondary: "#ffffffff"
       },
       ...darkPaletteColor,
+      customShadows: CustomShadows(darkPaletteColor),
       // contrastText: "#ffffff",
       
     },

@@ -6,6 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Divider from '@mui/material/Divider';
 import React from 'react';
+import { Theme, useTheme } from '@mui/material';
 interface IMainCardProps {
   border?: boolean;
   boxshadow?: boolean;
@@ -46,16 +47,17 @@ export default function MainCard({
   ref,
   ...others
 }: IMainCardProps) {
+  const theme = useTheme()
   return (
     <Card
       elevation={elevation || 0}
-      sx={(theme) => ({
+      sx={() => ({
         position: 'relative',
         p: 4,
         ...(border && { border: `1px solid ${theme.palette.grey['A800']}` }),
-        borderRadius: 4,
+        borderRadius: `${theme.shape.borderRadius}px`,
         boxshadow: boxshadow && !border ? boxshadow : 'inherit',
-        // ':hover': { boxShadow: boxShadow ? shadow || theme.customShadows.z1 : 'inherit' },
+        ':hover': { boxShadow: theme.customShadows.z1 },
         ...(codeHighlight && {
           '& pre': { margin: 0, padding: '12px !important', fontFamily: theme.typography.fontFamily, fontSize: '0.75rem' }
         }),

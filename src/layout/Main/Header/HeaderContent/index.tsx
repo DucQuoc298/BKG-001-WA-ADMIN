@@ -8,10 +8,10 @@ import Box from '@mui/material/Box';
 import Search from './Search';
 import Profile from './Profile';
 import Notification from './Notification';
-import MobileSection from './MobileSection';
-
+import React from 'react';
 // project import
 import { GithubOutlined } from '@ant-design/icons';
+import MobileSection from 'layout/Main/Header/HeaderContent/MobileSection';
 
 // ==============================|| HEADER - CONTENT ||============================== //
 

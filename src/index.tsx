@@ -18,6 +18,8 @@ import { AuthProvider, MainProvider } from 'hooks';
 import { authConfig, mainConfig, KEY_CONTEXT } from 'themes/config';
 import ThemeCustomization from 'themes';
 import { CssBaseline } from '@mui/material';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -35,8 +37,10 @@ root.render(
           initialState={mainConfig}
         >
           <ThemeCustomization>
-            <CssBaseline />
-            <App />
+            <I18nextProvider i18n={i18n}>
+              <CssBaseline />
+              <App />
+            </I18nextProvider>
           </ThemeCustomization>
         </MainProvider>
       </AuthProvider>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -8,9 +8,8 @@ import Box from '@mui/material/Box';
 // project imports
 import Drawer from './Drawer';
 import Header from './Header';
-import Footer from './Footer';
 import Loader from 'components/Loader';
-import Breadcrumbs from 'components/@extended/Breadcrumbs';
+// import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import ScrollTop from 'components/ScrollTop';
 
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
@@ -45,9 +44,8 @@ export default function DashboardLayout() {
             flexDirection: 'column'
           }}
         >
-          <Breadcrumbs />
+          {/* <Breadcrumbs /> */}
           <Outlet />
-          <Footer />
         </Box>
       </Box>
     </Box>

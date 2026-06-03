@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 // material-ui
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -50,15 +50,15 @@ const actionSX = {
 export default function Notification() {
   const downMD = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
-  const anchorRef = useRef(null);
+  const anchorRef = useRef<HTMLButtonElement | null>(null);
   const [read, setRead] = useState(2);
   const [open, setOpen] = useState(false);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+  const handleClose = (event: MouseEvent | TouchEvent) => {
+    if (anchorRef.current && event.target instanceof Node && anchorRef.current.contains(event.target)) {
       return;
     }
     setOpen(false);
@@ -93,8 +93,8 @@ export default function Notification() {
         popperOptions={{ modifiers: [{ name: 'offset', options: { offset: [downMD ? -5 : 0, 9] } }] }}
       >
         {({ TransitionProps }) => (
-          <Transitions type="grow" position={downMD ? 'top' : 'top-right'} in={open} {...TransitionProps}>
-            <Paper sx={(theme) => ({ boxShadow: theme.customShadows.z1, width: '100%', minWidth: 285, maxWidth: { xs: 285, md: 420 } })}>
+          <Transitions ref={undefined} type="grow" position={downMD ? 'top' : 'top-right'} in={open} {...TransitionProps}>
+            <Paper sx={(theme) => ({ width: '100%', minWidth: 285, maxWidth: { xs: 285, md: 420 } })}>
               <ClickAwayListener onClickAway={handleClose}>
                 <MainCard
                   title="Notification"

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Link, useLocation, matchPath } from 'react-router-dom';
-
+import React from 'react';
 // material-ui
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Avatar from '@mui/material/Avatar';
@@ -17,10 +17,15 @@ import IconButton from 'components/@extended/IconButton';
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
 
 // ==============================|| NAVIGATION - LIST ITEM ||============================== //
-
-export default function NavItem({ item, level, isParents = false, setSelectedID }) {
+interface NavItemProps {
+  item: any;
+  level: number;
+  isParents?: boolean;
+  setSelectedID?: any;
+}
+export default function NavItem({ item, level, isParents = false, setSelectedID }: NavItemProps) {
   const { menuMaster } = useGetMenuMaster();
-  const drawerOpen = menuMaster.isDashboardDrawerOpened;
+  const drawerOpen = menuMaster?.isDashboardDrawerOpened;
 
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 

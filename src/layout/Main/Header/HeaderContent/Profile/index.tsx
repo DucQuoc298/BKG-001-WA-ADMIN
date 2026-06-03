@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -50,7 +50,7 @@ function a11yProps(index) {
 export default function Profile() {
   const theme = useTheme();
 
-  const anchorRef = useRef(null);
+  const anchorRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -84,7 +84,9 @@ export default function Profile() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <Avatar alt="profile user" src={avatar1} size="sm" sx={{ '&:hover': { outline: '1px solid', outlineColor: 'primary.main' } }} />
+          <Avatar alt="profile user" type="circular" src={avatar1} size="sm" sx={{ '&:hover': { outline: '1px solid', outlineColor: 'primary.main' } }} >
+              JD
+          </Avatar>
         </ButtonBase>
       </Tooltip>
       <Popper
@@ -106,14 +108,16 @@ export default function Profile() {
         }}
       >
         {({ TransitionProps }) => (
-          <Transitions type="grow" position="top-right" in={open} {...TransitionProps}>
-            <Paper sx={(theme) => ({ boxShadow: theme.customShadows.z1, width: 290, minWidth: 240, maxWidth: { xs: 250, md: 290 } })}>
+          <Transitions ref={undefined} type="grow" position="top-right" in={open} {...TransitionProps}>
+            <Paper sx={(theme) => ({ width: 290, minWidth: 240, maxWidth: { xs: 250, md: 290 } })}>
               <ClickAwayListener onClickAway={handleClose}>
                 <MainCard elevation={0} border={false} content={false}>
                   <CardContent sx={{ px: 2.5, pt: 3 }}>
                     <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
                       <Stack direction="row" sx={{ gap: 1.25, alignItems: 'center' }}>
-                        <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
+                        <Avatar type="circular" alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} >
+                          JD
+                        </Avatar>
                         <Stack>
                           <Typography variant="h6">John Doe</Typography>
                           <Typography variant="body2" sx={{ color: 'text.secondary' }}>

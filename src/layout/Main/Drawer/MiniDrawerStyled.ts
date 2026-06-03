@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import Drawer from '@mui/material/Drawer';
 
 // project imports
-import { DRAWER_WIDTH } from 'config';
+import { DRAWER_WIDTH } from 'themes/config';
 
 const openedMixin = (theme) => ({
   width: DRAWER_WIDTH,
@@ -19,7 +19,9 @@ const openedMixin = (theme) => ({
   boxShadow: 'none'
 });
 
-const closedMixin = (theme) => ({
+const closedMixin = (theme) => {
+  console.log('theme', theme);
+  return {
   transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen
@@ -29,7 +31,8 @@ const closedMixin = (theme) => ({
   width: theme.spacing(7.5),
   borderRight: 'none',
   boxShadow: theme.customShadows.z1
-});
+}
+};
 
 // ==============================|| DRAWER - MINI STYLED ||============================== //
 
