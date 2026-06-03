@@ -14,18 +14,18 @@ import Box from '@mui/material/Box';
 // project imports
 import IconButton from 'components/@extended/IconButton';
 
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen, handlerSelectedCollapse, handlerSelectedMenu, useGetMenuMaster } from 'api/menu';
 
 // ==============================|| NAVIGATION - LIST ITEM ||============================== //
 interface NavItemProps {
   item: any;
   level: number;
-  isParents?: boolean;
-  setSelectedID?: any;
+  isChild?: boolean;
 }
-export default function NavItem({ item, level, isParents = false, setSelectedID }: NavItemProps) {
+export default function NavItem({ item, level, isChild = false }: NavItemProps) {
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster?.isDashboardDrawerOpened;
+  const selectedMenu = menuMaster?.selectedMenu;
 
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 
@@ -36,10 +36,8 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
 
   const itemHandler = () => {
     if (downLG) handlerDrawerOpen(false);
-
-    if (isParents && setSelectedID) {
-      setSelectedID(item.id);
-    }
+    handlerSelectedMenu(item.id);
+    !isChild && handlerSelectedCollapse('');
   };
 
   const Icon = item.icon;
@@ -47,7 +45,6 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
     <Icon
       style={{
         fontSize: drawerOpen ? '1rem' : '1.25rem',
-        ...(isParents && { fontSize: 20, stroke: '1.5' })
       }}
     />
   ) : (
@@ -55,7 +52,7 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
   );
 
   const { pathname } = useLocation();
-  const isSelected = !!matchPath({ path: item?.link ? item.link : item.url, end: false }, pathname);
+  const isSelected = !!matchPath({ path: item?.link ? item.link : item.url, end: false }, pathname) || selectedMenu === item.id;
 
   const textColor = 'text.primary';
   const iconSelectedColor = 'primary.main';
@@ -64,9 +61,9 @@ export default function NavItem({ item, level, isParents = false, setSelectedID 
     <>
       <Box sx={{ position: 'relative' }}>
         <ListItemButton
-          component={Link}
-          to={item.url}
-          target={itemTarget}
+          // component={Link}
+          // to={item.url}
+          // target={itemTarget}
           disabled={item.disabled}
           selected={isSelected}
           sx={(theme) => ({

@@ -53,9 +53,9 @@ export default function MainCard({
       elevation={elevation || 0}
       sx={() => ({
         position: 'relative',
-        p: 4,
+        p: 2,
         ...(border && { border: `1px solid ${theme.palette.grey['A800']}` }),
-        borderRadius: `${theme.shape.borderRadius}px`,
+        borderRadius: 4,
         boxshadow: boxshadow && !border ? boxshadow : 'inherit',
         ':hover': { boxShadow: theme.customShadows.z1 },
         ...(codeHighlight && {

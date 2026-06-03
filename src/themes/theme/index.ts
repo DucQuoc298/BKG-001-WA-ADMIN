@@ -115,11 +115,11 @@ export const themes = {
       background: {
         default: "transparent",  // body — gradient từ MuiCssBaseline
         defaultChannel: "255 255 255",
-        paper: "#ffffff",        // Card, Dialog, Menu, Popover
+        paper: "#f0fafe",        // Card, Dialog, Menu, Popover
       },
       zone: {
-        header: "#1076BB",       // AppBar / Header
-        sidebar: "#05397D",      // Drawer / Sidebar  
+        header: "#f0fafe",       // AppBar / Header
+        sidebar: "#f0fafe",      // Drawer / Sidebar  
         content: "rgba(255,255,255,0.75)", // vùng nội dung chính
         footer: "#f0f4f8",       // Footer
       } as any,
@@ -157,6 +157,12 @@ export const themes = {
         dark: "#05397D",
         light1: "#E9ECEF"
       },
+      zone: {
+        header: "#272e41",
+        sidebar: "#272e41",
+        content: "rgba(255,255,255,0.75)",
+        footer: "#f0f4f8",
+      } as any,
       text: {
         primary: "#ffffffff",
         secondary: "#ffffffff"

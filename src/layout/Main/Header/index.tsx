@@ -16,6 +16,7 @@ import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from 'themes/config';
 // assets
 import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined';
 import MenuUnfoldOutlined from '@ant-design/icons/MenuUnfoldOutlined';
+import { Box } from '@mui/material';
 
 // ==============================|| MAIN LAYOUT - HEADER ||============================== //
 
@@ -30,17 +31,16 @@ export default function Header() {
 
   // common header
   const mainHeader = (
-    <Toolbar>
+    <Toolbar sx={{p: 0, minHeight: 50, pr: '10px !important', color: 'text.primary'}}>
       <IconButton
         aria-label="open drawer"
         onClick={() => handlerDrawerOpen(!drawerOpen)}
         edge="start"
         color="secondary"
         variant="light"
-        sx={(theme) => ({
+        sx={() => ({
           color: 'text.primary',
           bgcolor: drawerOpen ? 'transparent' : 'grey.100',
-          ml: { xs: 0, lg: -2 }
         })}
       >
         {!drawerOpen ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -53,15 +53,14 @@ export default function Header() {
   const appBar = {
     elevation: 0,
     sx: {
-      borderBottom: '1px solid',
-      borderBottomColor: 'divider',
       zIndex: 1200,
       width: { 
         xs: '100%', 
         lg: drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : `calc(100% - ${MINI_DRAWER_WIDTH}px)`, 
         position: 'fixed',
         color: 'inherit',
-      }
+      },
+      backgroundColor: 'transparent !important',
     }
   };
 
@@ -69,7 +68,14 @@ export default function Header() {
     <>
       {!downLG ? (
         <AppBarStyled open={drawerOpen} {...appBar}>
-          {mainHeader}
+          <Box sx={{
+            backgroundColor: 'zone.header',
+            m: 1,
+            borderRadius: 2
+          }}
+            >
+            {mainHeader}
+          </Box>
         </AppBarStyled>
       ) : (
         <AppBar {...appBar}>{mainHeader}</AppBar>

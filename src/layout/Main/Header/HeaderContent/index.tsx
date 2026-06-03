@@ -9,34 +9,17 @@ import Search from './Search';
 import Profile from './Profile';
 import Notification from './Notification';
 import React from 'react';
-// project import
-import { GithubOutlined } from '@ant-design/icons';
-import MobileSection from 'layout/Main/Header/HeaderContent/MobileSection';
-
 // ==============================|| HEADER - CONTENT ||============================== //
 
 export default function HeaderContent() {
-  const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
+  // const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 
   return (
     <>
-      {!downLG && <Search />}
-      {downLG && <Box sx={{ width: '100%', ml: 1 }} />}
-      <IconButton
-        component={Link}
-        href="https://github.com/codedthemes/mantis-free-react-admin-template"
-        target="_blank"
-        disableRipple
-        color="secondary"
-        title="Download Free Version"
-        sx={{ color: 'text.primary', bgcolor: 'grey.100' }}
-      >
-        <GithubOutlined />
-      </IconButton>
-
-      <Notification />
-      {!downLG && <Profile />}
-      {downLG && <MobileSection />}
+      <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto', gap: 2 }}>
+        <Notification />
+        <Profile />
+      </Box>
     </>
   );
 }

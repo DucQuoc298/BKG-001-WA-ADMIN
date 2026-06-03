@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { useRef, useState } from 'react';
-
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -16,8 +15,6 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 // project imports
-import ProfileTab from './ProfileTab';
-import SettingTab from './SettingTab';
 import Avatar from 'components/@extended/Avatar';
 import MainCard from 'components/MainCard';
 import Transitions from 'components/@extended/Transitions';
@@ -28,6 +25,25 @@ import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
 import SettingOutlined from '@ant-design/icons/SettingOutlined';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import avatar1 from 'assets/images/users/avatar-1.png';
+import { Divider, Grid, ListItem, Menu, MenuItem, Popover} from '@mui/material';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+// assets
+import EditOutlined from '@ant-design/icons/EditOutlined';
+import ProfileOutlined from '@ant-design/icons/ProfileOutlined';
+import WalletOutlined from '@ant-design/icons/WalletOutlined';
+import styles from './styles';
+import { ArrowForwardIosOutlined, CameraAltOutlined, CheckOutlined, DarkModeOutlined, LightModeOutlined, TranslateOutlined } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+import { ILanguage, IThemeMode } from 'types';
+import { useAuth, useMain } from 'hooks';
+import { FLAG_ICONS } from 'assets/images/icons/flags';
+import { languages } from 'utils';
+import { AuthNameRoutes } from 'routes/AuthRoutes';
+import { useNavigate } from 'react-router-dom';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -49,12 +65,26 @@ function a11yProps(index) {
 
 export default function Profile() {
   const theme = useTheme();
-
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const anchorRef = useRef<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+  const { state: mainState, setField } = useMain()
+  const { state, setState } = useAuth();
+  const navigate = useNavigate();
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
+  const [uiState, setUIState] = useState<{
+    expandLang: HTMLElement | null;
+    expandTheme: HTMLElement | null;
+    expandChangeCompany: HTMLElement | null;
+  }>({
+    expandLang: null,
+    expandTheme: null,
+    expandChangeCompany: null,
+  });
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
 
   const handleClose = (event) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -63,14 +93,48 @@ export default function Profile() {
     setOpen(false);
   };
 
-  const [value, setValue] = useState(0);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleAvatarFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (avatarUrl) URL.revokeObjectURL(avatarUrl);
+    const objectUrl = URL.createObjectURL(file);
+    setAvatarUrl(objectUrl);
+
+    // Đọc base64
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result
+      // const result = data[0];
+    };
+    reader.readAsDataURL(file);
+
+    event.target.value = '';
   };
-
+  const handleChangeLanguage = (lang: ILanguage) => {
+    setUIState({ ...uiState, expandLang: null });
+    i18n.changeLanguage(lang === ILanguage.VN ? 'vi' : 'en');
+    setField('lang', lang === ILanguage.VN ? 'vi' : 'en');
+  }
+  const handleChangeTheme = (theme: IThemeMode) => {
+    setUIState({ ...uiState, expandTheme: null });
+    setField('themeMode', theme);
+  }
+  const handleLanguageClose = () => {
+    setUIState({ ...uiState, expandLang: null });
+  }
+  const handleThemeClose = () => {
+    setUIState({ ...uiState, expandTheme: null });
+  }
+    const handleLogout = () => {
+    // logout(() => {
+    //   setState({ ...state, token: '', refreshToken: '', loginStatus: false, user: null });
+    //   setAuthToken('', '');
+      navigate(AuthNameRoutes.LOGIN);
+    // });
+  }
   return (
-    <Box sx={{ flexShrink: 0, ml: 'auto' }}>
+    <Box sx={{ flexShrink: 0 }}>
       <Tooltip title="Profile" disableInteractive>
         <ButtonBase
           sx={(theme) => ({
@@ -109,72 +173,176 @@ export default function Profile() {
       >
         {({ TransitionProps }) => (
           <Transitions ref={undefined} type="grow" position="top-right" in={open} {...TransitionProps}>
-            <Paper sx={(theme) => ({ width: 290, minWidth: 240, maxWidth: { xs: 250, md: 290 } })}>
+            <Paper sx={(theme) => ({ borderRadius: theme.shape.borderRadius, width: 290, minWidth: 240, maxWidth: { xs: 250, md: 290 } })}>
               <ClickAwayListener onClickAway={handleClose}>
-                <MainCard elevation={0} border={false} content={false}>
-                  <CardContent sx={{ px: 2.5, pt: 3 }}>
-                    <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                <MainCard elevation={0} border={false} content={false} sx={{p: 0}}>
+                  <CardContent sx={{ p: 2 }}>
+                    <Grid container sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Grid>
                       <Stack direction="row" sx={{ gap: 1.25, alignItems: 'center' }}>
-                        <Avatar type="circular" alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} >
-                          JD
-                        </Avatar>
-                        <Stack>
-                          <Typography variant="h6">John Doe</Typography>
-                          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            UI/UX Designer
-                          </Typography>
+                          <Box sx={{ position: 'relative', display: 'inline-flex' }} 
+                              onClick={() => fileInputRef.current?.click()}>
+                            <Avatar
+                              size="lg"
+                              sx={{ '&:hover': { outline: '1px solid', outlineColor: 'primary.main' } }}
+                              type="circular"
+                              src={avatarUrl}
+                            >
+                             Q
+                            </Avatar>
+                            <Box
+                              sx={{
+                                position: 'absolute',
+                                bottom: 0,
+                                right: 0,
+                                width: 20,
+                                height: 20,
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                border: '1.5px solid',
+                                borderColor: 'background.paper',
+                                '&:hover': { bgcolor: 'primary.dark' },
+                              }}
+                            >
+                              <CameraAltOutlined sx={{ fontSize: 11 }} />
+                            </Box>
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              accept="image/*"
+                              hidden
+                              onChange={handleAvatarFileChange}
+                            />
+                          </Box> 
+                          <Stack>
+                            <Typography variant="h6">Trương Đức Quốc</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              truongducquoc298@gmail.com
+                            </Typography>
+                          </Stack>
                         </Stack>
-                      </Stack>
-                      <Tooltip title="Logout">
-                        <IconButton size="large" sx={{ color: 'text.primary' }}>
-                          <LogoutOutlined />
-                        </IconButton>
-                      </Tooltip>
-                    </Stack>
+                      </Grid>
+                    </Grid>
+                    <Grid>
+                      <Divider sx={{ my: 1.5 }} />
+                    </Grid>
+                    <List disablePadding>
+                      <ListItem disablePadding>
+                        <ListItemButton
+                          aria-describedby={'language-popover'}
+                          onClick={(event: React.MouseEvent<HTMLElement>) => {
+                            setUIState({ ...uiState, expandLang: event.currentTarget });
+                          }}
+                        >
+                          <TranslateOutlined style={styles.icon} />
+                          <Typography variant="body1" sx={styles.label}>
+                            {t('text.language')}
+                          </Typography>
+                          <ArrowForwardIosOutlined sx={{fontSize: '14px', ml: 'auto'}}/>
+                        </ListItemButton>
+                        <Menu 
+                          id={'language-popover'}
+                          open={Boolean(uiState.expandLang)}
+                          anchorEl={uiState.expandLang}
+                          onClose={handleLanguageClose}
+                          anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                          }}
+                          transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                          }}
+                        >
+                          {languages.map((language) => (
+                            <MenuItem 
+                              onClick={() => {
+                                handleChangeLanguage(language.id as ILanguage)
+                              }} 
+                              key={language.id} 
+                              sx={{display: 'flex', alignItems: 'center', p: 1, cursor: 'pointer', '&:hover': {backgroundColor: 'action.hover'}}}>
+                              <img src={FLAG_ICONS[language.id === ILanguage.VN ? 'vn' : 'us']} alt={language.id} width={20} style={{marginRight: 8}} />
+                              <Typography variant='body1'>{t(language.text)}</Typography>
+                              {mainState?.lang === (language.id === ILanguage.VN ? 'vi' : 'en') ? <CheckOutlined sx={{ml: 1}} fontSize='small'/>: null}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </ListItem>
+                      <ListItem disablePadding>
+                        <ListItemButton
+                          aria-describedby={'theme-popover'}
+                          onClick={(event: React.MouseEvent<HTMLElement>) => {
+                            setUIState({ ...uiState, expandTheme: event.currentTarget });
+                          }}
+                        >
+                          {mainState?.theme_mode === 'dark' ?
+                            <DarkModeOutlined sx={{ ...styles.icon }} /> :
+                            <LightModeOutlined sx={{ ...styles.icon }} />
+                          }
+                          <Typography variant="body1" sx={styles.label}>
+                            {t('text.theme_mode')}
+                          </Typography>
+                          <ArrowForwardIosOutlined sx={{fontSize: '14px', ml: 'auto'}}/>
+                        </ListItemButton>
+                        <Menu
+                          id={'theme-popover'}
+                          open={Boolean(uiState.expandTheme)}
+                          anchorEl={uiState.expandTheme}
+                          onClose={handleThemeClose}
+                          anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                          }}
+                          transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                          }}
+                        >
+                          <MenuItem 
+                            onClick={() => {
+                              handleChangeTheme(IThemeMode.LIGHT)
+                            }}
+                            sx={styles.menu_item}>
+                            <LightModeOutlined sx={{ ...styles.icon, mr: 1 }} /> 
+                            <Typography variant='body1'>{t("theme_mode.light")}</Typography>
+                            {mainState?.themeMode === IThemeMode.LIGHT ? <CheckOutlined sx={{ml: 1}} fontSize='small'/>: null}
+                          </MenuItem>
+                          <MenuItem 
+                            onClick={() => {
+                              handleChangeTheme(IThemeMode.DARK)
+                            }}
+                            sx={styles.menu_item}>
+                            <DarkModeOutlined sx={{ ...styles.icon, mr: 1 }} /> 
+                            <Typography variant='body1'>{t("theme_mode.dark")}</Typography>
+                            {mainState?.themeMode === IThemeMode.DARK ? <CheckOutlined sx={{ml: 1}} fontSize='small'/>: null}
+                          </MenuItem>
+                        </Menu>
+                      </ListItem>
+                      <ListItem disablePadding>
+                        <ListItemButton
+                          // onClick={() =>{console.log('help');
+                          // }}
+                        >
+                          <QuestionCircleOutlined style={styles.icon} />
+                          <Typography variant="body1" sx={styles.label}>
+                            {t('text.help')}
+                          </Typography>
+                        </ListItemButton>
+                      </ListItem>
+                      <ListItem disablePadding>
+                        <ListItemButton onClick={handleLogout}>
+                          <LogoutOutlined style={{ ...styles.icon, color: theme.palette.error.main }} />
+                          <Typography variant="body1" sx={{ ...styles.label, color: theme.palette.error.main }}>
+                            {t('text.logout')}
+                          </Typography>
+                        </ListItemButton>
+                      </ListItem>
+                    </List>
                   </CardContent>
 
-                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <Tabs variant="fullWidth" value={value} onChange={handleChange} aria-label="profile tabs">
-                      <Tab
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          textTransform: 'capitalize',
-                          gap: 1.25,
-                          '& .MuiTab-icon': {
-                            marginBottom: 0
-                          }
-                        }}
-                        icon={<UserOutlined />}
-                        label="Profile"
-                        {...a11yProps(0)}
-                      />
-                      <Tab
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          textTransform: 'capitalize',
-                          gap: 1.25,
-                          '& .MuiTab-icon': {
-                            marginBottom: 0
-                          }
-                        }}
-                        icon={<SettingOutlined />}
-                        label="Setting"
-                        {...a11yProps(1)}
-                      />
-                    </Tabs>
-                  </Box>
-                  <TabPanel value={value} index={0} dir={theme.direction}>
-                    <ProfileTab />
-                  </TabPanel>
-                  <TabPanel value={value} index={1} dir={theme.direction}>
-                    <SettingTab />
-                  </TabPanel>
                 </MainCard>
               </ClickAwayListener>
             </Paper>

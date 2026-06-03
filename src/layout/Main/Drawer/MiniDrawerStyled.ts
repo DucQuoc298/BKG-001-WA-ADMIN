@@ -20,7 +20,6 @@ const openedMixin = (theme) => ({
 });
 
 const closedMixin = (theme) => {
-  console.log('theme', theme);
   return {
   transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
