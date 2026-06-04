@@ -7,7 +7,7 @@ import DashboardLayout from 'layout/Main';
 // render- Main
 const Dashboard = Loadable(lazy(() => import('pages/main/default')));
 const Home = Loadable(lazy(() => import('pages/main/Home')));
-const PluginRuntime = Loadable(lazy(() => import('runtime/PluginRuntime')));
+const PluginRuntime = Loadable(lazy(() => import('runtime/LoadFormRuntime')));
 
 export const MainNameRoutes = {
   HOME: '/home',

@@ -1,7 +1,7 @@
 import { definePlugin } from '../../types';
 
 export const createPluginComponent = definePlugin(({ react: React, sdk }) => {
-    const { MainCard, Paper, Typography } = sdk.ui;
+    const { MainCard, Paper, Typography } = sdk.components;
 
 
     function DemoFormPlugin() {
@@ -17,7 +17,7 @@ export const createPluginComponent = definePlugin(({ react: React, sdk }) => {
                 
                 <MainCard title="Host Custom Components" sx={{ mt: 2 }}>
                     <Typography variant="body2" color="text.secondary">
-                        Day la MainCard va Dialog duoc lay truc tiep tu host qua sdk.ui.
+                        Day la MainCard va Dialog duoc lay truc tiep tu host qua sdk.components.
                     </Typography>
                 </MainCard>
                 

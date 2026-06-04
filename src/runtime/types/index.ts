@@ -12,29 +12,21 @@ export interface RuntimePluginManifest {
   plugins: RuntimePluginManifestItem[];
 }
 
-export interface AppRuntime {
+export interface RuntimeHttpClient {
   http: {
     get: <T = unknown>(url: string, config?: unknown) => Promise<T>;
     post: <T = unknown>(url: string, body?: unknown, config?: unknown) => Promise<T>;
     fetchJson: <T = unknown>(url: string, init?: RequestInit) => Promise<T>;
   };
-  // homeApi: {
-  //   getMenuByModule: (params: { module: string }, callback?: (data: any) => void) => Promise<any>;
-  //   getRecent: (params: { operatorid: string }, callback?: (data: any) => void) => Promise<any>;
-  //   updateRecent: (params: { menuid: string }, callback?: (data: any) => void) => Promise<any>;
-  //   getLicenceInfo: (callback?: (data: any) => void) => Promise<any>;
-  // };
-  components: {
-    Box: ComponentType<any>;
-    Button: ComponentType<any>;
-    Dialog: ComponentType<any>;
-    MainCard: ComponentType<any>;
-    Paper: ComponentType<any>;
-    Stack: ComponentType<any>;
-    Typography: ComponentType<any>;
-    ContainerWrapper: ComponentType<any>;
-  };
 }
+
+export interface RuntimeSharedComponents {
+  components: object & { [key: string]: ComponentType<any> };
+}
+
+export interface RuntimeBaseRule extends RuntimeHttpClient, RuntimeSharedComponents {}
+
+export type AppRuntime<TExtra extends object = object> = RuntimeBaseRule & TExtra;
 
 export interface RuntimePluginContext {
   react: typeof import('react');
@@ -49,3 +41,17 @@ export interface RuntimePluginModule {
   default?: ComponentType;
   createPluginComponent?: RuntimePluginFactory;
 }
+
+export interface RuntimeFormDeclaration<TExtra extends object = object> {
+  id: string;
+  runtime: AppRuntime<TExtra>;
+}
+
+export const defineAppRuntime = <TExtra extends object = object>(runtime: AppRuntime<TExtra>) => runtime;
+
+export const defineFormRuntime = <TExtra extends object = object>(id: string, runtime: AppRuntime<TExtra>): RuntimeFormDeclaration<TExtra> => ({
+  id,
+  runtime,
+});
+
+export type AppRuntimeFactory = (pluginId?: string) => AppRuntime;

@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { Box, Button, Paper, Stack, Typography } from '@mui/material';
-import Dialog from 'components/Dialog';
-import MainCard from 'components/MainCard';
 // import { getLicenceInfo, getMenuByModule, getRecent, updateRecent } from 'services/api/home';
 // import { axiosClient } from 'services/utils/axios';
 import {
@@ -9,7 +6,7 @@ import {
   RuntimePluginManifestItem,
   RuntimePluginModule,
   AppRuntime,
-} from 'types/runtime';
+} from 'runtime/types';
 
 const DEFAULT_MANIFEST_PATH = 'plugins/manifest.json';
 

@@ -1,24 +1,21 @@
 import { Alert, Box, CircularProgress, Typography } from '@mui/material';
-import { useAppRuntime } from 'hooks';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { createAppRuntime } from 'runtime/AppPlugin';
 
 import {
   findPluginByPath,
   getRuntimePluginManifest,
   loadRuntimePluginComponent,
-} from 'services/runtime';
-import { AppRuntime, RuntimePluginManifestItem, RuntimePluginModule } from 'types';
+} from 'runtime/services/runtime';
 
 type RuntimeStatus = 'loading' | 'ready' | 'error';
 
-export default function PluginRuntime() {
+export default function LoadFormRuntime() {
   const { pathname } = useLocation();
   const [status, setStatus] = useState<RuntimeStatus>('loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [PluginPage, setPluginPage] = useState<React.ComponentType | null>(null);
-  const sdk = useAppRuntime();
-  const pluginUrl = `/plugins/${pathname}.mjs`;
 
   useEffect(() => {
     const loadPlugin = async () => {
@@ -33,7 +30,8 @@ export default function PluginRuntime() {
           throw new Error(`No plugin found for route ${pathname}`);
         }
         
-        const component = await loadRuntimePluginComponent(plugin, manifestUrl, sdk);
+        const appRuntime = createAppRuntime(plugin.id);
+        const component = await loadRuntimePluginComponent(plugin, manifestUrl, appRuntime);
         setPluginPage(() => component);
         setStatus('ready');
       } catch (error) {
@@ -44,7 +42,7 @@ export default function PluginRuntime() {
     };
 
     loadPlugin();
-  }, [pluginUrl]);
+  }, [pathname]);
 
   if (status === 'loading') {
     return (

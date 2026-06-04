@@ -39,7 +39,7 @@ const validationSchema = Yup.object().shape({
 export default function AuthRegister() {
   const { t } = useTranslation();
   const fileRef = useRef<any>(null);
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
   const [isRevise, setIsRevise] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);  
   const {

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 
 // project imports
