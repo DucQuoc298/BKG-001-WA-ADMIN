@@ -47,6 +47,7 @@
     "simplebar-react": "3.3.2",
     "swr": "2.4.1",
     "tinycolor2": "^1.6.0",
+    "typescript": "^6.0.3",
     "vite": "8.0.13",
     "vite-jsconfig-paths": "2.0.1",
     "web-vitals": "5.2.0",
