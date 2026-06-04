@@ -71,7 +71,7 @@ const menuItems : ISideBarMenuItem = {
     },
     {
       id: 'dashboardsss',
-      title: 'Dashboards',
+      title: 'Dashboardssss',
       type: 'collapse',
       url: '/dashboard/default',
       icon: icons.DashboardOutlined,

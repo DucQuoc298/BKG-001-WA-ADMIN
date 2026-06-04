@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Link, useLocation, matchPath } from 'react-router-dom';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 // material-ui
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Avatar from '@mui/material/Avatar';
@@ -41,33 +41,26 @@ export default function NavCollapse({ item, level }: NavCProps) {
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
   const [anchorEl, setAnchorEl] = useState(null);
 
-  let itemTarget = '_self';
-  if (item.target) {
-    itemTarget = '_blank';
-  }
+
+  const isOpenCollapse = selectedCollapse === item.id;
+  const isSelected = !drawerOpen ? selectedMenu === item.id || item.children?.some((child) => child.id === selectedMenu) : selectedCollapse !== item.id && item.children?.some((child) => child.id === selectedMenu);
+  const textColor = 'text.primary';
+  const iconSelectedColor = 'primary.main';
 
   const itemHandler = useCallback((event) => {
     if (downLG) handlerDrawerOpen(false);
-    handlerSelectedCollapse(isOpenCollapse ? '' : item.id);
-    console.log(anchorEl);
+    
     if (!drawerOpen) {
-      if(anchorEl) {
-        setAnchorEl(null);
-      }else setAnchorEl(event?.currentTarget);
+      //Mở popper nếu collapse chưa mở, đóng nếu collapse đã mở
+      anchorEl ? setAnchorEl(null) : setAnchorEl(event?.currentTarget);
+      //Nếu collapse chưa mở và menu con không chứa selectedMenu thì setSelectedMenu, ngược lại giữ nguyên selectedMenu
       !isOpenCollapse && setAnchorEl(event?.currentTarget);
-      if(!item.children?.includes((child) => child.id === selectedMenu)) {
-        handlerSelectedMenu(isSelected ? '' : item.id);
-      }
+    }else{
+      handlerSelectedCollapse(isOpenCollapse ? '' : item.id);
     }
-  }, [downLG, drawerOpen, item.id, item.children, selectedMenu, anchorEl]);
+  }, [downLG, drawerOpen, item.id, item.children, selectedMenu, anchorEl, isSelected, isOpenCollapse]);
 
-  const handleClosePopper = () => {
-    item.children?.map((child) => {
-      if (child.id !== selectedMenu) {
-        handlerSelectedMenu('');
-      }
-    });
-    console.log('close popper');
+  const handleClickAway = () => {
     setAnchorEl(null);
   };
 
@@ -82,11 +75,6 @@ export default function NavCollapse({ item, level }: NavCProps) {
     false
   );
 
-  const isSelected = !drawerOpen ? selectedCollapse === item.id || item.children?.includes((child) => child.id === selectedMenu) : selectedCollapse === item.id && item.children?.includes((child) => child.id === selectedMenu);
-  const isOpenCollapse = selectedCollapse === item.id;
-  const textColor = 'text.primary';
-  const iconSelectedColor = 'primary.main';
-
 
   const menus = item.children?.map((item) => {
   switch (item.type) {
@@ -96,6 +84,12 @@ export default function NavCollapse({ item, level }: NavCProps) {
       return <NavItem key={item.id} item={item} level={level + 1} isChild={true} />;
   }
 });
+const onMouseEnter = (event) => {
+  setAnchorEl(event.currentTarget);
+};
+const onMouseLeave = () => {
+  setAnchorEl(null);
+}
   return (
    <>
       <Box sx={{ position: 'relative' }}>
@@ -103,6 +97,7 @@ export default function NavCollapse({ item, level }: NavCProps) {
           disableRipple
           disabled={item.disabled}
           selected={isSelected}
+          {...(!drawerOpen && { onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave })}
           sx={(theme) => ({
             zIndex: 1201,
             pl: drawerOpen ? `${level * 28}px` : 1.5,
@@ -171,19 +166,11 @@ export default function NavCollapse({ item, level }: NavCProps) {
               }
             />
             {drawerOpen && (
-              isSelected ? <KeyboardArrowRightOutlined sx={{color: iconSelectedColor}}/> : 
+              isOpenCollapse ? <KeyboardArrowRightOutlined sx={{color: isSelected ? iconSelectedColor : textColor}}/> : 
                 <KeyboardArrowDownOutlined sx={{color: isSelected ? iconSelectedColor : textColor}}/>
             )}
           </>
         )}
-        </ListItemButton>
-        {drawerOpen && (<Collapse in={isOpenCollapse} timeout="auto" unmountOnExit>
-            <List
-              disablePadding
-            >
-              {menus}
-            </List>
-        </Collapse>)}
         {!drawerOpen && (
           <Popper
             open={Boolean(anchorEl)}
@@ -193,7 +180,7 @@ export default function NavCollapse({ item, level }: NavCProps) {
               {
                 name: 'offset',
                 options: {
-                  offset: [-12, 4]
+                  offset: [-12, 0]
                 }
               }
             ]}
@@ -204,7 +191,7 @@ export default function NavCollapse({ item, level }: NavCProps) {
               <Transitions ref={undefined} in={Boolean(anchorEl)} {...TransitionProps}>
                 <Paper sx={styles.popperPaper}>
                   <ClickAwayListener 
-                  onClickAway={handleClosePopper} 
+                  onClickAway={handleClickAway} 
                   mouseEvent="onMouseDown"
                   touchEvent="onTouchStart"
                   >
@@ -215,6 +202,13 @@ export default function NavCollapse({ item, level }: NavCProps) {
             )}
           </Popper>
         )}
+        </ListItemButton>
+        {drawerOpen && (<Collapse in={isOpenCollapse} timeout="auto" unmountOnExit>
+            <List disablePadding >
+              {menus}
+            </List>
+        </Collapse>)}
+        
       </Box>
     </>
   );
