@@ -1,7 +1,5 @@
-import { useTheme } from "@mui/material";
 
 export default () => {
-  const theme = useTheme();
   const textColor = 'text.primary';
   const iconSelectedColor = 'primary.main';
   return {
