@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import { AppRuntime } from "types";
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
-import {MainCard, Dialog} from 'components';
+import {MainCard, Dialog, ContainerWrapper} from 'components';
 
 const appRunTime: AppRuntime = {
   http: {
@@ -38,6 +38,7 @@ const appRunTime: AppRuntime = {
     Paper,
     Stack,
     Typography,
+    ContainerWrapper
   },
 };
 

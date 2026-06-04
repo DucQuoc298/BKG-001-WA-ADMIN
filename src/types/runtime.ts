@@ -32,6 +32,7 @@ export interface AppRuntime {
     Paper: ComponentType<any>;
     Stack: ComponentType<any>;
     Typography: ComponentType<any>;
+    ContainerWrapper: ComponentType<any>;
   };
 }
 

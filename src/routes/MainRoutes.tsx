@@ -7,7 +7,6 @@ import DashboardLayout from 'layout/Main';
 // render- Main
 const Dashboard = Loadable(lazy(() => import('pages/main/default')));
 const Home = Loadable(lazy(() => import('pages/main/Home')));
-const Invoice = Loadable(lazy(() => import('pages/main/Invoice')));
 const PluginRuntime = Loadable(lazy(() => import('runtime/PluginRuntime')));
 
 export const MainNameRoutes = {
@@ -30,15 +29,6 @@ const MainRoutes = {
         {
           index: true,
           element: <Home />
-        }
-      ]
-    },
-    {
-      path: MainNameRoutes.INVOICE,
-      children: [
-        {
-          index: true,
-          element: <Invoice />
         }
       ]
     },

@@ -4,11 +4,13 @@ import DatePicker from "./@extended/DatePicker";
 import Dialog from "./Dialog";
 import Snackbar from "./Snackbar";
 import MainCard from "./MainCard";
+import ContainerWrapper from "./ContainerWrapper";
 export {
   TextField,
   Button,
   DatePicker,
   Dialog,
   Snackbar,
-  MainCard
+  MainCard,
+  ContainerWrapper
 };

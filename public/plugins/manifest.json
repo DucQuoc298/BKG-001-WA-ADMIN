@@ -6,6 +6,13 @@
       "routePath": "/user-forms/demo-form",
       "moduleUrl": "./demo-form.mjs",
       "enabled": true
+    },
+    {
+      "id": "invoice",
+      "name": "Invoice Plugin",
+      "routePath": "/user-forms/invoice",
+      "moduleUrl": "./invoice.mjs",
+      "enabled": true
     }
   ]
 }

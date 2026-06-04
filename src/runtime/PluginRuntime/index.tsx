@@ -6,8 +6,9 @@ import { useLocation } from 'react-router-dom';
 import {
   findPluginByPath,
   getRuntimePluginManifest,
+  loadRuntimePluginComponent,
 } from 'services/runtime';
-import { RuntimePluginManifestItem, RuntimePluginModule } from 'types';
+import { AppRuntime, RuntimePluginManifestItem, RuntimePluginModule } from 'types';
 
 type RuntimeStatus = 'loading' | 'ready' | 'error';
 
@@ -16,8 +17,9 @@ export default function PluginRuntime() {
   const [status, setStatus] = useState<RuntimeStatus>('loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [PluginPage, setPluginPage] = useState<React.ComponentType | null>(null);
-
+  const sdk = useAppRuntime();
   const pluginUrl = `/plugins/${pathname}.mjs`;
+
   useEffect(() => {
     const loadPlugin = async () => {
       try {
@@ -30,35 +32,8 @@ export default function PluginRuntime() {
         if (!plugin) {
           throw new Error(`No plugin found for route ${pathname}`);
         }
-        const loadRuntimePluginComponent = async (
-          plugin: RuntimePluginManifestItem,
-          manifestUrl: string
-        ): Promise<React.ComponentType> => {
-          const sdk = useAppRuntime();
-          const resolvedModuleUrl = new URL(manifestUrl, plugin.moduleUrl).toString();
-          const pluginModule = (await import(/* @vite-ignore */ resolvedModuleUrl)) as RuntimePluginModule;
         
-          if (pluginModule.default && typeof pluginModule.default === 'function') {
-            return pluginModule.default;
-          }
-        
-          if (pluginModule.createPluginComponent && typeof pluginModule.createPluginComponent === 'function') {
-            const createComponent = pluginModule.createPluginComponent as (...args: any[]) => React.ComponentType | undefined;
-        
-            const fromContext = createComponent({ react: React, sdk });
-            if (typeof fromContext === 'function') {
-              return fromContext;
-            }
-        
-            const fromLegacyArgs = createComponent(React, sdk);
-            if (typeof fromLegacyArgs === 'function') {
-              return fromLegacyArgs;
-            }
-          }
-        
-          throw new Error(`Plugin ${plugin.id} has no valid exported component`);
-        };
-        const component = await loadRuntimePluginComponent(plugin, manifestUrl);
+        const component = await loadRuntimePluginComponent(plugin, manifestUrl, sdk);
         setPluginPage(() => component);
         setStatus('ready');
       } catch (error) {

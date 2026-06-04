@@ -54,51 +54,11 @@ const resolvePluginModuleUrl = (manifestUrl: string, moduleUrl: string) => {
   return new URL(moduleUrl, manifestUrl).toString();
 };
 
-const createRuntimePluginSdk = (): AppRuntime => {
-  return {
-    http: {
-      get: async <T = unknown>(url: string, config?: unknown) => {
-        // const response = await axiosClient.get<T>(url, config as any);
-        // return response.data;
-        return {} as T;
-      },
-      post: async <T = unknown>(url: string, body?: unknown, config?: unknown) => {
-        // const response = await axiosClient.post<T>(url, body, config as any);
-        // return response.data;
-        return {} as T;
-      },
-      fetchJson: async <T = unknown>(url: string, init?: RequestInit) => {
-        // const response = await fetch(url, init);
-        // if (!response.ok) {
-        //   throw new Error(`Request failed with status ${response.status}`);
-        // }
-        // return (await response.json()) as T;
-        return {} as T;
-      },
-    },
-    // homeApi: {
-      // getMenuByModule,
-      // getRecent,
-      // updateRecent,
-      // getLicenceInfo,
-    // },
-    components: {
-      Box,
-      Button,
-      Dialog,
-      MainCard,
-      Paper,
-      Stack,
-      Typography,
-    },
-  };
-};
-
 export const loadRuntimePluginComponent = async (
   plugin: RuntimePluginManifestItem,
-  manifestUrl: string
+  manifestUrl: string,
+  sdk: AppRuntime
 ): Promise<React.ComponentType> => {
-  const sdk = createRuntimePluginSdk();
   const resolvedModuleUrl = resolvePluginModuleUrl(manifestUrl, plugin.moduleUrl);
   const pluginModule = (await import(/* @vite-ignore */ resolvedModuleUrl)) as RuntimePluginModule;
 

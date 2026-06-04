@@ -111,3 +111,5 @@ dist
 **/._*
 package-lock.json
 yarn.lock
+
+.cert
