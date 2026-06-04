@@ -49,7 +49,11 @@ export default function NavItem({ item, level, isChild = false }: NavItemProps) 
   );
 
   const { pathname } = useLocation();
-  const isSelected = !!matchPath({ path: item?.link ? item.link : item.url, end: false }, pathname) || selectedMenu === item.id;
+  const itemPath = item?.link ? item.link : item.url;
+  const isRootPath = itemPath === '/';
+  const isMatchedPath = itemPath ? !!matchPath({ path: itemPath, end: isRootPath }, pathname) : false;
+  const isFallbackSelected = !itemPath && selectedMenu === item.id;
+  const isSelected = isMatchedPath || isFallbackSelected;
 
   const textColor = 'text.primary';
   const iconSelectedColor = 'primary.main';

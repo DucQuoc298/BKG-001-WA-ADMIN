@@ -1,5 +1,6 @@
-import { DashboardOutlined } from "@mui/icons-material";
+import { DashboardOutlined, HomeOutlined } from "@mui/icons-material";
 
 export const icons = {
-  DashboardOutlined
+  Dashboard: DashboardOutlined,
+  Home: HomeOutlined
 };

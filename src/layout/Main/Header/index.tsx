@@ -40,7 +40,7 @@ export default function Header() {
         variant="light"
         sx={() => ({
           color: 'text.primary',
-          bgcolor: drawerOpen ? 'transparent' : 'grey.100',
+          bgcolor: 'transparent',
         })}
       >
         {!drawerOpen ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}

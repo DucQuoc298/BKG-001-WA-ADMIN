@@ -8,7 +8,7 @@ export default () => {
       pl: drawerOpen ? `${level * 28}px` : 1.5,
       py: !drawerOpen && level === 1 ? 1.25 : 1,
       ...(drawerOpen && {
-        '&:hover': { bgcolor: 'primary.lighter' },
+        '&:hover': { bgcolor: 'grey.200' },
         '&.Mui-selected': {
           bgcolor: 'primary.lighter',
           borderRight: '2px solid',
@@ -31,7 +31,7 @@ export default () => {
         height: 36,
         alignItems: 'center',
         justifyContent: 'center',
-        '&:hover': { bgcolor: 'secondary.lighter' }
+        '&:hover': { bgcolor: 'grey.200' }
       }),
       ...(!drawerOpen &&
         isSelected && {

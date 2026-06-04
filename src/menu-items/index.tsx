@@ -1,5 +1,4 @@
 // project import
-import { DashboardOutlined } from '@mui/icons-material';
 import { icons } from './icons';
 
 // ==============================|| MENU ITEMS ||============================== //
@@ -24,34 +23,17 @@ const menuItems : ISideBarMenuItem = {
       id: 'dashboard',
       title: 'Dashboard',
       type: 'item',
-      url: '/dashboard/default',
-      icon: icons.DashboardOutlined,
+      url: '/dashboard',
+      icon: icons.Dashboard,
       breadcrumbs: false
     },
     {
-      id: 'dashboards',
-      title: 'Dashboards',
-      type: 'collapse',
-      url: '/dashboard/default',
-      icon: icons.DashboardOutlined,
-      breadcrumbs: false,
-      children: [
-        {
-          id: '1',
-          title: 'Analytics',
-          type: 'item',
-          url: '/dashboard/analytics',
-          breadcrumbs: false,
-        },
-        {
-          id: '2',
-          title: 'Analytics',
-          type: 'item',
-          url: '/dashboard/analytics',
-          breadcrumbs: false,
-        },
-       
-      ]
+      id: 'home',
+      title: 'Home',
+      type: 'item',
+      url: '/home',
+      icon: icons.Home,
+      breadcrumbs: false
     },
   ]
 };

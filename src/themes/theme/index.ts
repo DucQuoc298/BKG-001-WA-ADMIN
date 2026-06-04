@@ -85,7 +85,7 @@ export function Default(colors) {
   };
 
   return {
-    secondary: {
+    grey: {
       lighter: greyColors[100],
       100: greyColors[100],
       200: greyColors[200],
@@ -142,10 +142,10 @@ const paletteDarkColor = {
     },
     primary: {
       main: "#46a0f4ff",
-      light: "#70AFEB",
-      lighter: "#DFF2FA",
-      dark: "#05397D",
-      light1: "#E9ECEF"
+      light: "#213365",
+      lighter: "#283e7a",
+      dark: "#70AFEB",
+      light1: "#2b2b2c"
     },
     zone: {
       header: "#272e41",
@@ -175,7 +175,6 @@ export const themes = {
       ...paletteDarkColor,
       ...darkPaletteColor,
       customShadows: CustomShadows(paletteDarkColor),
-      // contrastText: "#ffffff",
       
     },
     colors: {

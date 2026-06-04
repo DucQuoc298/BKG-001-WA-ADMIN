@@ -6,6 +6,7 @@ import DashboardLayout from 'layout/Main';
 
 // render- Main
 const Dashboard = Loadable(lazy(() => import('pages/main/default')));
+const Home = Loadable(lazy(() => import('pages/main/Home')));
 
 export const MainNameRoutes = {
   HOME: '/home',
@@ -15,6 +16,7 @@ const MainRoutes = {
   element: <DashboardLayout />,
   children: [
     {
+      path: '/dashboard',
       index: true,
       element: <Dashboard />
     },
@@ -23,7 +25,7 @@ const MainRoutes = {
       children: [
         {
           index: true,
-          element: <Dashboard />
+          element: <Home />
         }
       ]
     },
