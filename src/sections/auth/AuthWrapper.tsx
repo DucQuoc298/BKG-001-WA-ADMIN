@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 // material-ui
-import { Box, Grid, LinearProgress, MenuItem, Popover, Stack, Typography } from '@mui/material';
+import { Box, Grid, MenuItem, Popover, Stack, Typography } from '@mui/material';
 import AuthCard from './AuthCard';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'components';

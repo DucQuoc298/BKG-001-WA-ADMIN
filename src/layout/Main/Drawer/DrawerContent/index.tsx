@@ -1,8 +1,7 @@
 // project imports
 import Navigation from './Navigation';
 import SimpleBar from 'components/third-party/SimpleBar';
-import { useGetMenuMaster } from 'api/menu';
-import React, { useMemo } from 'react';
+import React from 'react';
 // ==============================|| DRAWER CONTENT ||============================== //
 
 export default function DrawerContent() {

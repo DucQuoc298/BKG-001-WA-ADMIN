@@ -5,12 +5,10 @@
 
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { useKey, } from 'hooks';
 import { resources } from "./resources";
 import { parseJSON } from "utils";
 import { KEY_CONTEXT } from "themes/config";
-const { getKey } = useKey();
-const layout = parseJSON(getKey(KEY_CONTEXT.MAIN) ?? '{}',{})
+const layout = parseJSON(localStorage.getItem(KEY_CONTEXT.MAIN) ?? '{}',{})
 
 i18n.use(initReactI18next).init({
   // compatibilityJSON: "v3",

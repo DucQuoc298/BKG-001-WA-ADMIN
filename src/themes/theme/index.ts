@@ -108,36 +108,63 @@ const lightColors = { grey: buildGrey(IThemeMode.LIGHT) };
 const darkColors = { grey: buildGrey(IThemeMode.DARK) };
 const lightPaletteColor = Default(lightColors);
 const darkPaletteColor = Default(darkColors);
+const paletteLightColor = {
+    mode: 'light',
+    background: {
+      default: "transparent",  
+      defaultChannel: "255 255 255",
+      paper: "#f0fafe",       
+    },
+    zone: {
+      header: "#f0fafe",      
+      sidebar: "#f0fafe",    
+      content: "rgba(255,255,255,0.75)",
+      footer: "#f0f4f8",
+    } as any,
+    primary: {
+      main: "#1076BB",
+      light: "#70AFEB",
+      lighter: "#DFF2FA",
+      dark: "#05397D",
+      light1: "#E9ECEF"
+    },
+
+    text: {
+      primary: "#000000",
+      secondary: "#8c8c8c"
+    },
+}
+const paletteDarkColor = {
+    mode: 'dark',
+    background: {
+      default: "#121212", 
+      paper: "#272e41"
+    },
+    primary: {
+      main: "#46a0f4ff",
+      light: "#70AFEB",
+      lighter: "#DFF2FA",
+      dark: "#05397D",
+      light1: "#E9ECEF"
+    },
+    zone: {
+      header: "#272e41",
+      sidebar: "#272e41",
+      content: "rgba(255,255,255,0.75)",
+      footer: "#f0f4f8",
+    } as any,
+    text: {
+      primary: "#ffffffff",
+      secondary: "#ffffffff"
+    },
+}
+
 export const themes = {
   [IThemeMode.LIGHT]: {
     palette: {
-      mode: 'light',
-      background: {
-        default: "transparent",  // body — gradient từ MuiCssBaseline
-        defaultChannel: "255 255 255",
-        paper: "#f0fafe",        // Card, Dialog, Menu, Popover
-      },
-      zone: {
-        header: "#f0fafe",       // AppBar / Header
-        sidebar: "#f0fafe",      // Drawer / Sidebar  
-        content: "rgba(255,255,255,0.75)", // vùng nội dung chính
-        footer: "#f0f4f8",       // Footer
-      } as any,
-      primary: {
-        main: "#1076BB",
-        light: "#70AFEB",
-        lighter: "#DFF2FA",
-        dark: "#05397D",
-        light1: "#E9ECEF"
-      },
-
-      text: {
-        primary: "#000000",
-        secondary: "#8c8c8c"
-      },
+      ...paletteLightColor,
       ...lightPaletteColor,
-      customShadows: CustomShadows(lightPaletteColor),
-      // contrastText: "#ffffff",
+      customShadows: CustomShadows(paletteLightColor),
     },
     colors: {
       ...colors,
@@ -145,30 +172,9 @@ export const themes = {
   },
   [IThemeMode.DARK]: {
     palette: {
-      mode: 'dark',
-      background: {
-        default: "#121212", 
-        paper: "#272e41"
-      },
-      primary: {
-        main: "#46a0f4ff",
-        light: "#70AFEB",
-        lighter: "#DFF2FA",
-        dark: "#05397D",
-        light1: "#E9ECEF"
-      },
-      zone: {
-        header: "#272e41",
-        sidebar: "#272e41",
-        content: "rgba(255,255,255,0.75)",
-        footer: "#f0f4f8",
-      } as any,
-      text: {
-        primary: "#ffffffff",
-        secondary: "#ffffffff"
-      },
+      ...paletteDarkColor,
       ...darkPaletteColor,
-      customShadows: CustomShadows(darkPaletteColor),
+      customShadows: CustomShadows(paletteDarkColor),
       // contrastText: "#ffffff",
       
     },

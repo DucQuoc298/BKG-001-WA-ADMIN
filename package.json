@@ -2,6 +2,7 @@
   "name": "react-template",
   "private": true,
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "start": "vite --mode dev",
     "build": "tsc && vite build",
@@ -26,6 +27,7 @@
     "@reduxjs/toolkit": "^2.12.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@vitejs/plugin-react": "6.0.2",
+    "axios": "^1.17.0",
     "dayjs": "^1.11.21",
     "formik": "2.4.9",
     "framer-motion": "12.39.0",
@@ -71,16 +73,17 @@
   "devDependencies": {
     "@eslint/compat": "2.1.0",
     "@eslint/eslintrc": "3.3.5",
-    "@eslint/js": "10.0.1",
+    "@eslint/js": "^9.39.4",
     "@types/node": "^25.9.1",
     "@types/react-dom": "^19.2.3",
-    "eslint": "10.3.0",
-    "eslint-config-prettier": "10.1.8",
+    "@typescript-eslint/eslint-plugin": "^8.60.1",
+    "@typescript-eslint/parser": "^8.60.1",
+    "eslint": "^9.39.4",
     "eslint-plugin-jsx-a11y": "6.10.2",
-    "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.1.1",
-    "prettier": "3.8.3"
+    "prettier": "3.8.3",
+    "typescript-eslint": "^8.60.1"
   },
   "packageManager": "yarn@4.14.1"
 }

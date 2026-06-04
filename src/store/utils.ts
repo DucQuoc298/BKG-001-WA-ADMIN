@@ -24,7 +24,6 @@ function* _request<TParam>({
 }: IGetRequest<TParam>) {
   // const { t } = useTranslation();
   try {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const rq: AxiosResponse = yield service(params!);
     if (!rq) {
       // TODO: Handle server communication error

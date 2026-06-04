@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 // material-ui
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -50,15 +50,16 @@ const actionSX = {
 export default function Notification() {
   const downMD = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
-  const anchorRef = useRef<HTMLButtonElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [read, setRead] = useState(2);
   const [open, setOpen] = useState(false);
-  const handleToggle = () => {
+  const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
     setOpen((prevOpen) => !prevOpen);
   };
 
   const handleClose = (event: MouseEvent | TouchEvent) => {
-    if (anchorRef.current && event.target instanceof Node && anchorRef.current.contains(event.target)) {
+    if (anchorEl && event.target instanceof Node && anchorEl.contains(event.target)) {
       return;
     }
     setOpen(false);
@@ -69,12 +70,11 @@ export default function Notification() {
       <IconButton
         color="secondary"
         variant="light"
-        sx={(theme) => ({
+        sx={() => ({
           color: 'text.primary',
           bgcolor: open ? 'grey.100' : 'transparent'
         })}
         aria-label="open profile"
-        ref={anchorRef}
         aria-controls={open ? 'profile-grow' : undefined}
         aria-haspopup="true"
         onClick={handleToggle}
@@ -86,7 +86,7 @@ export default function Notification() {
       <Popper
         placement={downMD ? 'bottom' : 'bottom-end'}
         open={open}
-        anchorEl={anchorRef.current}
+        anchorEl={anchorEl}
         role={undefined}
         transition
         disablePortal
@@ -94,7 +94,7 @@ export default function Notification() {
       >
         {({ TransitionProps }) => (
           <Transitions ref={undefined} type="grow" position={downMD ? 'top' : 'top-right'} in={open} {...TransitionProps}>
-            <Paper sx={(theme) => ({ width: '100%', minWidth: 285, maxWidth: { xs: 285, md: 420 } })}>
+            <Paper sx={{ width: '100%', minWidth: 285, maxWidth: { xs: 285, md: 420 } }}>
               <ClickAwayListener onClickAway={handleClose}>
                 <MainCard
                   title="Notification"

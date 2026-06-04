@@ -166,14 +166,14 @@ interface IconButtonProps extends Omit<MuiIconButtonProps, 'color'> {
   variant?: Variant;
   shape?: Shape;
   color?: MuiIconButtonProps['color'];
-  ref?: any;
 }
 
-function IconButton({ variant = 'text', shape = 'square', color = 'primary', ref, ...others }: IconButtonProps) {
-  return (
-    <IconButtonStyle ref={ref} disableRipple variant={variant} shape={shape} color={color} {...others} />
-  );
-}
+const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
+  { variant = 'text', shape = 'square', color = 'primary', ...others },
+  ref
+) {
+  return <IconButtonStyle ref={ref} disableRipple variant={variant} shape={shape} color={color} {...others} />;
+});
 
 IconButton.displayName = 'IconButton';
 
@@ -186,6 +186,5 @@ IconButton.propTypes = {
   shape: PropTypes.string,
   children: PropTypes.node,
   color: PropTypes.string,
-  ref: PropTypes.any,
   others: PropTypes.any
 };

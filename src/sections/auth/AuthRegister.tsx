@@ -1,25 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 // material-ui
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 // third-party
 import * as Yup from 'yup';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import AnimateButton from 'components/@extended/AnimateButton';
 import { Button, DatePicker, TextField } from 'components';
 import { useTranslation } from 'react-i18next';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import { IconButton, Input, InputAdornment } from '@mui/material';
 import { CloudUploadOutlined } from '@ant-design/icons';
-import { useSnackbar } from 'hooks/useSnackbar';
-import { AuthNameRoutes } from 'routes/AuthRoutes';
 
 // ============================|| JWT - REGISTER ||============================ //
 
@@ -41,18 +39,13 @@ const validationSchema = Yup.object().shape({
 export default function AuthRegister() {
   const { t } = useTranslation();
   const fileRef = useRef<any>(null);
-  const [ loading, setLoading ] = useState(false);
+  const [ loading ] = useState(false);
   const [isRevise, setIsRevise] = useState(true);
-  const {success} = useSnackbar();
-  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);  
   const {
     control,
     register,
-    handleSubmit,
-    reset,
     formState: { errors },
-    watch
   } = useForm<IFormValues>({
     defaultValues: {
       expiryDate: null,
@@ -63,10 +56,7 @@ export default function AuthRegister() {
     mode: 'onSubmit'
   });
 
-  watch(['expiryDate', 'company', 'license']);
-  
-  
-  
+  useWatch({ control, name: ['expiryDate', 'company', 'license'] });
 
   const handleLicenseFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

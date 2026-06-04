@@ -29,10 +29,6 @@ export default function NavItem({ item, level, isChild = false }: NavItemProps) 
 
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 
-  let itemTarget = '_self';
-  if (item.target) {
-    itemTarget = '_blank';
-  }
 
   const itemHandler = () => {
     if (downLG) handlerDrawerOpen(false);
@@ -66,7 +62,7 @@ export default function NavItem({ item, level, isChild = false }: NavItemProps) 
           // target={itemTarget}
           disabled={item.disabled}
           selected={isSelected}
-          sx={(theme) => ({
+          sx={() => ({
             zIndex: 1201,
             pl: drawerOpen ? `${level * 28}px` : 1.5,
             py: !drawerOpen && level === 1 ? 1.25 : 1,
@@ -89,7 +85,7 @@ export default function NavItem({ item, level, isChild = false }: NavItemProps) 
         >
           {itemIcon && (
             <ListItemIcon
-              sx={(theme) => ({
+              sx={() => ({
                 minWidth: 28,
                 color: isSelected ? iconSelectedColor : textColor,
                 ...(!drawerOpen && {

@@ -29,7 +29,7 @@ import { MainNameRoutes } from 'routes/MainRoutes';
 // ============================|| JWT - LOGIN ||============================ //
 
 export default function AuthLogin() {
-  const {state, setState} = useAuth();
+  const {state} = useAuth();
   const [rememberMe, setRememberMe] = React.useState(state.rememberMe !== null ? true : false);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -47,6 +47,7 @@ export default function AuthLogin() {
           // login({username: values.username, password: values.password}, (data)=>{
           //   const {token, refreshToken, ...safeData } = data
           //   setState((prevState) => ({ ...prevState, user: JSON.stringify(safeData), loginStatus: true, token: token, refreshToken: refreshToken, rememberMe: rememberMe ? values.username : null }));
+            console.log("Login successful with values:", values);
             navigate(MainNameRoutes.HOME);
           // })
         }}

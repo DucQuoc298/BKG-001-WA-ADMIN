@@ -2,8 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 // material-ui
 import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 
 // project import
 import NavItem from '../NavItem';

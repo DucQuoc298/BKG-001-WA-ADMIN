@@ -1,5 +1,4 @@
 // material-ui
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import React from 'react';
 // project import

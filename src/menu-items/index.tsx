@@ -1,7 +1,5 @@
 // project import
 import { DashboardOutlined } from '@mui/icons-material';
-import dashboard from './dashboard';
-import pages from './page';
 
 // ==============================|| MENU ITEMS ||============================== //
 const icons = {

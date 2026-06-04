@@ -8,8 +8,6 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import Stack from '@mui/material/Stack';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -18,27 +16,18 @@ import Box from '@mui/material/Box';
 import Avatar from 'components/@extended/Avatar';
 import MainCard from 'components/MainCard';
 import Transitions from 'components/@extended/Transitions';
-import IconButton from 'components/@extended/IconButton';
 
 // assets
 import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
-import SettingOutlined from '@ant-design/icons/SettingOutlined';
-import UserOutlined from '@ant-design/icons/UserOutlined';
 import avatar1 from 'assets/images/users/avatar-1.png';
-import { Divider, Grid, ListItem, Menu, MenuItem, Popover} from '@mui/material';
+import { Divider, Grid, ListItem, Menu, MenuItem} from '@mui/material';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-// assets
-import EditOutlined from '@ant-design/icons/EditOutlined';
-import ProfileOutlined from '@ant-design/icons/ProfileOutlined';
-import WalletOutlined from '@ant-design/icons/WalletOutlined';
 import styles from './styles';
 import { ArrowForwardIosOutlined, CameraAltOutlined, CheckOutlined, DarkModeOutlined, LightModeOutlined, TranslateOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { ILanguage, IThemeMode } from 'types';
-import { useAuth, useMain } from 'hooks';
+import { useMain } from 'hooks';
 import { FLAG_ICONS } from 'assets/images/icons/flags';
 import { languages } from 'utils';
 import { AuthNameRoutes } from 'routes/AuthRoutes';
@@ -54,23 +43,15 @@ function TabPanel({ children, value, index, ...other }) {
   );
 }
 
-function a11yProps(index) {
-  return {
-    id: `profile-tab-${index}`,
-    'aria-controls': `profile-tabpanel-${index}`
-  };
-}
-
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 export default function Profile() {
   const theme = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const anchorRef = useRef<HTMLButtonElement | null>(null);
+  const [anchorRef, setAnchorRef] = useState<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const { state: mainState, setField } = useMain()
-  const { state, setState } = useAuth();
   const navigate = useNavigate();
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -87,7 +68,7 @@ export default function Profile() {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
 
   const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+    if (anchorRef && anchorRef.contains(event.target)) {
       return;
     }
     setOpen(false);
@@ -103,10 +84,10 @@ export default function Profile() {
 
     // Đọc base64
     const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result
-      // const result = data[0];
-    };
+    // reader.onload = () => {
+    //   const base64 = reader.result
+    //   // const result = data[0];
+    // };
     reader.readAsDataURL(file);
 
     event.target.value = '';
@@ -143,7 +124,7 @@ export default function Profile() {
             '&:focus-visible': { outline: `2px solid ${theme.palette.secondary.dark}`, outlineOffset: 2 }
           })}
           aria-label="open profile"
-          ref={anchorRef}
+          ref={setAnchorRef}
           aria-controls={open ? 'profile-grow' : undefined}
           aria-haspopup="true"
           onClick={handleToggle}
@@ -156,7 +137,7 @@ export default function Profile() {
       <Popper
         placement="bottom-end"
         open={open}
-        anchorEl={anchorRef.current}
+        anchorEl={anchorRef}
         role={undefined}
         transition
         disablePortal

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 // material-ui
 import Grid from '@mui/material/Grid';
 import Logo from 'assets/images/logo192.png';
@@ -26,13 +26,16 @@ export default function ForgotPassword() {
   const [form, setForm] = useState<FormType>(FormType.forgotPassword);
   const navigate = useNavigate();
 
-  const handleForgotPassword = (values: { userid: string; email: string }, callback?: (data: any) => void) => {
+  const handleForgotPassword = (values: { userid: string; email: string }) => {
+    console.log("Forgot password with values:", values);
     setForm(FormType.confirmForgotPassword);
   };
   const handleConfirmForgotPassword  = (values: { confirmCode: string; verificationCode: string }) => {
+    console.log("Confirm forgot password with values:", values);
     setForm(FormType.resetPassword);
   };
   const handleResetPassword = (values: { newPassword: string }) => {
+    console.log("Reset password with values:", values);
     setForm(FormType.forgotPassword);
     navigate(AuthNameRoutes.LOGIN);
   };

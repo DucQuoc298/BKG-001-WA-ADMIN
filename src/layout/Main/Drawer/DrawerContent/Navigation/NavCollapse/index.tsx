@@ -1,10 +1,7 @@
 import PropTypes from 'prop-types';
-import { Link, useLocation, matchPath } from 'react-router-dom';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 // material-ui
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Avatar from '@mui/material/Avatar';
-import Chip from '@mui/material/Chip';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -12,13 +9,11 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 // project imports
-import IconButton from 'components/@extended/IconButton';
 
-import { handlerDrawerOpen, handlerSelectedCollapse, handlerSelectedMenu, useGetMenuMaster } from 'api/menu';
-import { ISideBarMenuItem } from 'menu-items';
-import { ClickAwayListener, Collapse, List, Paper, Popper, Tooltip } from '@mui/material';
+import { handlerDrawerOpen, handlerSelectedCollapse, useGetMenuMaster } from 'api/menu';
+import { ClickAwayListener, Collapse, List, Paper, Popper } from '@mui/material';
 import NavItem from '../NavItem';
-import { ExpandMore, KeyboardArrowDownOutlined, KeyboardArrowRightOutlined } from '@mui/icons-material';
+import { KeyboardArrowDownOutlined, KeyboardArrowRightOutlined } from '@mui/icons-material';
 import createStyles from './styles';
 import Transitions from 'components/@extended/Transitions';
 
@@ -98,7 +93,7 @@ const onMouseLeave = () => {
           disabled={item.disabled}
           selected={isSelected}
           {...(!drawerOpen && { onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave })}
-          sx={(theme) => ({
+          sx={() => ({
             zIndex: 1201,
             pl: drawerOpen ? `${level * 28}px` : 1.5,
             py: !drawerOpen && level === 1 ? 1.25 : 1,
@@ -121,7 +116,7 @@ const onMouseLeave = () => {
         >
           {itemIcon && (
             <ListItemIcon
-              sx={(theme) => ({
+              sx={() => ({
                 minWidth: 28,
                 color: isSelected ? iconSelectedColor : textColor,
                 ...(!drawerOpen && {

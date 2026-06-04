@@ -28,6 +28,7 @@ export const parseJSON = (data: string, out: any = null) => {
     const value = JSON.parse(data, toCamelCase);
     return value;
   } catch (error) {
+    console.error("Error parsing JSON:", error);
     return out;
   }
 };

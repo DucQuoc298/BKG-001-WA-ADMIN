@@ -6,7 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Divider from '@mui/material/Divider';
 import React from 'react';
-import { Theme, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 interface IMainCardProps {
   border?: boolean;
   boxshadow?: boolean;
