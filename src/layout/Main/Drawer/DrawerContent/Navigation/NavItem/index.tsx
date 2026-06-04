@@ -10,7 +10,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-
+import createStyles from './styles';
 // project imports
 import IconButton from 'components/@extended/IconButton';
 
@@ -26,6 +26,7 @@ export default function NavItem({ item, level, isChild = false }: NavItemProps) 
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster?.isDashboardDrawerOpened;
   const selectedMenu = menuMaster?.selectedMenu;
+  const styles = createStyles();
 
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 
@@ -57,51 +58,16 @@ export default function NavItem({ item, level, isChild = false }: NavItemProps) 
     <>
       <Box sx={{ position: 'relative' }}>
         <ListItemButton
-          // component={Link}
-          // to={item.url}
-          // target={itemTarget}
+          component={Link}
+          to={item.url}
           disabled={item.disabled}
           selected={isSelected}
-          sx={() => ({
-            zIndex: 1201,
-            pl: drawerOpen ? `${level * 28}px` : 1.5,
-            py: !drawerOpen && level === 1 ? 1.25 : 1,
-            ...(drawerOpen && {
-              '&:hover': { bgcolor: 'primary.lighter' },
-              '&.Mui-selected': {
-                bgcolor: 'primary.lighter',
-                borderRight: '2px solid',
-                borderColor: 'primary.main',
-                color: iconSelectedColor,
-                '&:hover': { color: iconSelectedColor, bgcolor: 'primary.lighter' }
-              }
-            }),
-            ...(!drawerOpen && {
-              '&:hover': { bgcolor: 'transparent' },
-              '&.Mui-selected': { '&:hover': { bgcolor: 'transparent' }, bgcolor: 'transparent' }
-            })
-          })}
+          sx={() => styles.listItemButton({ drawerOpen, level })}
           onClick={() => itemHandler()}
         >
           {itemIcon && (
             <ListItemIcon
-              sx={() => ({
-                minWidth: 28,
-                color: isSelected ? iconSelectedColor : textColor,
-                ...(!drawerOpen && {
-                  borderRadius: 1.5,
-                  width: 36,
-                  height: 36,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  '&:hover': { bgcolor: 'secondary.lighter' }
-                }),
-                ...(!drawerOpen &&
-                  isSelected && {
-                    bgcolor: 'primary.lighter',
-                    '&:hover': { bgcolor: 'primary.lighter' }
-                  })
-              })}
+              sx={() => (styles.listItemIcon({ drawerOpen, isSelected }))}
             >
               {itemIcon}
             </ListItemIcon>

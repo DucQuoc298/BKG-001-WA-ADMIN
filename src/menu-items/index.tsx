@@ -1,10 +1,9 @@
 // project import
 import { DashboardOutlined } from '@mui/icons-material';
+import { icons } from './icons';
 
 // ==============================|| MENU ITEMS ||============================== //
-const icons = {
-  DashboardOutlined
-};
+
 
 export interface ISideBarMenuItem {
   id: string;
@@ -51,60 +50,9 @@ const menuItems : ISideBarMenuItem = {
           url: '/dashboard/analytics',
           breadcrumbs: false,
         },
-        {
-          id: '3',
-          title: 'Analytics',
-          type: 'item',
-          url: '/dashboard/analytics',
-          breadcrumbs: false
-        },
-        {
-          id: '4',
-          title: 'Analytics',
-          type: 'item',
-          url: '/dashboard/analytics',
-          breadcrumbs: false
-        },
+       
       ]
     },
-    {
-      id: 'dashboardsss',
-      title: 'Dashboardssss',
-      type: 'collapse',
-      url: '/dashboard/default',
-      icon: icons.DashboardOutlined,
-      breadcrumbs: false,
-      children: [
-        {
-          id: '6',
-          title: '34',
-          type: 'item',
-          url: '/dashboard/analytics',
-          breadcrumbs: false,
-        },
-        {
-          id: '7',
-          title: 'Analyt34ics',
-          type: 'item',
-          url: '/dashboard/analytics',
-          breadcrumbs: false,
-        },
-        {
-          id: '8',
-          title: 'Analytics',
-          type: 'item',
-          url: '/dashboard/analytics',
-          breadcrumbs: false
-        },
-        {
-          id: '9',
-          title: 'Analytics',
-          type: 'item',
-          url: '/dashboard/analytics',
-          breadcrumbs: false
-        },
-      ]
-    }
   ]
 };
 
