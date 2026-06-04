@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useTransition } from 'react';
 
 // material-ui
 import FormHelperText from '@mui/material/FormHelperText';
@@ -39,7 +39,7 @@ const validationSchema = Yup.object().shape({
 export default function AuthRegister() {
   const { t } = useTranslation();
   const fileRef = useRef<any>(null);
-  const [ loading ] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [isRevise, setIsRevise] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);  
   const {
@@ -122,7 +122,7 @@ export default function AuthRegister() {
                 variant="outlined" 
                 color="primary" 
                 // onClick={onGetInformationRegister} 
-                disabled={loading}
+                disabled={isPending}
                 text={t('AUTH.get_license_info')}
                 />
               </AnimateButton>

@@ -85,6 +85,22 @@ export function Default(colors) {
   };
 
   return {
+     secondary: {
+      lighter: greyColors[100],
+      100: greyColors[100],
+      200: greyColors[200],
+      light: greyColors[300],
+      400: greyColors[400],
+      main: greyColors[500],
+      600: greyColors[600],
+      dark: greyColors[700],
+      800: greyColors[800],
+      darker: greyColors[900],
+      A100: greyColors[0],
+      A200: greyColors.A400,
+      A300: greyColors.A700,
+      contrastText: greyColors[0]
+    },
     grey: {
       lighter: greyColors[100],
       100: greyColors[100],
@@ -142,7 +158,7 @@ const paletteDarkColor = {
     },
     primary: {
       main: "#46a0f4ff",
-      light: "#213365",
+      light: "#70AFEB",
       lighter: "#283e7a",
       dark: "#70AFEB",
       light1: "#2b2b2c"

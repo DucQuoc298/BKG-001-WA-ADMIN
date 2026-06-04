@@ -1,0 +1,11 @@
+{
+  "plugins": [
+    {
+      "id": "demo-form",
+      "name": "Demo Form Plugin",
+      "routePath": "/user-forms/demo-form",
+      "moduleUrl": "./demo-form.mjs",
+      "enabled": true
+    }
+  ]
+}

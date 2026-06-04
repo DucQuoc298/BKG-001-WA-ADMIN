@@ -70,8 +70,6 @@ export default function Header() {
         <AppBarStyled open={drawerOpen} {...appBar}>
           <Box sx={{
             backgroundColor: 'zone.header',
-            m: 1,
-            borderRadius: 2
           }}
             >
             {mainHeader}

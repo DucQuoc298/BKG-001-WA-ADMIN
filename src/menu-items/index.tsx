@@ -35,6 +35,14 @@ const menuItems : ISideBarMenuItem = {
       icon: icons.Home,
       breadcrumbs: false
     },
+    {
+      id: 'invoice',
+      title: 'Invoice',
+      type: 'item',
+      url: '/invoice',
+      icon: icons.Invoice,
+      breadcrumbs: false
+    },
   ]
 };
 

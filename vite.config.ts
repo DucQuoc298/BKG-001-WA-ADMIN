@@ -36,6 +36,8 @@ export default defineConfig(({ mode }) => {
         themes: path.resolve(__dirname, 'src/themes'),
         types: path.resolve(__dirname, 'src/types'),
         utils: path.resolve(__dirname, 'src/utils'),
+        runtime: path.resolve(__dirname, 'src/runtime'),
+        plugins: path.resolve(__dirname, 'src/plugins'),
       },
     },
     server: {

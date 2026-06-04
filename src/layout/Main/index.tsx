@@ -33,15 +33,14 @@ export default function DashboardLayout() {
       <Header />
       <Drawer />
 
-      <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
-        <Toolbar sx={{ mt: 'inherit' }} />
+      <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: 3 }}>
         <Box
           sx={{
-            ...{ px: { xs: 0, sm: 2 } },
             position: 'relative',
             minHeight: 'calc(100vh - 110px)',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            mt: '60px'
           }}
         >
           {/* <Breadcrumbs /> */}
