@@ -6,6 +6,8 @@ export interface RuntimePluginManifestItem {
   routePath: string;
   moduleUrl: string;
   enabled?: boolean;
+  icon?: string;
+  sidebar?: boolean;
 }
 
 export interface RuntimePluginManifest {

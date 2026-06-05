@@ -5,6 +5,7 @@ import { IThemeMode } from "types";
 export const APP_DEFAULT_PATH = '/home';
 export const DRAWER_WIDTH = 260;
 export const MINI_DRAWER_WIDTH = 60;
+export const HEADER_HEIGHT = 50;
 
 
 export const mainConfig = {

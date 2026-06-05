@@ -12,6 +12,7 @@ import Loader from 'components/Loader';
 import ScrollTop from 'components/ScrollTop';
 
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { DRAWER_WIDTH, HEADER_HEIGHT } from 'themes/config';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
@@ -32,17 +33,16 @@ export default function DashboardLayout() {
       <Header />
       <Drawer />
 
-      <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ width: `calc(100% - ${DRAWER_WIDTH}px)`, flexGrow: 1, p: 3 }}>
         <Box
           sx={{
             position: 'relative',
-            minHeight: 'calc(100vh - 110px)',
+            minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
             display: 'flex',
             flexDirection: 'column',
-            mt: '60px'
+            pt: `${2* HEADER_HEIGHT}px`
           }}
         >
-          {/* <Breadcrumbs /> */}
           <Outlet />
         </Box>
       </Box>

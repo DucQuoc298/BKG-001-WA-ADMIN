@@ -9,7 +9,7 @@ import MainCard from 'components/MainCard';
 export default function AuthCard({ children, ...other }) {
   return (
     <MainCard
-      sx={{ maxWidth:1000, '& > *': { flexGrow: 1, flexBasis: '50%' } }}
+      sx={{ maxWidth:1000, '& > *': { flexGrow: 1, flexBasis: '50%' }, p: 4 }}
       content={false}
       {...other}
       border={false}

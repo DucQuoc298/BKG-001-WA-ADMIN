@@ -5,6 +5,9 @@ import Dialog from "./Dialog";
 import Snackbar from "./Snackbar";
 import MainCard from "./MainCard";
 import ContainerWrapper from "./ContainerWrapper";
+import {
+  ToolBarLocal
+} from "./ToolBar";
 export {
   TextField,
   Button,
@@ -12,5 +15,6 @@ export {
   Dialog,
   Snackbar,
   MainCard,
-  ContainerWrapper
+  ContainerWrapper,
+  ToolBarLocal,
 };

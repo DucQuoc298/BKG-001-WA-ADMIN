@@ -3,7 +3,7 @@ import { Button as MuiButton, ButtonProps, SxProps, useTheme } from "@mui/materi
 import createStyle from "./styles";
 import { IThemeMode } from "types";
 
-type IButtonIcon = ButtonProps & {
+type IButton = ButtonProps & {
   text?: string;
 };
 
@@ -12,7 +12,7 @@ const Button = ({
   variant = "contained",
   sx,
   ...props
-}: IButtonIcon) => {
+}: IButton) => {
   const styles = createStyle();
   const theme = useTheme();
   const sxBtn = (

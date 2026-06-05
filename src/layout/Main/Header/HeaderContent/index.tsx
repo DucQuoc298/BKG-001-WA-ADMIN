@@ -12,6 +12,9 @@ export default function HeaderContent() {
 
   return (
     <>
+      <Box sx={{height: 50, display: 'flex', width: '100%', bgcolor: 'red'}} >
+        
+      </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto', gap: 2 }}>
         <Notification />
         <Profile />

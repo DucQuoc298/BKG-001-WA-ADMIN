@@ -5,14 +5,18 @@
       "name": "Demo Form Plugin",
       "routePath": "/user-forms/demo-form",
       "moduleUrl": "./demo-form.mjs",
-      "enabled": true
+      "enabled": true,
+      "icon": "form",
+      "sidebar": false
     },
     {
       "id": "invoice",
       "name": "Invoice Plugin",
       "routePath": "/user-forms/invoice",
       "moduleUrl": "./invoice.mjs",
-      "enabled": true
+      "enabled": true,
+      "icon": "invoice",
+      "sidebar": true
     }
   ]
 }

@@ -13,14 +13,11 @@ export default function Register() {
   return (
     <AuthWrapper>
       <Grid container sx={{ maxWidth: 400 }}>
-        
         <Grid container spacing={3} size={12 }>
-
           <Grid size={12}>
             <FirebaseRegister  />
           </Grid>
         </Grid>
-    
       </Grid>
     </AuthWrapper>
   );
