@@ -1,10 +1,12 @@
 import { combineReducers } from "redux";
 import snackbar from "./snackbar/reducer";
+import form from "./form/reducer";
 
 export const RESET_APP = "RESET_APP";
 
 const appReducer = combineReducers({
   snackbar,
+  form,
 });
 const rootReducer = (state: any, action: any) => {
   if (action.type === RESET_APP) {

@@ -8,6 +8,8 @@ import DashboardLayout from 'layout/Main';
 const Dashboard = Loadable(lazy(() => import('pages/main/default')));
 const Home = Loadable(lazy(() => import('pages/main/Home')));
 const PluginRuntime = Loadable(lazy(() => import('runtime/LoadFormRuntime')));
+const Invoice = Loadable(lazy(() => import('pages/main/Invoice')));
+
 
 export const MainNameRoutes = {
   HOME: '/home',
@@ -29,6 +31,15 @@ const MainRoutes = {
         {
           index: true,
           element: <Home />
+        }
+      ]
+    },
+    {
+      path: MainNameRoutes.INVOICE,
+      children: [
+        {
+          index: true,
+          element: <Invoice />
         }
       ]
     },

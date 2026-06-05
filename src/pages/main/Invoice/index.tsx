@@ -5,24 +5,26 @@ import React from 'react';
 import { IAction, IActionAndSub } from 'types/commom';
 import {useForm} from 'hooks/useForm';
 import { updateInvoiceForm } from 'store/form/reducer';
-import { Form } from 'react-hook-form';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
-export default function Home() {
+export default function Invoice() {
   const handleButtonClick = (action: IAction | IActionAndSub) => {
-    console.log('Button Home clicked:', action);
+    console.log('Button Invoice clicked:', action);
   }
-  const { invoiceForm, homeForm, update, reset } = useForm();
+  const { invoiceForm, update, reset } = useForm();
  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const {  value } = e.target;
 
-      update("homeForm",{
-        note: value,
+      update("invoiceForm",{
+        customerName: value,
       })
   };
+
+  console.log('Invoice Form:', invoiceForm);
+
   return (
     <ContainerWrapper
       toolbarLocalProps={{ 
@@ -48,9 +50,9 @@ export default function Home() {
       <MainCard>
 
       <Typography variant="h5" sx={{ mb: 2 }}>
-        Home
+        Invoice
       </Typography>
-      <TextField label="Search" variant="outlined" value={homeForm.note} fullWidth onChange={handleChange} />
+      <TextField label="Search" variant="outlined" value={invoiceForm.customerName} fullWidth onChange={handleChange} />
       </MainCard>
     </ContainerWrapper>
   );

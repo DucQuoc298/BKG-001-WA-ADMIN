@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
@@ -19,7 +19,7 @@ import { DRAWER_WIDTH, HEADER_HEIGHT } from 'themes/config';
 export default function DashboardLayout() {
   const { menuMasterLoading } = useGetMenuMaster();
   const downXL = useMediaQuery((theme) => theme.breakpoints.down('xl'));
-
+  const activePage = useLocation().pathname.slice(1).split("/")[0];
   // set media wise responsive drawer
   useEffect(() => {
     handlerDrawerOpen(!downXL);
