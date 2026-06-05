@@ -1,12 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 // project imports
-import MainRoutes, { MainNameRoutes } from './MainRoutes';
-import AuthRoutes, { AuthNameRoutes } from './AuthRoutes';
+import MainRoutes from './MainRoutes';
+import AuthRoutes from './AuthRoutes';
 
 // ==============================|| ROUTING RENDER ||============================== //
 
-const router = createBrowserRouter([MainRoutes, AuthRoutes], { basename: '/' });
+const router = createBrowserRouter([MainRoutes, AuthRoutes], { basename: import.meta.env.VITE_BASE_URL });
 
 export default router;
-export { AuthNameRoutes, MainNameRoutes };

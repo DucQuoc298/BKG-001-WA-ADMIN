@@ -4,8 +4,6 @@ import { ContainerWrapper, MainCard, TextField } from 'components';
 import React from 'react';
 import { IAction, IActionAndSub } from 'types/commom';
 import {useForm} from 'hooks/useForm';
-import { updateInvoiceForm } from 'store/form/reducer';
-
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 export default function Invoice() {
@@ -28,8 +26,8 @@ export default function Invoice() {
   return (
     <ContainerWrapper
       toolbarLocalProps={{ 
-        title: 'Homeasjkbdbajsdjbkabsdabjdsjbk',
-        handleButtonClick: handleButtonClick,
+        title: 'Invoiceasjkbdbajsdjbkabsdabjdsjbk',
+        handleButtonClick: handleButtonClick, 
         buttons: [
           { 
             key: IAction.NEW, 

@@ -12,7 +12,7 @@ import { Box } from '@mui/material';
 import AuthForgotPassword from 'sections/auth/AuthForgotPassword';
 import AuthConfirmForgotPassword from 'sections/auth/AuthConfirmForgotPassword';
 import AuthResetPassword from 'sections/auth/AuthResetPassword';
-import { AuthNameRoutes } from 'routes/AuthRoutes';
+import { AuthNameRoutes } from 'types';
 // import { useUser } from 'hooks';
 
 // ================================|| JWT - FORGOT PASSWORD ||================================ //

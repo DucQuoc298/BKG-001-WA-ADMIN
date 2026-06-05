@@ -24,7 +24,7 @@ import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 import { useTranslation } from 'react-i18next';
 import { Button, TextField } from 'components';
 import { useAuth } from 'hooks/useConfig';
-import { MainNameRoutes } from 'routes/MainRoutes';
+import { MainNameRoutes } from 'types';
 
 // ============================|| JWT - LOGIN ||============================ //
 

@@ -10,7 +10,7 @@ import AppBarStyled from './AppBarStyled';
 import HeaderContent from './HeaderContent';
 import IconButton from 'components/@extended/IconButton';
 
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen, useGetMenuMaster } from 'hooks/useMenu';
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from 'themes/config';
 
 // assets

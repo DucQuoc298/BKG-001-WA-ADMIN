@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 
 // project imports
 
-import { handlerDrawerOpen, handlerSelectedCollapse, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen, handlerSelectedCollapse, useGetMenuMaster } from 'hooks/useMenu';
 import { ClickAwayListener, Collapse, List, Paper, Popper } from '@mui/material';
 import NavItem from '../NavItem';
 import { KeyboardArrowDownOutlined, KeyboardArrowRightOutlined } from '@mui/icons-material';

@@ -26,11 +26,10 @@ import ListItemButton from '@mui/material/ListItemButton';
 import styles from './styles';
 import { ArrowForwardIosOutlined, CameraAltOutlined, CheckOutlined, DarkModeOutlined, LightModeOutlined, TranslateOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { ILanguage, IThemeMode } from 'types';
+import { AuthNameRoutes, ILanguage, IThemeMode } from 'types';
 import { useMain } from 'hooks';
 import { FLAG_ICONS } from 'assets/images/icons/flags';
 import { languages } from 'utils';
-import { AuthNameRoutes } from 'routes/AuthRoutes';
 import { useNavigate } from 'react-router-dom';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 

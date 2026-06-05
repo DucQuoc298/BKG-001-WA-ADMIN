@@ -11,10 +11,10 @@ import { Formik } from 'formik';
 
 import { useTranslation } from 'react-i18next';
 import { Button, TextField } from 'components';
-import { AuthNameRoutes } from 'routes/AuthRoutes';
 import { InputAdornment } from '@mui/material';
 import IconButton from 'components/@extended/IconButton';
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import { AuthNameRoutes } from 'types';
 
 // ============================|| JWT - RESET PASSWORD ||============================ //
 interface IAuthResetPasswordProps {

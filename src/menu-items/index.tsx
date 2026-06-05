@@ -1,6 +1,6 @@
 // project import
 import { icons } from './icons';
-import { IFormKey } from 'types';
+import { IFormKey, MainNameRoutes } from 'types';
 // ==============================|| MENU ITEMS ||============================== //
 
 
@@ -23,7 +23,7 @@ const menuItems : ISideBarMenuItem = {
       id: IFormKey.HOME,
       title: IFormKey.HOME,
       type: 'item',
-      url: `/${IFormKey.HOME}`,
+      url: MainNameRoutes.HOME,
       icon: icons.Home,
       breadcrumbs: false
     },
@@ -31,7 +31,7 @@ const menuItems : ISideBarMenuItem = {
       id: IFormKey.INVOICE,
       title: IFormKey.INVOICE,
       type: 'item',
-      url: `/${IFormKey.INVOICE}`,
+      url: '/invoice',
       icon: icons.Invoice,
       breadcrumbs: false
     },

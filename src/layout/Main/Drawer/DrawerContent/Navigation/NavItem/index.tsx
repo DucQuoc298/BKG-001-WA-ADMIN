@@ -14,7 +14,8 @@ import createStyles from './styles';
 // project imports
 import IconButton from 'components/@extended/IconButton';
 
-import { handlerDrawerOpen, handlerSelectedCollapse, handlerSelectedMenu, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen, handlerSelectedCollapse, handlerSelectedMenu, useGetMenuMaster } from 'hooks/useMenu';
+import { useTranslation } from 'react-i18next';
 
 // ==============================|| NAVIGATION - LIST ITEM ||============================== //
 interface NavItemProps {
@@ -27,6 +28,7 @@ export default function NavItem({ item, level, isChild = false }: NavItemProps) 
   const drawerOpen = menuMaster?.isDashboardDrawerOpened;
   const selectedMenu = menuMaster?.selectedMenu;
   const styles = createStyles();
+  const { t } = useTranslation();
 
   const downLG = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 
@@ -80,7 +82,7 @@ export default function NavItem({ item, level, isChild = false }: NavItemProps) 
             <ListItemText
               primary={
                 <Typography variant="h6" sx={{ color: isSelected ? iconSelectedColor : textColor }}>
-                  {item.title}
+                 {t(`form.${item.title}`)}
                 </Typography>
               }
             />

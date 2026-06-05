@@ -1,4 +1,4 @@
 export enum IFormKey {
-  HOME = "home",
-  INVOICE = "invoice",
+  HOME = "HOME",
+  INVOICE = "INVOICE",
 }
