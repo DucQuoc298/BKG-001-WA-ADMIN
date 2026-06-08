@@ -1,10 +1,22 @@
 import useSWR, { mutate } from 'swr';
 import { useMemo } from 'react';
-
-const initialState = {
+export type OpenedFormTab = {
+  path: string;
+  label: string;
+};
+interface MenuMaster {
+  isDashboardDrawerOpened: boolean;
+  selectedMenu: string;
+  selectedCollapse: string;
+  openedForm: OpenedFormTab[];
+  activeForm: string;
+}
+const initialState: MenuMaster = {
   isDashboardDrawerOpened: false,
-  selectedMenu: 'dashboard',
-  selectedCollapse: ''
+  selectedMenu: 'home',
+  selectedCollapse: '',
+  openedForm: [{ path: '/home', label: 'HOME' }],
+  activeForm: 'HOME'
 };
 
 const endpoints = {
@@ -60,3 +72,44 @@ export function handlerSelectedCollapse(selectedCollapse: string) {
     false
   );
 }
+export function addOpenedFormTab(newTab: OpenedFormTab) {
+  mutate(
+    endpoints.key + endpoints.master,
+    (currentMenuMaster) => {
+      const openedForm = currentMenuMaster?.openedForm || [];
+      if (openedForm.some((tab) => tab.path === newTab.path)) {
+        return currentMenuMaster;
+      }
+      return { ...currentMenuMaster, openedForm: [...openedForm, newTab] };
+    },
+    false
+  );
+}
+export function handlerFormOpened(openedForm: OpenedFormTab[]) {
+  mutate(
+    endpoints.key + endpoints.master,
+    (currentMenuMaster) => {
+      return { ...currentMenuMaster, openedForm };
+    },
+    false
+  );
+};
+export function handlerActiveForm(activeForm: string) {
+  mutate(
+    endpoints.key + endpoints.master,
+    (currentMenuMaster) => {
+      return { ...currentMenuMaster, activeForm };
+    },
+    false
+  );
+};
+export function removeOpenedFormTab(path: string) {
+  mutate(
+    endpoints.key + endpoints.master,
+    (currentMenuMaster) => {
+      const openedForm = currentMenuMaster?.openedForm || [];
+      return { ...currentMenuMaster, openedForm: openedForm.filter((tab) => tab.path !== path) };
+    },
+    false
+  );
+};

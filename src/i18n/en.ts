@@ -77,6 +77,7 @@ export default {
   form:{
     HOME: "Home",
     INVOICE: "Invoice",
+    BILL: "Bill",
   },
   alert: {
     update_avatar_successfully: "Update avatar successfully",

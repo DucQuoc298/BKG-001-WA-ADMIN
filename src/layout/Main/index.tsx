@@ -1,11 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet} from 'react-router-dom';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-
 // project imports
 import Drawer from './Drawer';
 import Header from './Header';
@@ -14,7 +11,7 @@ import Loader from 'components/Loader';
 import ScrollTop from 'components/ScrollTop';
 
 import { handlerDrawerOpen, useGetMenuMaster } from 'hooks/useMenu';
-import { DRAWER_WIDTH, HEADER_HEIGHT } from 'themes/config';
+import { DRAWER_WIDTH, HEADER_HEIGHT, TOOLBAR_HEIGHT } from 'themes/config';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
@@ -38,10 +35,10 @@ export default function DashboardLayout() {
         <Box
           sx={{
             position: 'relative',
-            minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
+            minHeight: `calc(100vh - ${HEADER_HEIGHT + TOOLBAR_HEIGHT}px)`,
             display: 'flex',
             flexDirection: 'column',
-            pt: `${2* HEADER_HEIGHT}px`
+            pt: `${TOOLBAR_HEIGHT + HEADER_HEIGHT}px`
           }}
         >
           <Outlet />

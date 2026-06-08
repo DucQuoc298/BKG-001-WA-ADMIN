@@ -35,6 +35,14 @@ const menuItems : ISideBarMenuItem = {
       icon: icons.Invoice,
       breadcrumbs: false
     },
+    {
+      id: IFormKey.BILL,
+      title: IFormKey.BILL,
+      type: 'item',
+      url: '/bill',
+      icon: icons.Bill,
+      breadcrumbs: false
+    },
   ]
 };
 

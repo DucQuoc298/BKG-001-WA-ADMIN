@@ -11,14 +11,6 @@ export type FormDraftState = {
   invoiceForm: InvoiceFormData;
   homeForm: HomeFormData;
 };
-interface IOptions {
-  position?: {
-    vertical: "top" | "bottom";
-    horizontal: "left" | "center" | "right";
-  };
-  autoHideDuration?: number;
-  useI18n?: boolean;
-}
 
 const initialState: FormDraftState = {
   invoiceForm: {

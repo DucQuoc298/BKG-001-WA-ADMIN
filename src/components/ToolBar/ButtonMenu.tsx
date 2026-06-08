@@ -4,7 +4,7 @@ import { Button } from "components/Buttons";
 import { IAction, IActionAndSub } from "types";
 import styles from "./styles";
 import { KeyboardArrowDownOutlined } from "@mui/icons-material";
-import { memo, useCallback, useEffect, useOptimistic, useState, useTransition } from "react";
+import { memo, useCallback, useEffect, useState, useTransition } from "react";
 
 interface ButtonMenuProps {
   icon?: React.JSX.Element | null
@@ -26,7 +26,7 @@ const ButtonMenu = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [key, setKey] = useState(0);
-  const [isPending, startTransition] = useTransition();
+  const [,startTransition] = useTransition();
 
   useEffect(() => {
     startTransition(() => {

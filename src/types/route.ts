@@ -6,5 +6,6 @@ export enum AuthNameRoutes {
 export enum MainNameRoutes {
   HOME = '/home',
   INVOICE = '/invoice',
+  BILL = '/bill',
   USER_FORMS = '/user-forms/*'
 }

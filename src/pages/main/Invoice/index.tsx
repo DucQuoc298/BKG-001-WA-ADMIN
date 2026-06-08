@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { IconName } from 'assets/Icon';
 import { ContainerWrapper, MainCard, TextField } from 'components';
 import React from 'react';
@@ -10,7 +10,7 @@ export default function Invoice() {
   const handleButtonClick = (action: IAction | IActionAndSub) => {
     console.log('Button Invoice clicked:', action);
   }
-  const { invoiceForm, update, reset } = useForm();
+  const { invoiceForm, update } = useForm();
  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -20,8 +20,6 @@ export default function Invoice() {
         customerName: value,
       })
   };
-
-  console.log('Invoice Form:', invoiceForm);
 
   return (
     <ContainerWrapper

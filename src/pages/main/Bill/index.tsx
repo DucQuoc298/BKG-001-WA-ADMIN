@@ -1,31 +1,17 @@
 import { Typography } from '@mui/material';
 import { IconName } from 'assets/Icon';
-import { ContainerWrapper, MainCard, TextField } from 'components';
+import { ContainerWrapper, MainCard } from 'components';
 import React from 'react';
-import { IAction, IActionAndSub } from 'types/commom';
-import {useForm} from 'hooks/useForm';
-
+import { IAction } from 'types/commom';
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
-export default function Home() {
-  const handleButtonClick = (action: IAction | IActionAndSub) => {
-    console.log('Button Home clicked:', action);
-  }
-  const { homeForm, update } = useForm();
- const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const {  value } = e.target;
+export default function Bill() {
 
-      update("homeForm",{
-        note: value,
-      })
-  };
   return (
     <ContainerWrapper
       toolbarLocalProps={{ 
-        title: 'Homeasjkbdbajsdjbkabsdabjdsjbk',
-        handleButtonClick: handleButtonClick,
+        title: 'Bill',
+        
         buttons: [
           { 
             key: IAction.NEW, 
@@ -45,10 +31,9 @@ export default function Home() {
     >
       <MainCard>
 
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Home
-      </Typography>
-      <TextField label="Search" variant="outlined" value={homeForm.note} fullWidth onChange={handleChange} />
+          <Typography variant="h5" sx={{ mb: 2 }}>
+            Bill
+          </Typography>
       </MainCard>
     </ContainerWrapper>
   );

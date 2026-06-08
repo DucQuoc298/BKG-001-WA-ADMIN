@@ -77,6 +77,7 @@ export default {
   form:{
     HOME: "Trang chủ",
     INVOICE: "Hóa đơn",
+    BILL: "Hóa đơn nhập",
   },
   alert: {
     update_avatar_successfully: "Cập nhật ảnh đại diện thành công",
