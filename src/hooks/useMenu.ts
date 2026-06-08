@@ -15,7 +15,7 @@ const initialState: MenuMaster = {
   isDashboardDrawerOpened: false,
   selectedMenu: 'home',
   selectedCollapse: '',
-  openedForm: [{ path: '/home', label: 'HOME' }],
+  openedForm: [],
   activeForm: 'HOME'
 };
 
@@ -80,7 +80,7 @@ export function addOpenedFormTab(newTab: OpenedFormTab) {
       if (openedForm.some((tab) => tab.path === newTab.path)) {
         return currentMenuMaster;
       }
-      return { ...currentMenuMaster, openedForm: [...openedForm, newTab] };
+      return { ...currentMenuMaster, openedForm: [newTab, ...openedForm] };
     },
     false
   );
@@ -108,7 +108,27 @@ export function removeOpenedFormTab(path: string) {
     endpoints.key + endpoints.master,
     (currentMenuMaster) => {
       const openedForm = currentMenuMaster?.openedForm || [];
-      return { ...currentMenuMaster, openedForm: openedForm.filter((tab) => tab.path !== path) };
+      const removedIndex = openedForm.findIndex((tab) => tab.path === path);
+      const nextOpenedForm = openedForm.filter((tab) => tab.path !== path);
+
+      if (removedIndex === -1) {
+        return currentMenuMaster;
+      }
+
+      const isRemovingActiveTab = currentMenuMaster?.activeForm === openedForm[removedIndex]?.label?.toUpperCase();
+
+      if (!isRemovingActiveTab) {
+        return { ...currentMenuMaster, openedForm: nextOpenedForm };
+      }
+
+      const nextActiveTab =
+        nextOpenedForm[removedIndex] ?? nextOpenedForm[removedIndex - 1] ?? nextOpenedForm[0];
+
+      return {
+        ...currentMenuMaster,
+        openedForm: nextOpenedForm,
+        activeForm: nextActiveTab ? nextActiveTab.label.toUpperCase() : 'HOME'
+      };
     },
     false
   );

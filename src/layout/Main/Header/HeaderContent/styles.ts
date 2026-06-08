@@ -50,5 +50,35 @@ export default {
     '&:hover': {
       opacity: 1,
     }
-  }
+  },
+  btnMore:{
+    bgcolor: "grey.200",
+    minWidth: '50px',
+    height: '25px',
+    "& .MuiButton-icon": {
+      ml: 0
+    },
+    "&:hover": {
+      bgcolor: "grey.300",
+      color: "black",
+    }
+
+  },
+  btnMenu:{
+    fontSize: '12px',
+    position: 'relative',
+    display: 'flex',
+    border: 'none',
+    maxWidth: '150px',
+    width: '100%',
+    overflow: "hidden !important",
+    flex: '1',
+    padding: '6px 12px',
+    height: '25px',
+    borderRadius: '8px', 
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  } 
 }

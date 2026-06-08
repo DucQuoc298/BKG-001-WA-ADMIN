@@ -9,13 +9,11 @@ import styles from './styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { addOpenedFormTab, handlerActiveForm, handlerFormOpened, OpenedFormTab, removeOpenedFormTab, useGetMenuMaster } from 'hooks/useMenu';
-import { Stack } from '@mui/material';
+import { Menu, MenuItem, Stack } from '@mui/material';
 import Icons, { IconName } from 'assets/Icon';
 import { IFormKey } from 'types';
-// ==============================|| HEADER - CONTENT ||============================== //
-
-const TAB_MAX_WIDTH = 200;
-const TAB_MIN_WIDTH = 50;
+import { Button } from 'components';
+import { ArrowDropDownOutlined } from '@mui/icons-material';
 
 const getTabLabel = (path: string) => {
   const segments = path.split('/').filter(Boolean);
@@ -54,6 +52,17 @@ export default function HeaderContent() {
   const sortedOpenedTabs = useMemo(() => openedForm ?? [], [openedForm, t]);
   const isActive = (tab: OpenedFormTab) => activeForm === tab.label;
   const [visible, setVisible] = useState<OpenedFormTab[]>([]);
+  const [overflow, setOverflow] = useState<OpenedFormTab[]>([]);
+
+useEffect(() => {
+  if (openedForm && activeForm) {
+    const activeTab = openedForm.find(tab => tab.label.toUpperCase() === activeForm);
+    if (activeTab) {
+      navigate(activeTab.path);
+    }
+  }
+}, [activeForm]);
+
 
   useLayoutEffect(() => {
     const map: Record<string, number> = {};
@@ -81,6 +90,7 @@ export default function HeaderContent() {
         }
       });
       setVisible(v);
+      setOverflow(sortedOpenedTabs.filter((tab) => !v.includes(tab)));
     };
 
     const ro = new ResizeObserver(() => {
@@ -98,7 +108,6 @@ export default function HeaderContent() {
 
   const handleActiveButton = (tab: OpenedFormTab) => () => {
     handlerActiveForm(tab.label.toUpperCase() as IFormKey);
-    navigate(tab.path);
   };
 
   const reorderOpenedTabs = (sourcePath: string, targetPath: string) => {
@@ -138,6 +147,30 @@ export default function HeaderContent() {
   const handleDragEnd = () => {
     setDraggingTabPath(null);
   };
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  
+  const handleClickMore = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMore = () => {
+    setAnchorEl(null);
+  };
+
+  const handleClosePath = (e: React.MouseEvent<HTMLElement|SVGSVGElement>, path: string) => {
+    e.stopPropagation();
+    if(openedForm !== undefined && openedForm.length === 1){
+      if(activeForm === IFormKey.HOME) return;
+        handlerActiveForm(IFormKey.HOME);
+        handlerFormOpened([{ path: 'home', label: 'home' }]);
+        return;
+    }
+    removeOpenedFormTab(path);
+    // xoá data liên quan đến form đang đóng nếu có
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   const ButtonTabs = useMemo(() => {
     return visible.map((tab) => (
@@ -152,24 +185,11 @@ export default function HeaderContent() {
         onDragEnd={handleDragEnd}
         sx={{
           ...styles.tabButton,
-          width: `${widthMap[tab.label] ?? TAB_MIN_WIDTH}px`,
-          minWidth: `${TAB_MIN_WIDTH}px`,
-          maxWidth: `${TAB_MAX_WIDTH}px`,
-          cursor: 'grab',
           opacity: draggingTabPath === tab.path ? 0.55 : 1,
           ...(isActive(tab) ? styles.activeTabButton : {}),
         }}>
         {t(`form.${tab.label.toUpperCase()}` as keyof typeof t)}
-        <Box className="tab-close-icon" sx={styles.closeIcon} onClick={(e) => {
-          e.stopPropagation();
-          if(openedForm !== undefined && openedForm.length === 1){
-            if(activeForm === IFormKey.HOME) return;
-              handlerActiveForm(IFormKey.HOME);
-              handlerFormOpened([{ path: 'home', label: 'home' }]);
-              return;
-          }
-          removeOpenedFormTab(tab.label);
-         }}>
+        <Box className="tab-close-icon" sx={styles.closeIcon} onClick={(e) => handleClosePath(e, tab.path)}>
           <Icons name={IconName.CLOSE} size={14} />
         </Box>
       </Box>
@@ -191,6 +211,56 @@ export default function HeaderContent() {
           direction={"row"}
         >
           {ButtonTabs}
+          {overflow.length > 0 && (
+            <Box>
+              <Button
+                variant="text"
+                endIcon={<ArrowDropDownOutlined/>}
+                sx={styles.btnMore}
+                text={`+${overflow.length}`}
+                onClick={handleClickMore}
+              />
+              <Menu
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleCloseMore}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+              >
+                {overflow.map((item, _index) => {
+                  const formText = t(`form.${item.label.toUpperCase()}` as keyof typeof t);
+                  return (
+                    <MenuItem
+                      key={item.label}
+                      id={item.label}
+                      onClick={() => {
+                        handleActiveButton(item)()
+                        handleCloseMore();
+                      }}
+                    >
+                      <Button
+                      id={item.label}
+                      variant="text"
+                      sx={{
+                        ...styles.btnMenu,
+                        backgroundColor: 'transparent',
+                      }}
+                      text={formText}
+                      />
+                      <Icons name={IconName.CLOSE} size={14} color="primary.main" onClick={(e) => handleClosePath(e, item.path)}/>
+                    </MenuItem>
+                  );
+                })}
+              </Menu>
+            </Box>
+          )}
         </Stack>
 
         <Stack
@@ -213,22 +283,10 @@ export default function HeaderContent() {
             component="button" 
             sx={{
               ...styles.tabButton,
-              width: `${widthMap[tab.path] ?? TAB_MIN_WIDTH}px`,
-              minWidth: `${TAB_MIN_WIDTH}px`,
-              maxWidth: `${TAB_MAX_WIDTH}px`,
             }}>
               {t(`form.${tab.label.toUpperCase()}` as keyof typeof t)}
-              <Box className="tab-close-icon" sx={styles.closeIcon} onClick={(e) => {
-                e.stopPropagation();
-                if(openedForm !== undefined && openedForm.length === 1){
-                  if(activeForm === IFormKey.HOME) return;
-                    handlerActiveForm(IFormKey.HOME);
-                    handlerFormOpened([{ path: 'home', label: 'home' }]);
-                    return;
-                }
-                removeOpenedFormTab(tab.label);
-              }}>
-                <Icons name={IconName.CLOSE} size={14} />
+              <Box className="tab-close-icon" sx={styles.closeIcon} onClick={(e) => handleClosePath(e, tab.path)}>
+                <Icons name={IconName.CLOSE} size={14} color="primary" onClick={(e) => handleClosePath(e, tab.path)}/>
               </Box>
             </Box>
           ))}

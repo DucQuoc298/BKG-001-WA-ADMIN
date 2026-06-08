@@ -3,7 +3,7 @@ import { IconName } from 'assets/Icon';
 import { ContainerWrapper, MainCard, TextField } from 'components';
 import React from 'react';
 import { IAction, IActionAndSub } from 'types/commom';
-import {useForm} from 'hooks/useForm';
+import {useHome} from 'hooks';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
@@ -11,13 +11,13 @@ export default function Home() {
   const handleButtonClick = (action: IAction | IActionAndSub) => {
     console.log('Button Home clicked:', action);
   }
-  const { homeForm, update } = useForm();
- const handleChange = (
+  const { homeForm, update } = useHome();
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const {  value } = e.target;
 
-      update("homeForm",{
+      update({
         note: value,
       })
   };

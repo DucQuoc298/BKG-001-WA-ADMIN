@@ -3,20 +3,20 @@ import { IconName } from 'assets/Icon';
 import { ContainerWrapper, MainCard, TextField } from 'components';
 import React from 'react';
 import { IAction, IActionAndSub } from 'types/commom';
-import {useForm} from 'hooks/useForm';
+import {useInvoice} from 'hooks';
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 export default function Invoice() {
   const handleButtonClick = (action: IAction | IActionAndSub) => {
     console.log('Button Invoice clicked:', action);
   }
-  const { invoiceForm, update } = useForm();
+  const { invoiceForm, update } = useInvoice();
  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const {  value } = e.target;
 
-      update("invoiceForm",{
+      update({
         customerName: value,
       })
   };
