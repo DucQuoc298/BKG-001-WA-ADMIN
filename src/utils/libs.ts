@@ -1,6 +1,7 @@
 
-
+import { GridApiCommunity } from "@mui/x-data-grid/internals";
 import { alpha } from '@mui/material/styles';
+import { GridApiPro } from '@mui/x-data-grid-pro';
 import dayjs, { Dayjs } from 'dayjs';
 import { ILanguage } from 'types';
 export const emptyGuid = "00000000-0000-0000-0000-000000000000";
@@ -251,7 +252,20 @@ export const loadRecord = <T extends object>(
     });
 };
 
-
+export const updateRow = (
+  api: React.RefObject<GridApiPro> | GridApiCommunity,
+  rowId,
+  data
+) => {
+  const app = api["current"] ? (api as React.RefObject<GridApiPro>).current : api as GridApiCommunity;
+  //
+  const newRows = app.getAllRowIds().map((id) => {
+    const row = app.getRow(id);
+    if (id === rowId) return { ...row, ...data };
+    return { ...row };
+  });
+  app.updateRows(newRows);
+};
 
 export const guidEmpty = (v) => {
   v === emptyGuid;
