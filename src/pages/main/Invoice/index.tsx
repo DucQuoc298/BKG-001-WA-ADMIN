@@ -11,7 +11,7 @@ type Product = {
 };
 
 interface FormValues {
-  product: Product | null;
+  product: string | null;
 }
 
 export default function Invoice() {
@@ -19,7 +19,7 @@ export default function Invoice() {
 
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({defaultValues: { product: null }, mode: 'onChange'});
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({defaultValues: { product: invoiceForm.product }, mode: 'onChange'});
 
   const fetchProducts = useCallback(async ({ keyword, page}: {
       keyword: string;
@@ -80,9 +80,10 @@ export default function Invoice() {
         helperText={errors.product?.message}
         loading={loading}
         required
+        value={invoiceForm.product || null}
         defaultValue={invoiceForm.product || null}
         store={productStore}
-        {...register('product', { validate: (value: Product | null) => {
+        {...register('product', { validate: (value: string | null) => {
           if (!value) {
             return 'Product is required';
             }

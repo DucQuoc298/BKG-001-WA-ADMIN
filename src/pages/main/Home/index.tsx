@@ -113,7 +113,8 @@ const [loading, setLoading] = useState(false);
       helperText={errors.product?.message}
       loading={loading}
       required
-      defaultValue={136}
+      value={homeForm.product || null}
+      
       store={productStore}
       {...register('product', { validate: (value: Product | null) => {
         if (!value) {
