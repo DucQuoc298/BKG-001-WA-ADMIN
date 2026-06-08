@@ -1,8 +1,8 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IFormKey } from 'types';
 export type InvoiceFormData = {
   customerName: string;
+  product?: string | null;
 }
 export interface IInvoiceState {
   loading: boolean;
@@ -18,11 +18,12 @@ const initialState: IInvoiceState = {
   message: null,
   formData: {
     customerName: '',
+    product: null,
   },
 };
 
 const invoiceSlice = createSlice({
-  name: IFormKey.INVOICE.toLowerCase(),
+  name: 'invoice',
   initialState,
   reducers: {
     updateInvoiceForm: (state, action: PayloadAction<Partial<InvoiceFormData>>) => {

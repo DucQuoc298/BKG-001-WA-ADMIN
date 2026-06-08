@@ -5,9 +5,8 @@ import Dialog from "./Dialog";
 import Snackbar from "./Snackbar";
 import MainCard from "./MainCard";
 import ContainerWrapper from "./ContainerWrapper";
-import {
-  ToolBarLocal
-} from "./ToolBar";
+import { ToolBarLocal } from "./ToolBar";
+import Autocomplete from "./Autocomplete";
 export {
   TextField,
   Button,
@@ -17,4 +16,5 @@ export {
   MainCard,
   ContainerWrapper,
   ToolBarLocal,
+  Autocomplete
 };

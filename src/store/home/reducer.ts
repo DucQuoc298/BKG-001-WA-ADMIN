@@ -1,9 +1,10 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IFormKey, IFormMode } from 'types';
+import { IFormMode } from 'types';
 export type HomeFormData = {
   note: string;
   formMode: IFormMode;
+  product?: string | null;
 }
 export interface IHomeState {
   loading: boolean;
@@ -20,11 +21,12 @@ const initialState: IHomeState = {
   formData: {
     formMode: IFormMode.VIEW,
     note: '',
+    product: null,
   },
 };
 
 const homeSlice = createSlice({
-  name: IFormKey.HOME.toLowerCase(),
+  name: 'home',
   initialState,
   reducers: {
     updateHomeForm: (state, action: PayloadAction<Partial<HomeFormData>>) => {

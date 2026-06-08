@@ -14,7 +14,7 @@ interface IconProps {
   name: IconName;
   size: number;
   color?: string;
-  onClick?: (e) => void;
+  onClick?: (e: React.MouseEvent<SVGElement, MouseEvent>) => void;
 }
 export enum IconName {
   NEW = "new",

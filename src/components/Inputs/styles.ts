@@ -16,6 +16,7 @@ export default () => {
       },
       "& .MuiInputBase-input": {
         padding: "10px 10px",
+        height: '24px !important',
       },
       "& .MuiOutlinedInput-root":{
         borderRadius: '8px',

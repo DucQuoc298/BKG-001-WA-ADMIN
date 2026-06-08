@@ -167,7 +167,7 @@ export default function HeaderContent() {
     setAnchorEl(null);
   };
   // Handle closing a tab when the close icon is clicked
-  const handleClosePath = (e: React.MouseEvent<HTMLElement|SVGSVGElement>, tab: OpenedFormTab) => {
+  const handleClosePath = (e: React.MouseEvent<any>, tab: OpenedFormTab) => {
     e.stopPropagation();
     const formKey = tab.label;
 

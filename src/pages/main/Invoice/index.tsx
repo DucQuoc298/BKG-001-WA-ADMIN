@@ -1,46 +1,69 @@
 import { Typography } from '@mui/material';
-import { IconName } from 'assets/Icon';
-import { ContainerWrapper, MainCard, TextField } from 'components';
-import React from 'react';
-import { IAction, IActionAndSub } from 'types/commom';
+import { Autocomplete, Button, ContainerWrapper, MainCard, TextField } from 'components';
+import React, { useCallback, useMemo, useState } from 'react';
 import {useInvoice} from 'hooks';
+import { useForm } from 'react-hook-form';
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
+type Product = {
+  id: number;
+  title: string;
+  brand?: string;
+};
+
+interface FormValues {
+  product: Product | null;
+}
 
 export default function Invoice() {
-  const handleButtonClick = (action: IAction | IActionAndSub) => {
-    console.log('Button Invoice clicked:', action);
-  }
-  const { invoiceForm, update } = useInvoice();
- const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const {  value } = e.target;
+  const { update, invoiceForm } = useInvoice();
 
-      update({
-        customerName: value,
-      })
-  };
+  const [loading, setLoading] = useState(false);
+
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({defaultValues: { product: null }, mode: 'onChange'});
+
+  const fetchProducts = useCallback(async ({ keyword, page}: {
+      keyword: string;
+      page: number;
+      isReset?: boolean;
+    }, onSuccess?: (data: Product[]) => void) => {
+      if (!keyword.trim()) return;
+
+      try {
+        setLoading(true);
+
+        const res = await fetch(
+          `https://dummyjson.com/products/search?q=${encodeURIComponent(
+            keyword
+          )}&limit=10&skip=${page * 10}`
+        );
+
+        const data = await res.json();
+
+        const newProducts: Product[] = data.products ?? [];
+
+        if (onSuccess) {
+          onSuccess(newProducts);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const productStore = useMemo(
+    () => ({
+      mode: 'remote' as const,
+      params: { keyword: 'phone', page: 0 },
+      fnGetData: fetchProducts,
+    }),
+    [fetchProducts]
+  );
 
   return (
     <ContainerWrapper
       toolbarLocalProps={{ 
-        title: 'Invoiceasjkbdbajsdjbkabsdabjdsjbk',
-        handleButtonClick: handleButtonClick, 
-        buttons: [
-          { 
-            key: IAction.NEW, 
-            label: 'Add', 
-            icon: IconName.NEW,
-            items: [
-              { key: IAction.NEW, label: 'Add', icon: IconName.NEW},
-            ]
-          },
-          { key: IAction.EDIT, label: 'Edit', icon: IconName.EDIT },
-          { key: IAction.DELETE, label: 'Delete', icon: IconName.DELETE },
-          { key: IAction.VIEW, label: 'View', icon: IconName.VIEW },
-          { key: IAction.CANCEL, label: 'Cancel', icon: IconName.CANCEL },
-          
-        ]
+        title: 'Invoice',
       }}
     >
       <MainCard>
@@ -48,7 +71,27 @@ export default function Invoice() {
       <Typography variant="h5" sx={{ mb: 2 }}>
         Invoice
       </Typography>
-      <TextField label="Search" variant="outlined" value={invoiceForm.customerName} fullWidth onChange={handleChange} />
+      <TextField label="Customer Name" name="customerName" value={invoiceForm.customerName || ''} onChange={(e) => update({ customerName: e.target.value })} />
+      <Autocomplete 
+        idField="id"
+        textField="title"
+        label="Product"
+        error={!!errors.product}
+        helperText={errors.product?.message}
+        loading={loading}
+        required
+        defaultValue={invoiceForm.product || null}
+        store={productStore}
+        {...register('product', { validate: (value: Product | null) => {
+          if (!value) {
+            return 'Product is required';
+            }
+            console.log(value);
+          update({ product: value as any });
+          return true;
+        } })}
+        />
+        <Button onClick={handleSubmit((data) => console.log("data", data))} text="Submit"></Button>
       </MainCard>
     </ContainerWrapper>
   );
