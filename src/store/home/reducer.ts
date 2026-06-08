@@ -4,7 +4,8 @@ import { IFormMode } from 'types';
 export type HomeFormData = {
   note: string;
   formMode: IFormMode;
-  product?: string[] | null;
+  product?: string | null;
+  products?: string[] | null;
 }
 export interface IHomeState {
   loading: boolean;
@@ -22,6 +23,7 @@ const initialState: IHomeState = {
     formMode: IFormMode.VIEW,
     note: '',
     product: null,
+    products: null,
   },
 };
 

@@ -101,9 +101,6 @@ export const AutocompleteMultiple = forwardRef<HTMLInputElement, AutocompletePro
 
     const safeSelectedOption = Array.isArray(selectedOption) ? selectedOption : [];
 
-    // ------------------------------------------------------------------
-    // Scroll → load next page
-    // ------------------------------------------------------------------
     const handleScroll = useCallback(
       (event: UIEvent<HTMLElement>) => {
         const el = event.currentTarget;
@@ -113,9 +110,6 @@ export const AutocompleteMultiple = forwardRef<HTMLInputElement, AutocompletePro
       [loading, loadNextPage],
     );
 
-    // ------------------------------------------------------------------
-    // onChange — propagate to parent (Redux dispatch / react-hook-form)
-    // ------------------------------------------------------------------
     const handleChange: MuiAutocompleteProps<any, true, boolean, any>["onChange"] =
       useCallback(
         (event, newValue, reason, details) => {

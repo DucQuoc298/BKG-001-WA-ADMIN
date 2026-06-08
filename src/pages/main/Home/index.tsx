@@ -14,6 +14,7 @@ type Product = {
 
 interface FormValues {
   product: Product | null;
+  products: Product[] | null;
 }
 export default function Home() {
 
@@ -29,7 +30,7 @@ export default function Home() {
   };
 const [loading, setLoading] = useState(false);
   
-  const { register, formState: { errors } } = useForm<FormValues>({defaultValues: { product: null }, mode: 'onChange'});
+  const { register, formState: { errors } } = useForm<FormValues>({defaultValues: { product: null, products: null }, mode: 'onChange'});
 
   const fetchProducts = useCallback(async ({ keyword, page}: {
       keyword: string;
@@ -110,7 +111,6 @@ const [loading, setLoading] = useState(false);
       textField="title"
       label="Product"
       error={!!errors.product}
-      multiple={true}
       helperText={errors.product?.message}
       loading={loading}
       required
@@ -123,6 +123,27 @@ const [loading, setLoading] = useState(false);
           }
           console.log(value);
         update({ product: value as any });
+        return true;
+      } })}
+      />
+      <Autocomplete 
+      idField="id"
+      textField="title"
+      label="Product"
+      error={!!errors.products}
+      multiple={true}
+      helperText={errors.products?.message}
+      loading={loading}
+      required
+      value={homeForm.products || null}
+      limitTags={1}
+      store={productStore}
+      {...register('products', { validate: (value: Product[] | null) => {
+        if (!value || value.length === 0) {
+          return 'Products are required';
+          }
+          console.log(value);
+        update({ products: value as any });
         return true;
       } })}
       />
