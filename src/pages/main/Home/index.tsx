@@ -110,11 +110,12 @@ const [loading, setLoading] = useState(false);
       textField="title"
       label="Product"
       error={!!errors.product}
+      multiple={true}
       helperText={errors.product?.message}
       loading={loading}
       required
       value={homeForm.product || null}
-      
+      limitTags={1}
       store={productStore}
       {...register('product', { validate: (value: Product | null) => {
         if (!value) {

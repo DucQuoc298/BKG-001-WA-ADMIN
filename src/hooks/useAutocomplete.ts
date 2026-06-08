@@ -67,8 +67,8 @@ export function useAutocomplete<T = Record<string, any>>({
   const currentPage = useRef(0);
   // Tránh set state sau khi unmount
   const isMounted = useRef(true);
-  // Tránh gọi API song song
-  const isFetching = useRef(false);
+  // Chỉ nhận kết quả request mới nhất (tránh stale khi gõ search nhanh)
+  const requestIdRef = useRef(0);
 
   const scheduleOptionsUpdate = useCallback((next: T[]) => {
     window.setTimeout(() => {
@@ -109,16 +109,14 @@ export function useAutocomplete<T = Record<string, any>>({
   const fetchPage = useCallback(
     (page: number, mergeWithPrevious: boolean) => {
       if (mode !== "remote" || !fnGetData) return;
-      if (isFetching.current) return;
-
-      isFetching.current = true;
       if (isMounted.current) setLoading(true);
+      const requestId = ++requestIdRef.current;
 
       const callParams = { ...(params ?? {}), page, pageSize };
 
       fnGetData(callParams, (result: T[]) => {
-        isFetching.current = false;
         if (!isMounted.current) return;
+        if (requestId !== requestIdRef.current) return;
 
         setLoading(false);
 
@@ -169,10 +167,10 @@ export function useAutocomplete<T = Record<string, any>>({
 
     const cached = cache.get(cacheKey);
     if (!cached?.hasMore) return;       // không còn trang tiếp
-    if (isFetching.current) return;      // đang fetch rồi
+    if (loading) return;                 // đang fetch rồi
 
     fetchPage(currentPage.current + 1, true);
-  }, [mode, cacheKey, fetchPage]);
+  }, [mode, cacheKey, fetchPage, loading]);
 
   const loadFirstPage = useCallback(() => {
     if (mode !== "remote") return;

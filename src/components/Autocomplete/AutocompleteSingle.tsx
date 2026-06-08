@@ -5,7 +5,6 @@ import {
   useMemo,
   useRef,
   useState,
-  useTransition,
   type UIEvent,
 } from "react";
 import {
@@ -18,22 +17,6 @@ import { TextField } from "components";
 import { useAutocomplete } from "hooks";
 import Icons, { IconName } from "assets/Icon";
 import { useTranslation } from "react-i18next";
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/** Stable debounce — created once, not re-created on every render */
-function createDebounce<T extends (...args: any[]) => void>(fn: T, delay = 300) {
-  let timer: ReturnType<typeof setTimeout> | null = null;
-  return function (this: unknown, ...args: Parameters<T>) {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => {
-      timer = null;
-      fn.apply(this, args);
-    }, delay);
-  };
-}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -60,7 +43,7 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
 
     const { t } = useTranslation();
     const inputRef = useRef<HTMLInputElement>(null);
-    const [, startTransition] = useTransition();
+    const [searchKeyword, setSearchKeyword] = useState("");
 
     const {
       data,
@@ -81,9 +64,9 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
       return {
         ...(storeParams ?? {}),
         page: 0,
-        keyword: storeParams?.keyword,
+        keyword: searchKeyword.trim().length > 0 ? searchKeyword : storeParams?.keyword,
       };
-    }, [mode, storeParams]);
+    }, [mode, storeParams, searchKeyword]);
 
     const cacheKey =
       (store as any).cacheKey ||
@@ -154,32 +137,6 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
         [forceSelection, onChange],
       );
 
-    // ------------------------------------------------------------------
-    // Remote keyword search with debounce
-    // ------------------------------------------------------------------
-    const remoteSearch = useCallback(
-      (keyword: string) => {
-        if (mode !== "remote" || !fnGetData) return;
-
-        startTransition(() => {
-          const filter: any[] = [];
-          if (storeParams?.filter) filter.push(storeParams.filter);
-          if (keyword) filter.push({ property: textField, value: keyword, method: "like" });
-
-          fnGetData({ ...storeParams, filter, page: 0, pageSize }, () => {
-            // useAutocomplete handles state update via its own listener
-          });
-        });
-      },
-      [mode, fnGetData, storeParams, textField, pageSize],
-    );
-
-    // Stable debounced version — recreated only when remoteSearch identity changes
-    const debouncedSearch = useMemo(
-      () => createDebounce(remoteSearch, 700),
-      [remoteSearch],
-    );
-
     const handleInputChange: MuiAutocompleteProps<
       any,
       false,
@@ -187,12 +144,18 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
       any
     >["onInputChange"] = useCallback(
       (_event, value, reason) => {
-        // Only trigger API call for actual user typing, not programmatic changes
+        if (mode !== "remote") return;
+
         if (reason === "input") {
-          debouncedSearch(value);
+          setSearchKeyword(value);
+          return;
+        }
+
+        if (reason === "clear") {
+          setSearchKeyword("");
         }
       },
-      [debouncedSearch],
+      [mode],
     );
 
     // ------------------------------------------------------------------

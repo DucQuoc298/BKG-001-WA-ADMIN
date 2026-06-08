@@ -3,7 +3,7 @@ import { forwardRef } from "react";
 import { AutocompleteSingle } from "./AutocompleteSingle";
 import { AutocompleteMultiple } from "./AutocompleteMultiple";
 export type AutocompleteProps = Omit<
-  MuiAutocompleteProps<any, false, boolean, any>,
+  MuiAutocompleteProps<any, boolean, boolean, any>,
   "options" | "renderInput" | "onChange" | "onBlur"
 > & {
     label?: string;
@@ -11,6 +11,7 @@ export type AutocompleteProps = Omit<
     textField?: string;
     error?: boolean;
     helperText?: string;
+    multiple?: boolean;
     required?: boolean;
     store: {
       data?: any[];
@@ -27,22 +28,21 @@ export type AutocompleteProps = Omit<
     forceSelection?: boolean;
     name?: string;
     onChange?:
-      | MuiAutocompleteProps<any, false, boolean, any>["onChange"]
+      | MuiAutocompleteProps<any, boolean, boolean, any>["onChange"]
       | ((event: { target: { name?: string; value: any }; type?: string }) => void);
     onBlur?:
-      | MuiAutocompleteProps<any, false, boolean, any>["onBlur"]
+      | MuiAutocompleteProps<any, boolean, boolean, any>["onBlur"]
       | ((event: { target: { name?: string; value: any }; type?: string }) => void);
     // handleAddTab?: (newTab: { key: string; text: string }) => void;
   };
 export const Autocomplete = forwardRef<HTMLDivElement, AutocompleteProps>(
   function Autocomplete({multiple, ...props}, ref) {
     
-    
     // For demonstration, we'll just render the label and a simple input
     return (
       multiple ?
-      <AutocompleteMultiple  ref={ref} {...(props as any)}/> :
-      <AutocompleteSingle  ref={ref} {...(props as any)}/>
+      <AutocompleteMultiple  ref={ref} multiple {...(props as any)}/> :
+      <AutocompleteSingle  ref={ref} multiple={false} {...(props as any)}/>
     );
   }
 );  
