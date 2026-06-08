@@ -73,10 +73,12 @@ export default {
     notification: "Notification",
     no_notification: "No notification",
     change_company: "Change Company",
+    no_options: "No options",
   },
   form:{
     HOME: "Home",
     INVOICE: "Invoice",
+    BILL: "Bill",
   },
   alert: {
     update_avatar_successfully: "Update avatar successfully",

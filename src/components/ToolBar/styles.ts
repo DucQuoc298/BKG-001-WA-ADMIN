@@ -1,6 +1,7 @@
 export default {
   toolbar: {
     backgroundColor: 'background.paper',
+    px: '12px !important',
   },
   gridContainer: {
     alignItems: "center",

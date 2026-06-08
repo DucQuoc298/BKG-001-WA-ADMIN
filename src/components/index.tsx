@@ -9,6 +9,8 @@ import DataTable from "./DataTable";
 import {
   ToolBarLocal
 } from "./ToolBar";
+import { ToolBarLocal } from "./ToolBar";
+import Autocomplete from "./Autocomplete";
 export {
   TextField,
   Button,
@@ -19,4 +21,5 @@ export {
   ContainerWrapper,
   DataTable,
   ToolBarLocal,
+  Autocomplete
 };

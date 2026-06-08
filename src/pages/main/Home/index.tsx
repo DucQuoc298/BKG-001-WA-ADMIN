@@ -1,56 +1,152 @@
-import { Grid, Typography } from '@mui/material';
-import { IconName } from 'assets/Icon';
-import { ContainerWrapper, MainCard, TextField } from 'components';
-import React from 'react';
-import { IAction, IActionAndSub } from 'types/commom';
-import {useForm} from 'hooks/useForm';
-import { updateInvoiceForm } from 'store/form/reducer';
-import { Form } from 'react-hook-form';
+import { Typography } from '@mui/material';
+import { Autocomplete, Button, ContainerWrapper, MainCard, TextField } from 'components';
+import React, { useCallback, useMemo, useState } from 'react';
+import { IFormMode } from 'types/commom';
+import {useHome} from 'hooks';
+import { useForm } from 'react-hook-form';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
+type Product = {
+  id: number;
+  title: string;
+  brand?: string;
+};
 
+interface FormValues {
+  product: Product | null;
+  products: Product[] | null;
+}
 export default function Home() {
-  const handleButtonClick = (action: IAction | IActionAndSub) => {
-    console.log('Button Home clicked:', action);
-  }
-  const { invoiceForm, homeForm, update, reset } = useForm();
- const handleChange = (
+
+  const { homeForm, update } = useHome();
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const {  value } = e.target;
 
-      update("homeForm",{
+      update({
         note: value,
       })
   };
+const [loading, setLoading] = useState(false);
+  
+  const { register, formState: { errors } } = useForm<FormValues>({defaultValues: { product: null, products: null }, mode: 'onChange'});
+
+  const fetchProducts = useCallback(async ({ keyword, page}: {
+      keyword: string;
+      page: number;
+      isReset?: boolean;
+    }, onSuccess?: (data: Product[]) => void) => {
+      if (!keyword.trim()) return;
+
+      try {
+        setLoading(true);
+
+        const res = await fetch(
+          `https://dummyjson.com/products/search?q=${encodeURIComponent(
+            keyword
+          )}&limit=10&skip=${page * 10}`
+        );
+
+        const data = await res.json();
+
+        const newProducts: Product[] = data.products ?? [];
+
+        if (onSuccess) {
+          onSuccess(newProducts);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+  const getProductById = useCallback(async (id: number, onSuccess?: (data: Product) => void ) => {
+    if (!id) return null;
+
+      try {
+      setLoading(true);
+
+      const res = await fetch(
+        `https://dummyjson.com/products/${id}`
+      );
+
+      const data = await res.json();
+      if (onSuccess) {
+        onSuccess(data as Product);
+      }
+      return data as Product;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+    const productStore = useMemo(
+      () => ({
+        mode: 'remote' as const,
+        params: { keyword: 'phone', page: 0 },
+        fnGetData: fetchProducts,
+        fnGetDefaultData: getProductById,
+      }),
+      [fetchProducts, getProductById]
+    );
   return (
     <ContainerWrapper
       toolbarLocalProps={{ 
         title: 'Homeasjkbdbajsdjbkabsdabjdsjbk',
-        handleButtonClick: handleButtonClick,
-        buttons: [
-          { 
-            key: IAction.NEW, 
-            label: 'Add', 
-            icon: IconName.NEW,
-            items: [
-              { key: IAction.NEW, label: 'Add', icon: IconName.NEW},
-            ]
-          },
-          { key: IAction.EDIT, label: 'Edit', icon: IconName.EDIT },
-          { key: IAction.DELETE, label: 'Delete', icon: IconName.DELETE },
-          { key: IAction.VIEW, label: 'View', icon: IconName.VIEW },
-          { key: IAction.CANCEL, label: 'Cancel', icon: IconName.CANCEL },
-          
-        ]
+        
       }}
     >
       <MainCard>
 
       <Typography variant="h5" sx={{ mb: 2 }}>
-        Home
+        Home {homeForm.formMode === IFormMode.VIEW ? 'View Mode' : homeForm.formMode === IFormMode.FORM ? 'Edit Mode' : 'New Mode'}
       </Typography>
-      <TextField label="Search" variant="outlined" value={homeForm.note} fullWidth onChange={handleChange} />
+      <Button variant='contained' text="Open Form" onClick={() => update({ formMode: homeForm.formMode === IFormMode.FORM ? IFormMode.VIEW : IFormMode.FORM })} />
+      {homeForm.formMode === IFormMode.FORM && (
+        <TextField label="Search" variant="outlined" value={homeForm.note} fullWidth onChange={handleChange} />
+      )}
+      <Autocomplete 
+      idField="id"
+      textField="title"
+      label="Product"
+      error={!!errors.product}
+      helperText={errors.product?.message}
+      loading={loading}
+      required
+      value={homeForm.product || null}
+      limitTags={1}
+      store={productStore}
+      {...register('product', { validate: (value: Product | null) => {
+        if (!value) {
+          return 'Product is required';
+          }
+          console.log(value);
+        update({ product: value as any });
+        return true;
+      } })}
+      />
+      <Autocomplete 
+      idField="id"
+      textField="title"
+      label="Product"
+      error={!!errors.products}
+      multiple={true}
+      helperText={errors.products?.message}
+      loading={loading}
+      required
+      value={homeForm.products || null}
+      limitTags={1}
+      store={productStore}
+      {...register('products', { validate: (value: Product[] | null) => {
+        if (!value || value.length === 0) {
+          return 'Products are required';
+          }
+          console.log(value);
+        update({ products: value as any });
+        return true;
+      } })}
+      />
       </MainCard>
     </ContainerWrapper>
   );

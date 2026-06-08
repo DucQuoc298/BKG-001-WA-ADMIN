@@ -223,6 +223,37 @@ Neu khong dat bien nay, app dung mac dinh:
 
 ## 12) Troubleshooting nhanh
 
+## 12a) Convention reset form khi dong tab
+
+Hook `src/hooks/useForm.ts` dang reset form theo convention action type, khong hard-code tung slice cu the.
+
+Khi tao form slice moi va muon `resetForm(formKey)` tu dong hoat dong, can giu dung 2 quy uoc sau:
+
+- `name` cua slice phai bang `IFormKey.X.toLowerCase()`
+- reducer reset phai co ten `resetXForm`
+
+Vi du voi `IFormKey.BILL`:
+
+```ts
+const billSlice = createSlice({
+	name: IFormKey.BILL.toLowerCase(),
+	initialState,
+	reducers: {
+		resetBillForm: (state) => {
+			state.formData = initialState.formData;
+		}
+	}
+});
+```
+
+Luc do `resetForm(IFormKey.BILL)` se tu dispatch action type:
+
+```ts
+bill/resetBillForm
+```
+
+Neu khong dung convention nay, can tu xu ly rieng trong logic reset form.
+
 ### Loi: `Cannot load plugin manifest`
 
 - Kiem tra file `public/plugins/manifest.json`

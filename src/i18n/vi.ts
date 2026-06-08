@@ -73,10 +73,12 @@ export default {
     notification: "Thông báo",
     no_notification: "Không có thông báo ",
     change_company: "Đổi công ty",
+    no_options: "Không có lựa chọn nào",
   },
   form:{
     HOME: "Trang chủ",
     INVOICE: "Hóa đơn",
+    BILL: "Hóa đơn nhập",
   },
   alert: {
     update_avatar_successfully: "Cập nhật ảnh đại diện thành công",
