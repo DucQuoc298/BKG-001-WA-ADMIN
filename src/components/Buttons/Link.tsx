@@ -1,12 +1,14 @@
-import React, { memo } from "react";
-import { Link as MuiLink, SxProps } from "@mui/material";
+import React, { memo } from 'react';
+import { Link as MuiLink, SxProps } from '@mui/material';
+import type { TypographyVariant } from '@mui/material/styles';
 
 interface LinkProps {
     children?: React.ReactNode;
     sx?: SxProps;
     onClick?: () => void;
-    typography?: string;
+    typography?: TypographyVariant;
 }
+
 const Link = ({
     children,
     onClick,
@@ -14,20 +16,21 @@ const Link = ({
     sx,
 }: LinkProps) => {
     return (<MuiLink
-        typography={typography}
+        component="button"
+        variant={typography}
         sx={{
-            textDecoration: "none",
-            "& :hover": {
-                textDecoration: "underline",
+            textDecoration: 'none',
+            '&:hover': {
+                textDecoration: 'underline',
 
             },
-            cursor: "pointer",
+            cursor: 'pointer',
             ...sx
         }}
         onClick={onClick}
     >
         {children}
-    </MuiLink>)
+    </MuiLink>);
 };
 
 export default memo(Link);
