@@ -1,8 +1,9 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IFormKey } from 'types';
+import { IFormKey, IFormMode } from 'types';
 export type HomeFormData = {
   note: string;
+  formMode: IFormMode;
 }
 export interface IHomeState {
   loading: boolean;
@@ -17,6 +18,7 @@ const initialState: IHomeState = {
   error: null,
   message: null,
   formData: {
+    formMode: IFormMode.VIEW,
     note: '',
   },
 };

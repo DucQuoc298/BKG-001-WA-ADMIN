@@ -40,6 +40,15 @@ export interface IActionAndSub {
   key: IAction;
   sub: string;
 }
+
+// Form modes for handling different states of a form (viewing, editing, creating new)
+export enum IFormMode {
+  VIEW = "view",
+  FORM = "form",
+  NEW = "new",
+  EDIT = "edit",
+}
+
 export const actionButtons = [
   {
     key: IAction.NEW,

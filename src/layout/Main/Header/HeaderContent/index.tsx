@@ -8,7 +8,7 @@ import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 're
 import styles from './styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { addOpenedFormTab, handlerActiveForm, handlerFormOpened, OpenedFormTab, removeOpenedFormTab, useGetMenuMaster } from 'hooks/useMenu';
+import { addOpenedFormTab, handlerActiveForm, handlerFormOpened, OpenedFormTab, removeOpenedFormTab, useFormActions, useGetMenuMaster } from 'hooks';
 import { Menu, MenuItem, Stack } from '@mui/material';
 import Icons, { IconName } from 'assets/Icon';
 import { IFormKey } from 'types';
@@ -25,12 +25,13 @@ export default function HeaderContent() {
   const location = useLocation();
   const { menuMaster } = useGetMenuMaster();
   const { activeForm, openedForm } = menuMaster || {};
+  const { resetForm } = useFormActions();
   const { t } = useTranslation();
   const actionsRef = useRef<HTMLDivElement>(null);
   const measureRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const navigate = useNavigate();
 
-
+  // Sync opened tabs with current location
   useEffect(() => {
     if (location.pathname === '/') {
       openedForm && openedForm.length === 0 && handlerFormOpened([]);
@@ -54,16 +55,17 @@ export default function HeaderContent() {
   const [visible, setVisible] = useState<OpenedFormTab[]>([]);
   const [overflow, setOverflow] = useState<OpenedFormTab[]>([]);
 
-useEffect(() => {
-  if (openedForm && activeForm) {
-    const activeTab = openedForm.find(tab => tab.label.toUpperCase() === activeForm);
-    if (activeTab) {
-      navigate(activeTab.path);
+  // Navigate to active form when it changes
+  useEffect(() => {
+    if (openedForm && activeForm) {
+      const activeTab = openedForm.find(tab => tab.label.toUpperCase() === activeForm);
+      if (activeTab) {
+        navigate(activeTab.path);
+      }
     }
-  }
-}, [activeForm]);
+  }, [activeForm]);
 
-
+  // Measure tab widths whenever opened tabs change
   useLayoutEffect(() => {
     const map: Record<string, number> = {};
     sortedOpenedTabs.forEach((i) => {
@@ -73,6 +75,7 @@ useEffect(() => {
     setWidthMap(map);
   }, [sortedOpenedTabs]);
   
+  // Recalculate visible and overflow tabs on width change or when opened tabs change
   useLayoutEffect(() => {
     if (!actionsRef.current || !measureRefs.current) return;
 
@@ -106,10 +109,12 @@ useEffect(() => {
     return () => ro.disconnect();
   }, [sortedOpenedTabs, widthMap]);
 
+  // Handlers for tab actions
   const handleActiveButton = (tab: OpenedFormTab) => () => {
     handlerActiveForm(tab.label.toUpperCase() as IFormKey);
   };
 
+  // Reorder tabs when dragged and dropped
   const reorderOpenedTabs = (sourcePath: string, targetPath: string) => {
     if (!openedForm || sourcePath === targetPath) return;
 
@@ -124,17 +129,20 @@ useEffect(() => {
     handlerFormOpened(nextTabs);
   };
 
+  // Drag and drop handlers
   const handleDragStart = (tab: OpenedFormTab) => (e: React.DragEvent<HTMLButtonElement>) => {
     setDraggingTabPath(tab.path);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', tab.path);
   };
 
+  // Allow dropping by preventing default behavior
   const handleDragOver = (e: React.DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
 
+  // Handle dropping a tab onto another to reorder
   const handleDrop = (targetTab: OpenedFormTab) => (e: React.DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const sourcePath = draggingTabPath ?? e.dataTransfer.getData('text/plain');
@@ -144,34 +152,43 @@ useEffect(() => {
     setDraggingTabPath(null);
   };
 
+  // Reset dragging state when drag ends
   const handleDragEnd = () => {
     setDraggingTabPath(null);
   };
+  // Handlers for "More" menu actions
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  
+  // Open the "More" menu when the button is clicked
   const handleClickMore = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-
+  // Close the "More" menu
   const handleCloseMore = () => {
     setAnchorEl(null);
   };
-
-  const handleClosePath = (e: React.MouseEvent<HTMLElement|SVGSVGElement>, path: string) => {
+  // Handle closing a tab when the close icon is clicked
+  const handleClosePath = (e: React.MouseEvent<HTMLElement|SVGSVGElement>, tab: OpenedFormTab) => {
     e.stopPropagation();
+    const formKey = tab.label;
+
+    if (formKey) {
+      resetForm(formKey);
+    }
+
     if(openedForm !== undefined && openedForm.length === 1){
       if(activeForm === IFormKey.HOME) return;
         handlerActiveForm(IFormKey.HOME);
         handlerFormOpened([{ path: 'home', label: 'home' }]);
         return;
     }
-    removeOpenedFormTab(path);
+    removeOpenedFormTab(tab.path);
     // xoá data liên quan đến form đang đóng nếu có
   };
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
+  // Render the tab buttons and the "More" menu
   const ButtonTabs = useMemo(() => {
     return visible.map((tab) => (
       <Box 
@@ -189,7 +206,7 @@ useEffect(() => {
           ...(isActive(tab) ? styles.activeTabButton : {}),
         }}>
         {t(`form.${tab.label.toUpperCase()}` as keyof typeof t)}
-        <Box className="tab-close-icon" sx={styles.closeIcon} onClick={(e) => handleClosePath(e, tab.path)}>
+        <Box className="tab-close-icon" sx={styles.closeIcon} onClick={(e) => handleClosePath(e, tab)}>
           <Icons name={IconName.CLOSE} size={14} />
         </Box>
       </Box>
@@ -254,7 +271,7 @@ useEffect(() => {
                       }}
                       text={formText}
                       />
-                      <Icons name={IconName.CLOSE} size={14} color="primary.main" onClick={(e) => handleClosePath(e, item.path)}/>
+                      <Icons name={IconName.CLOSE} size={14} color="primary.main" onClick={(e) => handleClosePath(e, item)}/>
                     </MenuItem>
                   );
                 })}
@@ -285,8 +302,8 @@ useEffect(() => {
               ...styles.tabButton,
             }}>
               {t(`form.${tab.label.toUpperCase()}` as keyof typeof t)}
-              <Box className="tab-close-icon" sx={styles.closeIcon} onClick={(e) => handleClosePath(e, tab.path)}>
-                <Icons name={IconName.CLOSE} size={14} color="primary" onClick={(e) => handleClosePath(e, tab.path)}/>
+              <Box className="tab-close-icon" sx={styles.closeIcon} onClick={(e) => handleClosePath(e, tab)}>
+                <Icons name={IconName.CLOSE} size={14} color="primary" onClick={(e) => handleClosePath(e, tab)}/>
               </Box>
             </Box>
           ))}
