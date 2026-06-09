@@ -1,12 +1,6 @@
-import { Grid, Typography } from '@mui/material';
-import { IconName } from 'assets/Icon';
-import { ContainerWrapper, MainCard, TextField, DataTable } from 'components';
+import { ContainerWrapper, MainCard, DataTable } from 'components';
 import React, { useCallback, useEffect, useState } from 'react';
-import { IAction, IActionAndSub } from 'types/commom';
-import {} from 'hooks/useForm';
 import { IGridColDef } from 'types/grid';
-import { useInvoice } from 'hooks';
-import dayjs from 'dayjs';
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 type Product = {
@@ -17,36 +11,36 @@ type Product = {
 
 
 export default function Invoice() {
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [rows, setRows] = useState<Product[]>([]);
-  
-  const fetchProducts = useCallback(async ({ keyword, page}: {
-      keyword: string;
-      page: number;
-      isReset?: boolean;
-    }, onSuccess?: (data: Product[]) => void) => {
-      if (!keyword.trim()) return;
 
-      try {
-        setLoading(true);
+  const fetchProducts = useCallback(async ({ keyword, page }: {
+    keyword: string;
+    page: number;
+    isReset?: boolean;
+  }, onSuccess?: (data: Product[]) => void) => {
+    if (!keyword.trim()) return;
 
-        const res = await fetch(
-          `https://dummyjson.com/products/search?q=${encodeURIComponent(
-            keyword
-          )}&limit=10&skip=${page * 10}`
-        );
+    try {
+      setLoading(true);
 
-        const data = await res.json();
+      const res = await fetch(
+        `https://dummyjson.com/products/search?q=${encodeURIComponent(
+          keyword
+        )}&limit=10&skip=${page * 10}`
+      );
 
-        const newProducts: Product[] = data.products ?? [];
+      const data = await res.json();
 
-        if (onSuccess) {
-          onSuccess(newProducts);
-        }
-      } finally {
-        setLoading(false);
+      const newProducts: Product[] = data.products ?? [];
+
+      if (onSuccess) {
+        onSuccess(newProducts);
       }
-    },
+    } finally {
+      setLoading(false);
+    }
+  },
     []
   );
   const columns: IGridColDef[] = [
@@ -54,16 +48,16 @@ export default function Invoice() {
     { field: 'title', headerName: 'Title', width: 200 },
     { field: 'brand', headerName: 'Brand', width: 130 },
   ];
-    useEffect(() => {
-      // Initial fetch with empty keyword to load default products
-      fetchProducts({ keyword: '', page: 0 }, (data) => {
-        setRows(data);
-      });
-    }, [fetchProducts]);
+  useEffect(() => {
+    // Initial fetch with empty keyword to load default products
+    fetchProducts({ keyword: '', page: 0 }, (data) => {
+      setRows(data);
+    });
+  }, [fetchProducts]);
 
   return (
     <ContainerWrapper
-      toolbarLocalProps={{ 
+      toolbarLocalProps={{
         title: 'Invoiceasjkbdbajsdjbkabsdabjdsjbk',
       }}
     >

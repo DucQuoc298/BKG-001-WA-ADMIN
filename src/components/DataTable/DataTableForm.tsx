@@ -1,16 +1,16 @@
 import { Grid, SxProps } from '@mui/material';
-import { 
-  DataGridPro, 
-  GridCellModesModel, 
-  GridCellParams, 
-  useGridApiRef, 
-  DataGridProProps, 
-  GridPaginationModel, 
-  GridRowOrderChangeParams, 
-  GridRowSelectionModel, 
-  GridCallbackDetails, 
+import {
+  DataGridPro,
+  GridCellModesModel,
+  GridCellParams,
+  useGridApiRef,
+  DataGridProProps,
+  GridPaginationModel,
+  GridRowOrderChangeParams,
+  GridRowSelectionModel,
+  GridCallbackDetails,
   GridCellModes,
- } from '@mui/x-data-grid-pro';
+} from '@mui/x-data-grid-pro';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useStyles from './styles';
 import { IGridColDef } from 'types/grid';
@@ -73,9 +73,9 @@ const info = {
   lbllanguage: "en"
 }
 
-const DataTableForm = ({ 
-  columns, 
-  rows, 
+const DataTableForm = ({
+  columns,
+  rows,
   apiRef: propApiRef,
   onCellClick,
   onGridEditing,
@@ -85,23 +85,11 @@ const DataTableForm = ({
 }: IDataTable) => {
   const styles = useStyles();
   const { t, i18n } = useTranslation();
-  const apiRef = propApiRef ?? useGridApiRef();
+  const internalApiRef = useGridApiRef();
+  const apiRef = propApiRef ?? internalApiRef;
   const [dataRows, setDataRows] = useState(rows);
   const refCellModesModel = useRef<GridCellModesModel>({});
   const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
-  const [selections, setSelections] = useState<any[]>([]);
-  const refNextColumn = useRef<{ rowId; field } | null>(null);
-
-
-
-  const isEditMode = (model: GridCellModesModel) => {
-    for (const k of Object.keys(model)) {
-      for (const ck of Object.keys(model[k])) {
-        if (model[k][ck].mode === "edit") return true;
-      }
-    }
-    return false;
-  };
 
   const buildColumns = useMemo(() => {
     const colItems: IGridColDef[] = columns.map((col: IGridColDef) => {
@@ -130,7 +118,7 @@ const DataTableForm = ({
           ? t(col.headerName)
           : col.headerName
         : "";
-      
+
       if (customType === "checkbox") {
         return {
           ...colProps,
@@ -153,7 +141,7 @@ const DataTableForm = ({
           const field = colProps.field as string;
           if (!field) return value;
           let result
-          
+
           if (field.includes(".")) {
             const fields = field.split(".");
             result = row?.[fields[0]]?.[fields[1]];
@@ -163,7 +151,7 @@ const DataTableForm = ({
 
           if (
             (customType === "date" ||
-            type === "dateTime") &&
+              type === "dateTime") &&
             typeof result === "string"
           ) {
             return new Date(result);
@@ -259,7 +247,7 @@ const DataTableForm = ({
     }
 
     if (event.target.classList.contains("MuiAutocomplete-option")) {
-        return;
+      return;
     }
     if (params.isEditable === false) return;
 
@@ -296,7 +284,7 @@ const DataTableForm = ({
       return temp;
     });
   }, [readOnlyCells, tableId])
- 
+
   const handleRowUpdate = useCallback((_newRow, _oldRow) => {
     setDataRows((prevRows) =>
       prevRows?.map((row) => (row.id === _newRow.id ? _newRow : row))
@@ -310,28 +298,22 @@ const DataTableForm = ({
   const dataGridStyles = useMemo(() => [
     styles.dataTableView,
     rows?.length === 0
-        ? {
-          "& .MuiDataGrid-virtualScroller": {
-            overflowY: "hidden !important",
-          },
-        }
-        : {},
+      ? {
+        "& .MuiDataGrid-virtualScroller": {
+          overflowY: "hidden !important",
+        },
+      }
+      : {},
   ], [rows]) as SxProps;
 
   useEffect(() => {
-    setSelections([]);
-
-    // const convertRows = displayRows.map((row) => ({
-    //   ...row,
-    //   createdDate: row.createdDate ? new Date(row.createdDate) : null
-    // }));
-    // setDataRows(convertRows);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDataRows(rows);
   }, [JSON.stringify(rows)]);
 
   return (
     <Grid container size={12}>
-      <DataGridPro 
+      <DataGridPro
         apiRef={apiRef}
         columns={buildColumns}
         rows={dataRows}

@@ -1,9 +1,9 @@
-import { useTheme } from "@mui/material";
+// import { useTheme } from "@mui/material";
 
 const GRID_HEADER_HEIGHT_PX = '40px';
 
 export default () => {
-  const { palette } = useTheme();
+  // const { palette } = useTheme();
 
   return {
     dataTableView: {

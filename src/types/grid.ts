@@ -1,4 +1,4 @@
-import { GridColDef, GridColType } from "@mui/x-data-grid-pro";
+import { GridColDef } from "@mui/x-data-grid-pro";
 
 export type IGridColDef = GridColDef & {
   hidden?: boolean;
