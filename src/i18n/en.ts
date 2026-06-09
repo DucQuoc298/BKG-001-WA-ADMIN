@@ -12,6 +12,11 @@ export default {
     CONFIRM_FORGOT_PASSWORD: "Confirm Forgot Password",
     RESET_PASSWORD: "Reset Password",
   },
+  grid: {
+    row_per_page: "Rows per page",
+    of: "of",
+    no_row_label: "No rows"
+  },
   AUTH: {
     username: "Username",
     email: "Email",
@@ -39,14 +44,14 @@ export default {
     new_password: "New Password",
     confirm_password: "Confirm New Password",
   },
-  errors:{
+  errors: {
     required: "{{0}} is required",
     no_leading_trailing_whitespace: "{{0}} cannot start or end with spaces",
     max_length: "{{0}} must be less than {{1}} characters",
     confirm_password_must_match_new_password: "Confirm password must match new password",
     invalid_email: "Invalid email address",
   },
-  languages:{
+  languages: {
     EN: "English (US)",
     VN: "Tiếng Việt",
   },
@@ -75,7 +80,7 @@ export default {
     change_company: "Change Company",
     no_options: "No options",
   },
-  form:{
+  form: {
     HOME: "Home",
     INVOICE: "Invoice",
     BILL: "Bill",

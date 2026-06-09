@@ -1,98 +1,115 @@
-import { Typography } from '@mui/material';
-import { Autocomplete, Button, ContainerWrapper, MainCard, TextField } from 'components';
+import { useGridApiRef } from '@mui/x-data-grid-pro';
+import { ContainerWrapper, MainCard, DataTable } from 'components';
 import React, { useCallback, useMemo, useState } from 'react';
-import {useInvoice} from 'hooks';
-import { useForm } from 'react-hook-form';
+import { EGridColTypes, IGridColDef } from 'types/grid';
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
+
 type Product = {
   id: number;
   title: string;
   brand?: string;
 };
 
-interface FormValues {
-  product: string | null;
-}
+import { IconName } from 'assets/Icon';
+import { IAction, IActionAndSub } from 'types';
+
+const columnsDefinition: IGridColDef[] = [
+  { field: 'id', headerName: 'ID', width: 70 },
+  { field: 'title', headerName: 'Title', width: 200 },
+  { field: 'brand', headerName: 'Brand', width: 130, flex: 1 },
+  { field: 'price', headerName: 'Price', width: 130, flex: 1, type: EGridColTypes.ABS_NUMBER },
+  { field: 'sell', headerName: 'Sell', width: 130, flex: 1, type: EGridColTypes.DATETIME },
+];
+
+const mockRows = [
+  {
+    id: 1,
+    title: 'Product 1',
+    brand: 'Brand 1',
+    price: 2000,
+    sell: '2022-01-01',
+  },
+  {
+    id: 2,
+    title: 'Product 2',
+    price: -1000,
+    brand: 'Brand 2',
+    sell: '2022-01-01',
+  },
+];
 
 export default function Invoice() {
-  const { update, invoiceForm } = useInvoice();
+  const [, setLoading] = useState(false);
+  const [rows, setRows] = useState<Product[]>(mockRows);
+  const apiGridRef = useGridApiRef();
 
-  const [loading, setLoading] = useState(false);
+  const fetchProducts = useCallback(async ({ keyword, page }: {
+    keyword: string;
+    page: number;
+    isReset?: boolean;
+  }, onSuccess?: (data: Product[]) => void) => {
+    if (!keyword.trim()) return;
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({defaultValues: { product: invoiceForm.product }, mode: 'onChange'});
+    try {
+      setLoading(true);
 
-  const fetchProducts = useCallback(async ({ keyword, page}: {
-      keyword: string;
-      page: number;
-      isReset?: boolean;
-    }, onSuccess?: (data: Product[]) => void) => {
-      if (!keyword.trim()) return;
+      const res = await fetch(
+        `https://dummyjson.com/products/search?q=${encodeURIComponent(
+          keyword
+        )}&limit=14&skip=${page * 14}`
+      );
 
-      try {
-        setLoading(true);
+      const data = await res.json();
 
-        const res = await fetch(
-          `https://dummyjson.com/products/search?q=${encodeURIComponent(
-            keyword
-          )}&limit=10&skip=${page * 10}`
-        );
+      const newProducts: Product[] = data.products ?? [];
 
-        const data = await res.json();
-
-        const newProducts: Product[] = data.products ?? [];
-
-        if (onSuccess) {
-          onSuccess(newProducts);
-        }
-      } finally {
-        setLoading(false);
+      if (onSuccess) {
+        onSuccess(newProducts);
       }
-    },
-    []
-  );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const productStore = useMemo(
-    () => ({
-      mode: 'remote' as const,
-      params: { keyword: 'phone', page: 0 },
-      fnGetData: fetchProducts,
-    }),
-    [fetchProducts]
-  );
+  const handlePagination = useCallback((paginationModel: any) => {
+    fetchProducts({ keyword: 'phone', page: paginationModel.page }, (data) => {
+      setRows(data);
+    });
+  }, [fetchProducts]);
+
+  // Cấu hình các nút Action thô không phụ thuộc UI
+  const actionItems = useMemo(() => [
+    { key: IAction.EDIT, label: 'Edit', icon: IconName.EDIT },
+    { key: IAction.DELETE, label: 'Delete', icon: IconName.DELETE }
+  ], []);
+
+  const handleActionClick = useCallback((actionKey: IActionAndSub | IAction, row: Product) => {
+    if (actionKey === IAction.EDIT) {
+      console.log('Edit item with ID via DataTable prop callback:', row);
+    } else if (actionKey === IAction.DELETE) {
+      console.log('Delete item with ID via DataTable prop callback:', row);
+    }
+  }, []);
 
   return (
     <ContainerWrapper
-      toolbarLocalProps={{ 
+      toolbarLocalProps={{
         title: 'Invoice',
       }}
     >
       <MainCard>
-
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Invoice
-      </Typography>
-      <TextField label="Customer Name" name="customerName" value={invoiceForm.customerName || ''} onChange={(e) => update({ customerName: e.target.value })} />
-      <Autocomplete 
-        idField="id"
-        textField="title"
-        label="Product"
-        error={!!errors.product}
-        helperText={errors.product?.message}
-        loading={loading}
-        required
-        value={invoiceForm.product || null}
-        defaultValue={invoiceForm.product || null}
-        store={productStore}
-        {...register('product', { validate: (value: string | null) => {
-          if (!value) {
-            return 'Product is required';
-            }
-            console.log(value);
-          update({ product: value as any });
-          return true;
-        } })}
+        <DataTable
+          apiRef={apiGridRef}
+          variant="view"
+          columns={columnsDefinition}
+          autoRowHeight
+          rows={rows}
+          rowCount={200}
+          handlePagination={handlePagination}
+          actionBars={actionItems}
+          handleActionClick={handleActionClick}
+          checkboxSelection
         />
-        <Button onClick={handleSubmit((data) => console.log("data", data))} text="Submit"></Button>
       </MainCard>
     </ContainerWrapper>
   );
