@@ -53,7 +53,7 @@ export default function MainCard({
       elevation={elevation || 0}
       sx={() => ({
         position: 'relative',
-        p: 1,
+        // p: 1,
         ...(border && { border: `1px solid ${theme.palette.grey['A800']}` }),
         borderRadius: 4,
         boxshadow: boxshadow && !border ? boxshadow : 'inherit',
@@ -77,7 +77,7 @@ export default function MainCard({
       {/* card header and action */}
       {!darkTitle && title && (
         <CardHeader
-          sx={{ p: 2.5 }}s
+          sx={{ p: 2.5 }} s
           slotProps={{
             title: { variant: darkTitle ? 'h4' : 'subtitle1' },
             action: { sx: { m: '0px auto', alignSelf: 'center' } }

@@ -1,6 +1,7 @@
+import { useGridApiRef } from '@mui/x-data-grid-pro';
 import { ContainerWrapper, MainCard, DataTable } from 'components';
-import React, { useCallback, useEffect, useState } from 'react';
-import { IGridColDef } from 'types/grid';
+import React, { useCallback, useMemo, useState } from 'react';
+import { EGridColTypes, IGridColDef } from 'types/grid';
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 type Product = {
@@ -9,10 +10,38 @@ type Product = {
   brand?: string;
 };
 
+import { IconName } from 'assets/Icon';
+import { IAction, IActionAndSub } from 'types';
+
+const columnsDefinition: IGridColDef[] = [
+  { field: 'id', headerName: 'ID', width: 70 },
+  { field: 'title', headerName: 'Title', width: 200 },
+  { field: 'brand', headerName: 'Brand', width: 130, flex: 1 },
+  { field: 'price', headerName: 'Price', width: 130, flex: 1, type: EGridColTypes.ABS_NUMBER },
+  { field: 'sell', headerName: 'Sell', width: 130, flex: 1, type: EGridColTypes.DATETIME },
+];
+
+const mockRows = [
+  {
+    id: 1,
+    title: 'Product 1',
+    brand: 'Brand 1',
+    price: 2000,
+    sell: '2022-01-01',
+  },
+  {
+    id: 2,
+    title: 'Product 2',
+    price: -1000,
+    brand: 'Brand 2',
+    sell: '2022-01-01',
+  },
+];
 
 export default function Invoice() {
   const [, setLoading] = useState(false);
-  const [rows, setRows] = useState<Product[]>([]);
+  const [rows, setRows] = useState<Product[]>(mockRows);
+  const apiGridRef = useGridApiRef();
 
   const fetchProducts = useCallback(async ({ keyword, page }: {
     keyword: string;
@@ -27,7 +56,7 @@ export default function Invoice() {
       const res = await fetch(
         `https://dummyjson.com/products/search?q=${encodeURIComponent(
           keyword
-        )}&limit=10&skip=${page * 10}`
+        )}&limit=14&skip=${page * 14}`
       );
 
       const data = await res.json();
@@ -40,32 +69,47 @@ export default function Invoice() {
     } finally {
       setLoading(false);
     }
-  },
-    []
-  );
-  const columns: IGridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'title', headerName: 'Title', width: 200 },
-    { field: 'brand', headerName: 'Brand', width: 130 },
-  ];
-  useEffect(() => {
-    // Initial fetch with empty keyword to load default products
-    fetchProducts({ keyword: '', page: 0 }, (data) => {
+  }, []);
+
+  const handlePagination = useCallback((paginationModel: any) => {
+    fetchProducts({ keyword: 'phone', page: paginationModel.page }, (data) => {
       setRows(data);
     });
   }, [fetchProducts]);
 
+  // Cấu hình các nút Action thô không phụ thuộc UI
+  const actionItems = useMemo(() => [
+    { key: IAction.EDIT, label: 'Edit', icon: IconName.EDIT },
+    { key: IAction.DELETE, label: 'Delete', icon: IconName.DELETE }
+  ], []);
+
+  const handleActionClick = useCallback((actionKey: IActionAndSub | IAction, row: Product) => {
+    if (actionKey === IAction.EDIT) {
+      console.log('Edit item with ID via DataTable prop callback:', row);
+    } else if (actionKey === IAction.DELETE) {
+      console.log('Delete item with ID via DataTable prop callback:', row);
+    }
+  }, []);
+
   return (
     <ContainerWrapper
       toolbarLocalProps={{
-        title: 'Invoiceasjkbdbajsdjbkabsdabjdsjbk',
+        title: 'Invoice',
       }}
     >
       <MainCard>
-        <DataTable variant="view" columns={columns} rows={rows} />
-      </MainCard>
-      <MainCard sx={{ mt: 2 }}>
-        <DataTable variant="edit" columns={columns} rows={rows} />
+        <DataTable
+          apiRef={apiGridRef}
+          variant="view"
+          columns={columnsDefinition}
+          autoRowHeight
+          rows={rows}
+          rowCount={200}
+          handlePagination={handlePagination}
+          actionBars={actionItems}
+          handleActionClick={handleActionClick}
+          checkboxSelection
+        />
       </MainCard>
     </ContainerWrapper>
   );

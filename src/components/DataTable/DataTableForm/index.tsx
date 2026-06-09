@@ -12,14 +12,14 @@ import {
   GridCellModes,
 } from '@mui/x-data-grid-pro';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import useStyles from './styles';
+import useStyles from '../styles';
 import { IGridColDef } from 'types/grid';
 import { useTranslation } from 'react-i18next';
 import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 import { date2Srting, datetime2Srting, number2String } from 'utils';
 import { ILanguage } from 'types/commom';
-import CellEditNumber from './CellEditNumber';
-import CellEditText from './CellEditText';
+import CellEditNumber from '../CellEditNumber';
+import CellEditText from '../CellEditText';
 
 
 type IDataTable = DataGridProProps & {
@@ -315,7 +315,7 @@ const DataTableForm = ({
     <Grid container size={12}>
       <DataGridPro
         apiRef={apiRef}
-        columns={buildColumns}
+        columns={buildColumns as any}
         rows={dataRows}
         hideFooter={true}
         sx={dataGridStyles}

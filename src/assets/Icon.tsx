@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { 
-  LuPlus, 
+import {
+  LuPlus,
   LuPencil,
   LuTrash,
   LuEye,
@@ -28,13 +28,13 @@ export enum IconName {
 }
 const Icons = ({ name, size, color, onClick }: IconProps) => {
   switch (name) {
-    case IconName.NEW: return <LuPlus size={size} color={color} onClick={onClick}/>;
-    case IconName.EDIT: return <LuPencil size={size} color={color} onClick={onClick}/>;
-    case IconName.DELETE: return <LuTrash size={size} color={color} onClick={onClick}/>;
-    case IconName.VIEW: return <LuEye size={size} color={color} onClick={onClick}/>;
-    case IconName.CANCEL: return <LuUndo2 size={size} color={color} onClick={onClick}/>;
-    case IconName.MORE: return <MdMoreVert size={size} color={color} onClick={onClick}/>;
-    case IconName.CLOSE: return <LuX size={size} color={color} onClick={onClick}/>;
+    case IconName.NEW: return <LuPlus size={size} color={color} onClick={onClick} />;
+    case IconName.EDIT: return <LuPencil size={size} color={color} onClick={onClick} />;
+    case IconName.DELETE: return <LuTrash size={size} color={color} onClick={onClick} />;
+    case IconName.VIEW: return <LuEye size={size} color={color} onClick={onClick} />;
+    case IconName.CANCEL: return <LuUndo2 size={size} color={color} onClick={onClick} />;
+    case IconName.MORE: return <MdMoreVert size={size} color={color} onClick={onClick} />;
+    case IconName.CLOSE: return <LuX size={size} color={color} onClick={onClick} />;
 
     default: return null;
   }

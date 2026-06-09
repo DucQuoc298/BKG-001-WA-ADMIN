@@ -1,10 +1,9 @@
 
-import { GridApiCommunity } from "@mui/x-data-grid/internals";
 import { alpha } from '@mui/material/styles';
 import { GridApiPro } from '@mui/x-data-grid-pro';
-import dayjs, { Dayjs } from 'dayjs';
+import { GridApiCommunity } from "@mui/x-data-grid/internals";
+import dayjs from 'dayjs';
 import { ILanguage } from 'types';
-export const emptyGuid = "00000000-0000-0000-0000-000000000000";
 function toCamelCase(key, value) {
   if (value && typeof value === "object") {
     for (const k in value) {
@@ -16,95 +15,25 @@ function toCamelCase(key, value) {
   }
   return value;
 }
-export const toTitleCase = (str: string): string => {
-  if (!str) return "";
-  return str
-    .toLowerCase()
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
-export const parseJSON = (data: string, out: any = null) => {
-  try {
-    const value = JSON.parse(data, toCamelCase);
-    return value;
-  } catch (error) {
-    console.error("Error parsing JSON:", error);
-    return out;
-  }
-};
-
-export const debounce = (func, timeout = 300) => {
-  let timer;
-  return function (...args) {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => {
-      timer = null;
-      func.apply(debounce, args);
-    }, timeout);
-  };
-};
-
 export const findItemInArray = (array, value, key = "key") => {
   return array.find((item) =>
     typeof item === "object" ? item[key] === value : item === value
   );
 };
-
-export const findItemsInArray = (array, value, key = "key") => {
-  if (Array.isArray(value))
-    return array.filter((item) =>
-      typeof item === "object"
-        ? value.indexOf(item[key]) !== -1
-        : value.indexOf(item) !== -1
-    );
-  return array.filter((item) =>
-    typeof item === "object" ? item[key] === value : item === value
-  );
+export const updateRow = (
+  api: React.MutableRefObject<GridApiPro> | GridApiCommunity,
+  rowId,
+  data
+) => {
+  const app = api["current"] ? (api as React.MutableRefObject<GridApiPro>).current : api as GridApiCommunity;
+  //
+  const newRows = app.getAllRowIds().map((id) => {
+    const row = app.getRow(id);
+    if (id === rowId) return { ...row, ...data };
+    return { ...row };
+  });
+  app.updateRows(newRows);
 };
-
-export const getFromDateToFilter = (date: Date | string | Dayjs) => {
-  if (!date) return "1911-01-01";
-  // const offset = dayjs().utcOffset();
-  const d = dayjs(date).startOf('D');
-  if (d.format("YYYY-MM-DD") === "1911-01-01") return "1911-01-01";
-  const t = dayjs(date).startOf('D').add(1439, "minute").add(59, "second");
-  return [d.format("YYYY-MM-DDTHH:mm:ssZ"), t.format("YYYY-MM-DDTHH:mm:ssZ")];
-};
-
-export const convertYMDtoSync = (date: Date | string | Dayjs, _hasTime?: boolean) => {
-  if (!date) return "1911-01-01";
-  // const d = dayjs(date);
-  const offset = dayjs().utcOffset();
-  const d = dayjs(date).startOf('D').add(offset, "minute");
-  // const vUtc = dayjs(date).utc(true);
-  // const d = dayjs.tz(vUtc, dayjs.tz.guess());
-  if (d.format("YYYY-MM-DD") === "1911-01-01") return "1911-01-01";
-  return d.format("YYYY-MM-DDTHH:mm:ssZ");
-};
-
-export const convertDMY = (date: Date | string | null | undefined) => {
-  if (!date) return "";
-  const d = dayjs(date);
-  if (d.format("YYYY-MM-DD") === "1911-01-01") return "";
-  return d.format("DD/MM/YYYY");
-};
-
-export const convertDMY1 = (date: Date | string) => {
-  if (!date) return "";
-
-  const d = dayjs(date);
-  if (d.format("YYYY-MM-DD") === "1911-01-01") return "";
-  return d.format("DD MMM YYYY");
-};
-
-export const convertYMD = (date: Date | string) => {
-  if (!date) return "";
-  const d = dayjs(date);
-  if (d.format("YYYY-MM-DD") === "1911-01-01") return "";
-  return d.format("YYYY-MM-DD");
-};
-
 export const date2Srting = (date: Date | string, locale: ILanguage) => {
   if (!date) return "";
 
@@ -123,60 +52,6 @@ export const datetime2Srting = (date: Date | string, locale: ILanguage) => {
   if (locale === "EN") return d.format("DD MMM YYYY - HH:mm");
   return d.format("DD/MM/YYYY HH:mm");
 };
-export const isValidEmail = (email: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-export const isValidDate = (dateString: string): boolean => {
-  const regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-  let valid = regex.test(dateString);
-  if (!valid) {
-    valid = regex.test(dateString.substring(0, 10));
-  }
-  return valid;
-}
-export const formatNumber = (value: number) => {
-  const absValue = Math.abs(value);
-  const isNegative = value < 0;
-
-  let formatted: string;
-  if (absValue >= 1000_000_000) {
-    formatted = `${(absValue / 1_000_000_000).toFixed(1)}B`;
-  } else if (absValue >= 1_000_000) {
-    formatted = `${(absValue / 1_000_000).toFixed(1)}M`;
-  } else if (absValue >= 1_000) {
-    formatted = `${(absValue / 1_000).toFixed(1)}K`;
-  } else {
-    formatted = absValue.toString();
-  }
-  return isNegative ? `-${formatted}` : formatted;
-};
-
-export const fotmatNumber2 = (
-  value: number,
-  decimalPlace = 0,
-  locale = "en-Us"
-) => {
-  return value !== 0
-    ? value.toLocaleString(locale, {
-      minimumFractionDigits: decimalPlace,
-      maximumFractionDigits: decimalPlace,
-    })
-    : "0";
-};
-
-export const string2Number = (str: string): number => {
-  if (!str || str === '') return 0;
-
-  // Loại bỏ tất cả dấu phẩy (thousand separator)
-  const cleanStr = str.replace(/,/g, '');
-
-  // Chuyển đổi sang number
-  const number = parseFloat(cleanStr);
-
-  // Trả về 0 nếu không phải số hợp lệ
-  return isNaN(number) ? 0 : number;
-};
-
 export const number2String = (
   value: number | null,
   decimalPlace = 0,
@@ -194,210 +69,23 @@ export const number2String = (
       maximumFractionDigits: decimalPlace,
     })})`;
 };
-
-export const number2StringAbs = (
-  value: number,
-  decimalPlace = 0,
-  locale = "en-Us"
-) => {
-  value = value ?? 0;
-  return Math.abs(value).toLocaleString(locale, {
-    maximumFractionDigits: decimalPlace,
-  });
+export const toTitleCase = (str: string): string => {
+  if (!str) return "";
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 };
-
-export const checkBooleanByYN = (str: string | boolean | undefined) => {
-  return (
-    (typeof str === "string" && str === "Y") ||
-    (typeof str === "boolean" && str)
-  );
-};
-
-export const parseYNByBoolean = (t: boolean): string => {
-  return t ? "Y" : "N";
-};
-
-export const loadRecord = <T extends object>(
-  record: T,
-  form: any,
-  keyField: string,
-  options: {
-    dirties?: string[];
-    guidFields?: string[];
-  } = { dirties: [], guidFields: [] }
-) => {
-  const keys = Object.keys(record);
-
-  keys.forEach((key) => {
-    const field = key as keyof T;
-    if (record[keyField]) {
-      form.resetField(field);
-      if (
-        field === keyField ||
-        (options?.dirties &&
-          options?.dirties.length > 0 &&
-          options?.dirties.includes(key))
-      ) {
-        form.setValue(field, record[field], { shouldDirty: true });
-      } else {
-        form.setValue(field, record[field], { shouldDirty: false });
-      }
-    } else {
-      form.setValue(field, record[field], { shouldDirty: true });
-    }
-  });
-  options.guidFields &&
-    options.guidFields.forEach((field) => {
-      keys.indexOf(field) === -1 && form.setValue(field, null);
-    });
-};
-
-export const updateRow = (
-  api: React.RefObject<GridApiPro> | GridApiCommunity,
-  rowId,
-  data
-) => {
-  const app = api["current"] ? (api as React.RefObject<GridApiPro>).current : api as GridApiCommunity;
-  //
-  const newRows = app.getAllRowIds().map((id) => {
-    const row = app.getRow(id);
-    if (id === rowId) return { ...row, ...data };
-    return { ...row };
-  });
-  app.updateRows(newRows);
-};
-
-export const guidEmpty = (v) => {
-  v === emptyGuid;
-};
-
-export const convertToBaseAmt = (
-  value: number | undefined,
-  rate: number,
-  decimalPlace: number
-) => {
-  const v = value ? value : 0;
-  return parseFloat((v * rate).toFixed(decimalPlace));
-};
-
-export const roundNumber = (
-  value: number | undefined,
-  decimalPlace: number
-) => {
-  const v = value ? value : 0;
-  return parseFloat(v.toFixed(decimalPlace));
-};
-
-export const formatBytes = (bytes, decimals = 2) => {
-  if (bytes === 0) return "0 Bytes";
-
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-};
-
-export const convertBase64ToFile = (base64String: string, fileName: string) => {
+export const parseJSON = (data: string, out: any = null) => {
   try {
-    const bstr = atob(base64String);
-    let n = bstr.length;
-    const uint8Array = new Uint8Array(n);
-    while (n--) {
-      uint8Array[n] = bstr.charCodeAt(n);
-    }
-    const file = new File([uint8Array], fileName, { type: "application/pdf" });
-    return file;
-  } catch {
-    return new File([], fileName);
+    const value = JSON.parse(data, toCamelCase);
+    return value;
+  } catch (error) {
+    console.error("Error parsing JSON:", error);
+    return out;
   }
 };
-export const convertBase64ToString = (base64String: string) => {
-  try {
-    const bstr = atob(base64String);
-    return bstr;
-  } catch {
-    return null;
-  }
-};
-export const convertStringToBase64 = (str: string) => {
-  try {
-    const b64 = btoa(str);
-    return b64;
-  } catch {
-    return "";
-  }
-};
-export const allowFieldToAddLog = (
-  key: string,
-  values,
-  pKey: string
-  // logFields: string[]
-) => {
-  // if (!logFields.includes(key)) return false;
-  if (values[pKey]) return true;
-
-  const v = values[key];
-
-  if (isNaN(Date.parse(v))) {
-    return v !== emptyGuid && v !== undefined && v !== null && v !== ""
-      ? true
-      : false;
-  } else {
-    return v !== "1911-01-01" ? true : false;
-  }
-};
-
-
-
-export const createLogObject = (
-  data,
-  key: string,
-  logFields: string[],
-  details?: { name: string; key: string }[]
-  // dateFields?: string[]
-) => {
-  const contentLog = {};
-  logFields.forEach((f) => {
-    if (data[f]) {
-      if (f !== key) {
-        const item = details?.find((v) => v.name === f);
-        if (item) {
-          const dets: any[] = [];
-          data[f].forEach((d) => {
-            const det = {};
-            Object.keys(d).forEach((k1) => {
-              if (item.key !== k1 && logFields.indexOf(k1) !== -1) {
-                if (allowFieldToAddLog(k1, d, item.key)) det[k1] = d[k1];
-              }
-            });
-            dets.push(det);
-          });
-          contentLog[f] = dets;
-        } else {
-          if (allowFieldToAddLog(f, data, key)) {
-            let c = data[f];
-            if (c === emptyGuid) c = "";
-            contentLog[f] = c;
-          }
-        }
-      }
-    }
-  });
-  return contentLog;
-};
-
-export const setNameOfLog = (obj, propertyName: string, dataArray: any[]) => {
-  if (obj[propertyName] && Array.isArray(dataArray)) {
-    const foundItem = dataArray.find((item) => item.code === obj[propertyName]);
-    if (foundItem) {
-      obj[propertyName] = foundItem.name;
-    }
-  }
-};
-
 
 export const getAvatarColor = () => {
   const colors = [

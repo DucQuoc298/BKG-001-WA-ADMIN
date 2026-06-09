@@ -41,16 +41,21 @@ export default {
     code_verify: "Mã xác nhận",
     forgot_password_desc: "Vui lòng nhập mã xác nhận đã được gửi đến email của bạn",
   },
-  errors:{
+  errors: {
     required: "{{0}} là trường bắt buộc",
     no_leading_trailing_whitespace: "{{0}} không được bắt đầu hoặc kết thúc bằng khoảng trắng",
     max_length: "{{0}} phải ít hơn {{1}} ký tự",
     confirm_password_must_match_new_password: "Xác nhận mật khẩu phải khớp với mật khẩu mới",
     invalid_email: "Email không hợp lệ",
   },
-  languages:{
+  languages: {
     EN: "English (US)",
     VN: "Tiếng Việt",
+  },
+  grid: {
+    row_per_page: "Hiển thị",
+    of: "của",
+    no_row_label: "Không có dữ liệu"
   },
   text: {
     language: "Ngôn ngữ",
@@ -75,7 +80,7 @@ export default {
     change_company: "Đổi công ty",
     no_options: "Không có lựa chọn nào",
   },
-  form:{
+  form: {
     HOME: "Trang chủ",
     INVOICE: "Hóa đơn",
     BILL: "Hóa đơn nhập",
