@@ -92,10 +92,9 @@ const DataTableForm = ({
   const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
 
   const buildColumns = useMemo(() => {
-    const colItems: IGridColDef[] = columns.map((col: IGridColDef) => {
+    const colItems: IGridColDef[] = (columns as IGridColDef[]).map((col: IGridColDef) => {
       const {
         type,
-        customType,
         valueFormatter,
         valueGetter,
         renderEditCell,
@@ -106,7 +105,7 @@ const DataTableForm = ({
         ...colProps
       } = {
         ...col
-      }
+      } as IGridColDef;
 
       const width = colProps.width
         ? colProps.width
@@ -119,11 +118,11 @@ const DataTableForm = ({
           : col.headerName
         : "";
 
-      if (customType === "checkbox") {
+      if (type === "checkbox") {
         return {
           ...colProps,
           headerName: title,
-          type,
+          type: type as any,
           width,
           align: 'center',
           renderCell: (params) => params.value === 'Y'
@@ -150,7 +149,7 @@ const DataTableForm = ({
           }
 
           if (
-            (customType === "date" ||
+            (type === "date" ||
               type === "dateTime") &&
             typeof result === "string"
           ) {
@@ -160,7 +159,7 @@ const DataTableForm = ({
           return result;
         }),
         valueFormatter: valueFormatter ?? ((value: string | number | Date, row) => {
-          if (customType === "date") {
+          if (type === "date") {
             const l = info
               ? info.lbllanguage
                 ? info.lbllanguage
@@ -212,7 +211,7 @@ const DataTableForm = ({
               />
             );
           }
-          if (col.customType && col.customType === "textArea") {
+          if (col.type === "textArea") {
             return (
               <CellEditText
                 value={params.value}

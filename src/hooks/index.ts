@@ -7,3 +7,4 @@ export * from './useForm';
 export * from './useHome';
 export * from './useInvoice';
 export * from './useAutocomplete';
+export * from './useDataTable';

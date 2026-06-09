@@ -12,6 +12,14 @@ export interface ITableAction {
   disabled?: boolean;
 }
 
+export interface IDataTableStore {
+  data?: any[];
+  params?: any;
+  fnGetData?: (params: any, onSuccess?: (data: any[], total?: number) => void) => void;
+  mode?: "local" | "remote";
+  cacheKey?: string;
+}
+
 export type DataTableProps = Omit<DataGridProProps, 'columns'> & {
   variant?: 'view' | 'edit';
   height?: number;
@@ -20,6 +28,7 @@ export type DataTableProps = Omit<DataGridProProps, 'columns'> & {
   handleRowSelectionModelChange?: (params: GridRowSelectionModel, details: GridCallbackDetails<any>) => void;
   actionBars?: ITableAction[];
   handleActionClick?: (key: IAction, row: any) => void;
+  store?: IDataTableStore;
   // Bổ sung các props đặc thù của DataTableForm nếu cần
   useI18n?: boolean;
   autoRowHeight?: boolean;

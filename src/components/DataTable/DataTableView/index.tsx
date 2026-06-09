@@ -1,5 +1,5 @@
 import { Grid, SxProps } from '@mui/material';
-import { DataGridPro, DataGridProProps, useGridApiRef, GridRowSelectionModel, GridActionsCellItem, GridRowParams } from '@mui/x-data-grid-pro';
+import { DataGridPro, DataGridProProps, useGridApiRef, GridActionsCellItem, GridRowParams } from '@mui/x-data-grid-pro';
 import { useMemo, useState } from 'react';
 import useStyles from '../styles';
 import { Pagination } from '../components';
@@ -8,6 +8,7 @@ import { DataTableProps } from '..';
 import { ROW_HEIGHT, getGridColumns } from 'types';
 import { useTranslation } from 'react-i18next';
 import Icons from 'assets/Icon';
+import { useDataTable } from 'hooks';
 
 const DataTableView = ({
   height,
@@ -23,25 +24,63 @@ const DataTableView = ({
   disableRowSelectionOnClick = false,
   actionBars,
   handleActionClick,
+  store,
   ...props
 }: DataTableProps) => {
   const defaultApiRef = useGridApiRef();
   const apiRef = props.apiRef ?? defaultApiRef;
   const { t } = useTranslation();
+
+  // 1. Integrate useDataTable hook
+  const {
+    rows: storeRows,
+    rowCount: storeRowCount,
+    loading: storeLoading,
+    paginationModel: storePaginationModel,
+    handlePaginationModelChange,
+    rowSelectionModel: storeRowSelectionModel,
+    setRowSelectionModel: setStoreRowSelectionModel,
+  } = useDataTable({
+    cacheKey: store?.cacheKey ?? '',
+    mode: store?.mode ?? 'local',
+    data: store?.data,
+    params: store?.params,
+    fnGetData: store?.fnGetData,
+    initialPageSize: defaultPagination?.pageSize ?? initialState?.pagination?.paginationModel?.pageSize ?? 14,
+    initialPage: defaultPagination?.page ?? initialState?.pagination?.paginationModel?.page ?? 0,
+  });
+
+  //pagination
+  const [paginationModel, setPaginationModel] = useState(
+    defaultPagination ?? {
+      pageSize: initialState?.pagination?.paginationModel?.pageSize ?? 14,
+      page: initialState?.pagination?.paginationModel?.page ?? 0,
+    }
+  );
+
+  const hasStore = !!store;
+  const activeRows = hasStore ? storeRows : rows;
+  const activeRowCount = hasStore ? storeRowCount : rowCount;
+  const activePaginationModel = hasStore ? storePaginationModel : paginationModel;
+  const activeLoading = hasStore ? storeLoading : props.loading;
+
   //styles
   const styles = useStyles();
   const dataGridStyles = useMemo(() => ({
     ...styles.dataTable,
 
-    ...(rows.length === 0 ? {
+    ...(activeRows.length === 0 ? {
       "& .MuiDataGrid-virtualScroller": {
         overflowY: "hidden !important",
       },
     } : {})
-  }), [rows, styles.dataTable]) as SxProps;
+  }), [activeRows, styles.dataTable]) as SxProps;
 
   //select rows
-  const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>();
+  const [localRowSelectionModel, setLocalRowSelectionModel] = useState<any>(props.rowSelectionModel ?? { type: 'include', ids: new Set() });
+  const activeRowSelectionModel = props.rowSelectionModel !== undefined 
+    ? props.rowSelectionModel 
+    : (hasStore && storeRowSelectionModel ? storeRowSelectionModel : localRowSelectionModel);
 
   // props
   const gridProps: Partial<DataGridProProps> = {
@@ -52,16 +91,10 @@ const DataTableView = ({
     headerFilters: false,
     isCellEditable: () => false,
     hideFooterSelectedRowCount: true,
+    keepNonExistentRowsSelected: true,
     ...props,
   };
 
-  //pagination
-  const [paginationModel, setPaginationModel] = useState(
-    defaultPagination ?? {
-      pageSize: initialState?.pagination?.paginationModel?.pageSize ?? 14,
-      page: initialState?.pagination?.paginationModel?.page ?? 0,
-    }
-  );
   const [prevDefaultPagination, setPrevDefaultPagination] = useState(defaultPagination);
 
   if (JSON.stringify(defaultPagination) !== JSON.stringify(prevDefaultPagination)) {
@@ -75,23 +108,31 @@ const DataTableView = ({
   const CustomPagination = () => {
     return (
       <Pagination
-        totalRowCount={rowCount}
-        paginationModel={paginationModel}
+        totalRowCount={activeRowCount}
+        paginationModel={activePaginationModel}
         handleChangePage={(page) => {
-          if (page < 0 || page * paginationModel.pageSize > (rowCount ?? 0))
+          if (page < 0 || page * activePaginationModel.pageSize > (activeRowCount ?? 0))
             return;
-          setPaginationModel((prev) => {
-            const newModel = { ...prev, page };
-            handlePagination?.(newModel);
-            return newModel;
-          });
+          if (hasStore) {
+            handlePaginationModelChange({ ...activePaginationModel, page });
+          } else {
+            setPaginationModel((prev) => {
+              const newModel = { ...prev, page };
+              handlePagination?.(newModel);
+              return newModel;
+            });
+          }
         }}
         handleChangePageSize={(pageSize) => {
-          setPaginationModel((prev) => {
-            const newModel = { ...prev, page: 0, pageSize };
-            handlePagination?.(newModel);
-            return newModel;
-          });
+          if (hasStore) {
+            handlePaginationModelChange({ page: 0, pageSize });
+          } else {
+            setPaginationModel((prev) => {
+              const newModel = { ...prev, page: 0, pageSize };
+              handlePagination?.(newModel);
+              return newModel;
+            });
+          }
         }}
       />
     )
@@ -150,23 +191,46 @@ const DataTableView = ({
             ...dataGridStyles
           }}
           columns={gridColumns as any}
-          rows={rows}
+          rows={activeRows}
           initialState={initialState}
           rowHeight={ROW_HEIGHT}
           {...gridProps}
           pinnedColumns={gridPinnedColumns}
           pagination
-          paginationModel={paginationModel}
+          loading={activeLoading}
+          rowCount={activeRowCount}
+          paginationModel={activePaginationModel}
+          paginationMode={hasStore ? (store?.mode === 'remote' ? 'server' : 'client') : (props.paginationMode ?? (handlePagination ? 'server' : 'client'))}
+          onPaginationModelChange={(model, details) => {
+            if (hasStore) {
+              handlePaginationModelChange(model);
+            } else {
+              props.onPaginationModelChange?.(model, details);
+            }
+          }}
           getRowHeight={() => (autoRowHeight ? "auto" : ROW_HEIGHT)}
           slots={{
             pagination: CustomPagination
           }}
           checkboxSelection={checkboxSelection}
           disableRowSelectionOnClick={disableRowSelectionOnClick}
-          rowSelectionModel={rowSelectionModel}
+          rowSelectionModel={activeRowSelectionModel as any}
           onRowSelectionModelChange={(params, details) => {
             handleRowSelectionModelChange?.(params, details);
-            setRowSelectionModel(params)
+            props.onRowSelectionModelChange?.(params, details);
+            if (props.rowSelectionModel === undefined) {
+              let newModel: any;
+              if (Array.isArray(params)) {
+                newModel = { type: 'include', ids: new Set(params) };
+              } else {
+                newModel = { type: params?.type || 'include', ids: new Set(params?.ids || []) };
+              }
+              if (hasStore) {
+                setStoreRowSelectionModel?.(newModel);
+              } else {
+                setLocalRowSelectionModel(newModel);
+              }
+            }
           }}
         />
       </Grid>

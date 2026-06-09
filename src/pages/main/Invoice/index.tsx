@@ -1,6 +1,6 @@
 import { useGridApiRef } from '@mui/x-data-grid-pro';
 import { ContainerWrapper, MainCard, DataTable } from 'components';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { EGridColTypes, IGridColDef } from 'types/grid';
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
@@ -10,9 +10,6 @@ type Product = {
   brand?: string;
 };
 
-import { IconName } from 'assets/Icon';
-import { IAction, IActionAndSub } from 'types';
-
 const columnsDefinition: IGridColDef[] = [
   { field: 'id', headerName: 'ID', width: 70 },
   { field: 'title', headerName: 'Title', width: 200 },
@@ -21,73 +18,49 @@ const columnsDefinition: IGridColDef[] = [
   { field: 'sell', headerName: 'Sell', width: 130, flex: 1, type: EGridColTypes.DATETIME },
 ];
 
-const mockRows = [
-  {
-    id: 1,
-    title: 'Product 1',
-    brand: 'Brand 1',
-    price: 2000,
-    sell: '2022-01-01',
-  },
-  {
-    id: 2,
-    title: 'Product 2',
-    price: -1000,
-    brand: 'Brand 2',
-    sell: '2022-01-01',
-  },
-];
-
 export default function Invoice() {
-  const [, setLoading] = useState(false);
-  const [rows, setRows] = useState<Product[]>(mockRows);
   const apiGridRef = useGridApiRef();
 
-  const fetchProducts = useCallback(async ({ keyword, page }: {
-    keyword: string;
-    page: number;
-    isReset?: boolean;
-  }, onSuccess?: (data: Product[]) => void) => {
-    if (!keyword.trim()) return;
+  const productStore = useMemo(() => ({
+    cacheKey: 'invoice-products',
+    mode: 'remote' as const,
+    params: { keyword: 'phone' },
+    fnGetData: (
+      params: { keyword: string; page: number; pageSize: number },
+      onSuccess?: (data: Product[], total?: number) => void
+    ) => {
+      const { keyword, page, pageSize } = params;
+      if (!keyword || !keyword.trim()) {
+        onSuccess?.([]);
+        return;
+      }
 
-    try {
-      setLoading(true);
-
-      const res = await fetch(
+      fetch(
         `https://dummyjson.com/products/search?q=${encodeURIComponent(
           keyword
-        )}&limit=14&skip=${page * 14}`
-      );
-
-      const data = await res.json();
-
-      const newProducts: Product[] = data.products ?? [];
-
-      if (onSuccess) {
-        onSuccess(newProducts);
-      }
-    } finally {
-      setLoading(false);
+        )}&limit=${pageSize}&skip=${page * pageSize}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          onSuccess?.(data.products ?? [], data.total ?? 0);
+        })
+        .catch(() => {
+          onSuccess?.([]);
+        });
     }
-  }, []);
+  }), []);
 
-  const handlePagination = useCallback((paginationModel: any) => {
-    fetchProducts({ keyword: 'phone', page: paginationModel.page }, (data) => {
-      setRows(data);
-    });
-  }, [fetchProducts]);
-
-  // Cấu hình các nút Action thô không phụ thuộc UI
+  // Cấu hình các nút Action
   const actionItems = useMemo(() => [
-    { key: IAction.EDIT, label: 'Edit', icon: IconName.EDIT },
-    { key: IAction.DELETE, label: 'Delete', icon: IconName.DELETE }
+    { key: 'edit', label: 'Edit', icon: 'Edit' },
+    { key: 'delete', label: 'Delete', icon: 'Delete' }
   ], []);
 
-  const handleActionClick = useCallback((actionKey: IActionAndSub | IAction, row: Product) => {
-    if (actionKey === IAction.EDIT) {
-      console.log('Edit item with ID via DataTable prop callback:', row);
-    } else if (actionKey === IAction.DELETE) {
-      console.log('Delete item with ID via DataTable prop callback:', row);
+  const handleActionClick = useCallback((actionKey: any, row: any) => {
+    if (actionKey === 'edit') {
+      console.log('Edit item:', row);
+    } else if (actionKey === 'delete') {
+      console.log('Delete item:', row);
     }
   }, []);
 
@@ -102,11 +75,8 @@ export default function Invoice() {
           apiRef={apiGridRef}
           variant="view"
           columns={columnsDefinition}
-          autoRowHeight
-          rows={rows}
-          rowCount={200}
-          handlePagination={handlePagination}
-          actionBars={actionItems}
+          store={productStore}
+          actionBars={actionItems as any}
           handleActionClick={handleActionClick}
           checkboxSelection
         />
