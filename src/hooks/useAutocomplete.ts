@@ -45,6 +45,10 @@ interface CacheEntry<T> {
   params: string;      // JSON.stringify(params) — detect khi params đổi
 }
 
+// Bộ nhớ đệm (Cache) ở cấp độ module (Module-level).
+// Vì nằm ngoài hook, cache này tồn tại độc lập với vòng đời của các component.
+// Tất cả các component Autocomplete sử dụng chung một `cacheKey` sẽ dùng chung vùng nhớ cache này.
+// CẢNH BÁO: Cache này không tự dọn dẹp (no TTL/LRU), sẽ tích tụ trong RAM cho đến khi reload trang.
 const cache = new Map<string, CacheEntry<any>>();
 
 // ---------------------------------------------------------------------------
@@ -63,13 +67,19 @@ export function useAutocomplete<T = Record<string, any>>({
   const [options, setOptions] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Track page hiện tại (remote mode)
+  // useRef dùng để lưu chỉ số trang hiện tại mà không kích hoạt re-render component khi thay đổi
   const currentPage = useRef(0);
-  // Tránh set state sau khi unmount
+  
+  // Cờ hiệu để theo dõi vòng đời component. Khi component bị unmount, isMounted.current = false
+  // giúp ngăn chặn việc gọi setOptions/setLoading sau khi component đã chết, tránh lỗi rò rỉ bộ nhớ (Memory Leak).
   const isMounted = useRef(true);
-  // Chỉ nhận kết quả request mới nhất (tránh stale khi gõ search nhanh)
+  
+  // ID định danh của request bất đồng bộ cuối cùng. 
+  // Dùng để chống lỗi Race Condition (cạnh tranh luồng) khi người dùng nhập từ khóa tìm kiếm rất nhanh.
   const requestIdRef = useRef(0);
 
+  // Đẩy việc cập nhật options vào macro-task queue để tránh lỗi cập nhật state khi đang render (Concurrent rendering warning).
+  // Đồng thời kiểm tra component còn mount hay không trước khi thực thi setOptions.
   const scheduleOptionsUpdate = useCallback((next: T[]) => {
     window.setTimeout(() => {
       if (!isMounted.current) return;
@@ -77,11 +87,15 @@ export function useAutocomplete<T = Record<string, any>>({
     }, 0);
   }, []);
 
+  // Thiết lập trạng thái mount/unmount của component
   useEffect(() => {
     isMounted.current = true;
-    return () => { isMounted.current = false; };
+    return () => { 
+      isMounted.current = false; // Cleanup: Component unmount -> gán cờ thành false
+    };
   }, []);
 
+  // LOCAL MODE: Xử lý tìm kiếm và lọc dữ liệu cục bộ phía client
   useEffect(() => {
     if (mode !== "local") return;
     if (!data) {
@@ -96,6 +110,7 @@ export function useAutocomplete<T = Record<string, any>>({
     }
 
     const lower = keyword.toLowerCase();
+    // Lọc không phân biệt chữ hoa/thường trên mọi trường giá trị của đối tượng (multi-field search)
     const filtered = data.filter((item) =>
       Object.values(item as any).some((v) =>
         String(v ?? "").toLowerCase().includes(lower)
@@ -106,36 +121,46 @@ export function useAutocomplete<T = Record<string, any>>({
 
  const serialisedParams = JSON.stringify(params ?? {});
 
+  // Hàm tải dữ liệu của một trang cụ thể (dành cho REMOTE MODE)
   const fetchPage = useCallback(
     (page: number, mergeWithPrevious: boolean) => {
       if (mode !== "remote" || !fnGetData) return;
       if (isMounted.current) setLoading(true);
+      
+      // Tạo requestId mới cho đợt gọi API này
       const requestId = ++requestIdRef.current;
 
       const callParams = { ...(params ?? {}), page, pageSize };
 
+      // Gọi hàm lấy dữ liệu bất đồng bộ
       fnGetData(callParams, (result: T[]) => {
+        // KIỂM TRA AN TOÀN: 
+        // 1. Component còn mount không? Nếu không, bỏ qua.
+        // 2. RequestId có phải là mới nhất không? Nếu có request khác đè lên, bỏ qua (chống Race Condition).
         if (!isMounted.current) return;
         if (requestId !== requestIdRef.current) return;
 
         setLoading(false);
 
         const entry = cache.get(cacheKey);
+        // Nếu merge với trang cũ (cuộn tải thêm), lấy mảng trang cũ từ cache, ngược lại khởi tạo mảng rỗng
         const existingPages: T[][] = mergeWithPrevious && entry ? entry.pages : [];
 
-        // Insert / replace the page slot
+        // Ghi nhận dữ liệu của trang hiện tại vào mảng 2 chiều
         const updatedPages = [...existingPages];
         updatedPages[page] = result;
 
+        // Nếu số lượng kết quả trả về bằng hoặc vượt quá pageSize, giả định là vẫn còn dữ liệu ở trang tiếp theo
         const hasMore = result.length >= pageSize;
 
+        // Ghi đè hoặc lưu mới dữ liệu vào cache ở module-level
         cache.set(cacheKey, {
           pages: updatedPages,
           hasMore,
           params: serialisedParams,
         });
 
-        // Flatten tất cả các trang thành 1 mảng options
+        // Trải phẳng (flat) mảng 2 chiều các trang thành mảng 1 chiều để cập nhật danh sách hiển thị
         setOptions(updatedPages.flat());
         currentPage.current = page;
       });
@@ -143,20 +168,24 @@ export function useAutocomplete<T = Record<string, any>>({
     [mode, fnGetData, cacheKey, pageSize, serialisedParams, params]
   );
 
+  // REMOTE MODE: Đồng bộ cache hoặc gọi API tải trang đầu tiên khi params thay đổi
   useEffect(() => {
     if (mode !== "remote" || !fnGetData) return;
 
     const cached = cache.get(cacheKey);
+    // So sánh chuỗi JSON của params hiện tại với params đã lưu trong cache của key đó
     const paramsChanged = cached?.params !== serialisedParams;
 
     if (cached && !paramsChanged) {
-      // Cache hit — dùng lại, không gọi API
+      // CACHE HIT: Bộ lọc và key trùng khớp -> Khôi phục dữ liệu từ cache mà không gọi API mạng
       scheduleOptionsUpdate(cached.pages.flat());
+      // Thiết lập con trỏ trang hiện tại về trang cuối cùng đã lưu trong cache
       currentPage.current = cached.pages.length - 1;
       return;
     }
 
-    // Params thay đổi hoặc chưa có cache → xoá cache cũ, fetch trang 0
+    // CACHE MISS: Dữ liệu chưa từng được tải hoặc tham số lọc/từ khóa đã thay đổi
+    // Xóa cache cũ của key này, đặt lại con trỏ trang và gọi API trang đầu tiên (page: 0)
     cache.delete(cacheKey);
     currentPage.current = 0;
     fetchPage(0, false);

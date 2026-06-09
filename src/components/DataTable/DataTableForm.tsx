@@ -73,22 +73,6 @@ const info = {
   lbllanguage: "en"
 }
 
-const dummyColumns: IGridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 90 },
-  { field: 'customerName', headerName: 'Customer', flex: 1, minWidth: 180, editable: true },
-  { field: 'invoiceNo', headerName: 'Invoice No', width: 150, editable: true },
-  { field: 'amount', headerName: 'Amount', width: 140, type: 'number', editable: true },
-  { field: 'createdDate', headerName: 'Created Date', width: 140, type: 'date', editable: true }
-];
-
-const dummyRows = [
-  { id: 1, customerName: 'Nguyen Van An', invoiceNo: 'INV-2026-001', amount: 1250000, createdDate: '2026-01-01' },
-  { id: 2, customerName: 'Tran Thi Binh', invoiceNo: 'INV-2026-002', amount: 2890000, createdDate: '2026-01-02' },
-  { id: 3, customerName: 'Le Hoang Duc', invoiceNo: 'INV-2026-003', amount: 790000, createdDate: '2026-01-03' },
-  { id: 4, customerName: 'Pham Gia Huy', invoiceNo: 'INV-2026-004', amount: 4300000, createdDate: '2026-01-04' },
-  { id: 5, customerName: 'Do Minh Khoa', invoiceNo: 'INV-2026-005', amount: 1560000, createdDate: '2026-01-05' }
-];
-
 const DataTableForm = ({ 
   columns, 
   rows, 
@@ -99,12 +83,10 @@ const DataTableForm = ({
   tableId,
   onProcessRowUpdate,
 }: IDataTable) => {
-  const displayColumns = columns?.length ? columns : dummyColumns;
-  const displayRows = rows?.length ? rows : dummyRows;
   const styles = useStyles();
   const { t, i18n } = useTranslation();
   const apiRef = propApiRef ?? useGridApiRef();
-  const [dataRows, setDataRows] = useState(displayRows);
+  const [dataRows, setDataRows] = useState(rows);
   const refCellModesModel = useRef<GridCellModesModel>({});
   const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
   const [selections, setSelections] = useState<any[]>([]);
@@ -122,7 +104,7 @@ const DataTableForm = ({
   };
 
   const buildColumns = useMemo(() => {
-    const colItems: IGridColDef[] = displayColumns.map((col: IGridColDef) => {
+    const colItems: IGridColDef[] = columns.map((col: IGridColDef) => {
       const {
         type,
         customType,
@@ -317,7 +299,7 @@ const DataTableForm = ({
  
   const handleRowUpdate = useCallback((_newRow, _oldRow) => {
     setDataRows((prevRows) =>
-      prevRows.map((row) => (row.id === _newRow.id ? _newRow : row))
+      prevRows?.map((row) => (row.id === _newRow.id ? _newRow : row))
     );
 
     onProcessRowUpdate?.(_newRow);
@@ -327,14 +309,14 @@ const DataTableForm = ({
 
   const dataGridStyles = useMemo(() => [
     styles.dataTableView,
-    displayRows.length === 0
+    rows?.length === 0
         ? {
           "& .MuiDataGrid-virtualScroller": {
             overflowY: "hidden !important",
           },
         }
         : {},
-  ], [displayRows]) as SxProps;
+  ], [rows]) as SxProps;
 
   useEffect(() => {
     setSelections([]);
@@ -344,8 +326,8 @@ const DataTableForm = ({
     //   createdDate: row.createdDate ? new Date(row.createdDate) : null
     // }));
     // setDataRows(convertRows);
-    setDataRows(displayRows);
-  }, [JSON.stringify(displayRows)]);
+    setDataRows(rows);
+  }, [JSON.stringify(rows)]);
 
   return (
     <Grid container size={12}>

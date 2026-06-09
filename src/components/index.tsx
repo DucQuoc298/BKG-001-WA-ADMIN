@@ -6,9 +6,6 @@ import Snackbar from "./Snackbar";
 import MainCard from "./MainCard";
 import ContainerWrapper from "./ContainerWrapper";
 import DataTable from "./DataTable";
-import {
-  ToolBarLocal
-} from "./ToolBar";
 import { ToolBarLocal } from "./ToolBar";
 import Autocomplete from "./Autocomplete";
 export {

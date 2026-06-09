@@ -1,80 +1,77 @@
 import { Grid, Typography } from '@mui/material';
 import { IconName } from 'assets/Icon';
 import { ContainerWrapper, MainCard, TextField, DataTable } from 'components';
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { IAction, IActionAndSub } from 'types/commom';
-import {useForm} from 'hooks/useForm';
+import {} from 'hooks/useForm';
 import { IGridColDef } from 'types/grid';
+import { useInvoice } from 'hooks';
+import dayjs from 'dayjs';
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
-const invoiceDummyColumns: IGridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 90 },
-  { field: 'customerName', headerName: 'Customer', flex: 1, minWidth: 180, editable: true },
-  { field: 'invoiceNo', headerName: 'Invoice No', width: 150, editable: true },
-  { field: 'amount', headerName: 'Amount', width: 140, type: 'number', editable: true },
-  { field: 'createdDate', headerName: 'Created Date', width: 140, customType: 'date', editable: true }
-];
+type Product = {
+  id: number;
+  title: string;
+  brand?: string;
+};
 
-const invoiceDummyRows = [
-  { id: 1, customerName: 'Nguyen Van An', invoiceNo: 'INV-2026-001', amount: 1250000, createdDate: '2026-01-01T00:00:00+00:00' },
-  { id: 2, customerName: 'Tran Thi Binh', invoiceNo: 'INV-2026-002', amount: 2890000, createdDate: '2026-01-02T00:00:00+00:00' },
-  { id: 3, customerName: 'Le Hoang Duc', invoiceNo: 'INV-2026-003', amount: 790000, createdDate: '2026-01-03T00:00:00+00:00' },
-  { id: 4, customerName: 'Pham Gia Huy', invoiceNo: 'INV-2026-004', amount: 4300000, createdDate: '2026-01-04T00:00:00+00:00' },
-  { id: 5, customerName: 'Do Minh Khoa', invoiceNo: 'INV-2026-005', amount: 1560000, createdDate: '2026-01-05T00:00:00+00:00' }
-];
 
 export default function Invoice() {
-  const handleButtonClick = (action: IAction | IActionAndSub) => {
-    console.log('Button Invoice clicked:', action);
-  }
-  const { invoiceForm, update, reset } = useForm();
- const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const {  value } = e.target;
+  const [loading, setLoading] = useState(false);
+  const [rows, setRows] = useState<Product[]>([]);
+  
+  const fetchProducts = useCallback(async ({ keyword, page}: {
+      keyword: string;
+      page: number;
+      isReset?: boolean;
+    }, onSuccess?: (data: Product[]) => void) => {
+      if (!keyword.trim()) return;
 
-      update("invoiceForm",{
-        customerName: value,
-      })
-  };
+      try {
+        setLoading(true);
 
-  console.log('Invoice Form:', invoiceForm);
+        const res = await fetch(
+          `https://dummyjson.com/products/search?q=${encodeURIComponent(
+            keyword
+          )}&limit=10&skip=${page * 10}`
+        );
+
+        const data = await res.json();
+
+        const newProducts: Product[] = data.products ?? [];
+
+        if (onSuccess) {
+          onSuccess(newProducts);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+  const columns: IGridColDef[] = [
+    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'title', headerName: 'Title', width: 200 },
+    { field: 'brand', headerName: 'Brand', width: 130 },
+  ];
+    useEffect(() => {
+      // Initial fetch with empty keyword to load default products
+      fetchProducts({ keyword: '', page: 0 }, (data) => {
+        setRows(data);
+      });
+    }, [fetchProducts]);
 
   return (
     <ContainerWrapper
       toolbarLocalProps={{ 
         title: 'Invoiceasjkbdbajsdjbkabsdabjdsjbk',
-        handleButtonClick: handleButtonClick, 
-        buttons: [
-          { 
-            key: IAction.NEW, 
-            label: 'Add', 
-            icon: IconName.NEW,
-            items: [
-              { key: IAction.NEW, label: 'Add', icon: IconName.NEW},
-            ]
-          },
-          { key: IAction.EDIT, label: 'Edit', icon: IconName.EDIT },
-          { key: IAction.DELETE, label: 'Delete', icon: IconName.DELETE },
-          { key: IAction.VIEW, label: 'View', icon: IconName.VIEW },
-          { key: IAction.CANCEL, label: 'Cancel', icon: IconName.CANCEL },
-          
-        ]
       }}
     >
-      {/* <MainCard>
-
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Invoice
-      </Typography>
-      <TextField label="Search" variant="outlined" value={invoiceForm.customerName} fullWidth onChange={handleChange} />
-      </MainCard> */}
-
       <MainCard>
-        <DataTable variant="view" columns={invoiceDummyColumns} rows={invoiceDummyRows} />
+        <DataTable variant="view" columns={columns} rows={rows} />
       </MainCard>
       <MainCard sx={{ mt: 2 }}>
-        <DataTable variant="edit" columns={invoiceDummyColumns} rows={invoiceDummyRows} />
+        <DataTable variant="edit" columns={columns} rows={rows} />
       </MainCard>
     </ContainerWrapper>
   );

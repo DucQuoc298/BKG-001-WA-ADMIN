@@ -18,10 +18,6 @@ import { useAutocomplete } from "hooks";
 import Icons, { IconName } from "assets/Icon";
 import { useTranslation } from "react-i18next";
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps>(
   function AutocompleteSingle(props, ref) {
     const {
@@ -34,8 +30,8 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
       required,
       forceSelection,
       name,
-      value: valueProp,        // controlled value from Redux / react-hook-form
-      defaultValue,            
+      value: valueProp,
+      defaultValue,
       onChange,
       onBlur,
       ...rest
@@ -56,9 +52,7 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
     const optionTextField = textField || "text";
     const pageSize = 7;
 
-    // ------------------------------------------------------------------
-    // Build params for useAutocomplete
-    // ------------------------------------------------------------------
+    // build params
     const effectiveParams = useMemo(() => {
       if (mode !== "remote") return storeParams;
       return {
@@ -68,6 +62,7 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
       };
     }, [mode, storeParams, searchKeyword]);
 
+    // cache key
     const cacheKey =
       (store as any).cacheKey ||
       `${name || label || "autocomplete"}:${optionIdField}:${optionTextField}`;
@@ -81,7 +76,7 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
       pageSize,
     });
 
-
+    // resolve initial value
     const resolveInitial = () => {
       if (valueProp !== undefined) return valueProp ?? null;
       if (defaultValue !== undefined) return defaultValue ?? null;
@@ -90,19 +85,13 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
 
     const [selectedOption, setSelectedOption] = useState<any>(resolveInitial);
 
-    /**
-     * Sync when the parent-controlled value changes (e.g. Redux store hydrated
-     * after remount, or form reset).
-     */
+    // set selected option if valueProp changes
     useEffect(() => {
       if (valueProp !== undefined) {
         setSelectedOption(valueProp ?? null);
       }
     }, [valueProp]);
 
-    // ------------------------------------------------------------------
-    // Scroll → load next page
-    // ------------------------------------------------------------------
     const handleScroll = useCallback(
       (event: UIEvent<HTMLElement>) => {
         const el = event.currentTarget;
@@ -112,9 +101,6 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
       [loading, loadNextPage],
     );
 
-    // ------------------------------------------------------------------
-    // onChange — propagate to parent (Redux dispatch / react-hook-form)
-    // ------------------------------------------------------------------
     const handleChange: MuiAutocompleteProps<any, false, boolean, any>["onChange"] =
       useCallback(
         (_event, newValue, reason) => {
@@ -128,12 +114,12 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
           setSelectedOption(newValue ?? null);
           onChange?.({
             target: {
-                name,
-                value: newValue,
-              },
+              name,
+              value: newValue,
+            },
             type: "change",
-            } as any, newValue, reason);
-          },
+          } as any, newValue, reason);
+        },
         [forceSelection, onChange],
       );
 
@@ -158,9 +144,6 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
       [mode],
     );
 
-    // ------------------------------------------------------------------
-    // Slot props — merge external listbox props with scroll handler
-    // ------------------------------------------------------------------
     const externalSlotProps = (rest as any).slotProps ?? {};
     const externalListbox = externalSlotProps.listbox ?? {};
 
@@ -183,9 +166,6 @@ export const AutocompleteSingle = forwardRef<HTMLInputElement, AutocompleteProps
       [externalSlotProps, externalListbox, handleScroll],
     );
 
-    // ------------------------------------------------------------------
-    // Render
-    // ------------------------------------------------------------------
     return (
       <MuiAutocomplete
         {...rest}
