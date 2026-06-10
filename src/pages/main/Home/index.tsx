@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import { Autocomplete, Button, ContainerWrapper, MainCard, TextField } from 'components';
 import React, { useCallback, useMemo, useState } from 'react';
-import { IFormMode } from 'types/commom';
+import { EFormMode } from 'types';
 import { useHome } from 'hooks';
 import { useForm } from 'react-hook-form';
 
@@ -100,10 +100,10 @@ export default function Home() {
       <MainCard>
 
         <Typography variant="h5" sx={{ mb: 2 }}>
-          Home {homeForm.formMode === IFormMode.VIEW ? 'View Mode' : homeForm.formMode === IFormMode.FORM ? 'Edit Mode' : 'New Mode'}
+          Home {homeForm.formMode === EFormMode.VIEW ? 'View Mode' : homeForm.formMode === EFormMode.FORM ? 'Edit Mode' : 'New Mode'}
         </Typography>
-        <Button variant='contained' text="Open Form" onClick={() => update({ formMode: homeForm.formMode === IFormMode.FORM ? IFormMode.VIEW : IFormMode.FORM })} />
-        {homeForm.formMode === IFormMode.FORM && (
+        <Button variant='contained' text="Open Form" onClick={() => update({ formMode: homeForm.formMode === EFormMode.FORM ? EFormMode.VIEW : EFormMode.FORM })} />
+        {homeForm.formMode === EFormMode.FORM && (
           <TextField label="Search" variant="outlined" value={homeForm.note} fullWidth onChange={handleChange} />
         )}
         <Autocomplete

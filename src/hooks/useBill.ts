@@ -6,7 +6,7 @@ import {
   billListState,
 } from "store/bill/selector";
 import { BillFilters, BillFormData, openBillForm, resetBillForm, resetBillList, setBillFormLoading, setBillFormSaving, updateBillForm, updateBillListFilters, updateBillListSearch, updateBillListTab } from "store/bill/reducer";
-import { FormMode } from "types";
+import { EFormMode } from "types";
 
 export const useBill = () => {
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ export const useBill = () => {
   );
 
   const openForm = useCallback(
-    (mode: FormMode, activeId?: string | number | null, data?: BillFormData) => {
+    (mode: EFormMode, activeId?: string | number | null, data?: BillFormData) => {
       dispatch(openBillForm({ mode, activeId, data }));
     },
     [dispatch]

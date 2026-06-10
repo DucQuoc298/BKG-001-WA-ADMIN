@@ -5,7 +5,7 @@ import useStyles from '../styles';
 import { Pagination } from '../components';
 import { getDefaultGridHeight } from 'utils'
 import { DataTableProps } from '..';
-import { ROW_HEIGHT, getGridColumns } from 'types';
+import { DataTableMode, ROW_HEIGHT, getGridColumns } from 'types';
 import { useTranslation } from 'react-i18next';
 import Icons from 'assets/Icon';
 import { useDataTable } from 'hooks';
@@ -42,7 +42,7 @@ const DataTableView = ({
     setRowSelectionModel: setStoreRowSelectionModel,
   } = useDataTable({
     cacheKey: store?.cacheKey ?? '',
-    mode: store?.mode ?? 'local',
+    mode: store?.mode ?? DataTableMode.LOCAL,
     data: store?.data,
     params: store?.params,
     fnGetData: store?.fnGetData,
@@ -78,8 +78,8 @@ const DataTableView = ({
 
   //select rows
   const [localRowSelectionModel, setLocalRowSelectionModel] = useState<any>(props.rowSelectionModel ?? { type: 'include', ids: new Set() });
-  const activeRowSelectionModel = props.rowSelectionModel !== undefined 
-    ? props.rowSelectionModel 
+  const activeRowSelectionModel = props.rowSelectionModel !== undefined
+    ? props.rowSelectionModel
     : (hasStore && storeRowSelectionModel ? storeRowSelectionModel : localRowSelectionModel);
 
   // props

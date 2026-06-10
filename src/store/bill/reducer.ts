@@ -1,6 +1,6 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FormMode } from 'types';
+import { EFormMode } from 'types/form';
 
 export type BillFormData = {
   customerName: string;
@@ -21,7 +21,7 @@ export interface ListState<TFilters = Record<string, any>> {
 }
 
 export interface FormState<TFormData> {
-  mode: FormMode;
+  mode: EFormMode;
   activeId: string | number | null;
   formData: TFormData;
   loading: boolean;
@@ -42,7 +42,7 @@ const initialState: IBillState = {
     filters: {},
   },
   form: {
-    mode: 'create',
+    mode: EFormMode.LIST,
     activeId: null,
     formData: {
       customerName: '',
@@ -85,13 +85,13 @@ const billSlice = createSlice({
     // Actions cho trang Form
     openBillForm: (
       state,
-      action: PayloadAction<{ mode: FormMode; activeId?: string | number | null; data?: BillFormData }>
+      action: PayloadAction<{ mode: EFormMode; activeId?: string | number | null; data?: BillFormData }>
     ) => {
       state.form.mode = action.payload.mode;
       state.form.activeId = action.payload.activeId ?? null;
       if (action.payload.data) {
         state.form.formData = action.payload.data;
-      } else if (action.payload.mode === 'create') {
+      } else if (action.payload.mode === EFormMode.FORM) {
         state.form.formData = initialState.form.formData;
       }
     },

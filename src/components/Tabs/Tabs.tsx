@@ -23,8 +23,12 @@ const Tabs = ({
       scrollButtons="auto"
       allowScrollButtonsMobile
       value={activeTab}
-      onChange={(event, value) => handleTabChange(value)}
-      sx={sx}
+      onChange={(event, value) => {
+        event.preventDefault();
+        event.stopPropagation();
+        handleTabChange(value);
+      }}
+      sx={styles.tabs}
     >
       {
         tabs.map((tab) => (

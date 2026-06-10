@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   InvoiceFormData,
   InvoiceFilters,
-  FormMode,
   updateInvoiceForm,
   openInvoiceForm,
   resetInvoiceForm,
@@ -19,6 +18,7 @@ import {
   invoiceFormState,
   invoiceListState,
 } from "store/invoice/selector";
+import { EFormMode } from "types";
 
 export const useInvoice = () => {
   const dispatch = useDispatch();
@@ -37,7 +37,7 @@ export const useInvoice = () => {
   );
 
   const openForm = useCallback(
-    (mode: FormMode, activeId?: string | number | null, data?: InvoiceFormData) => {
+    (mode: EFormMode, activeId?: string | number | null, data?: InvoiceFormData) => {
       dispatch(openInvoiceForm({ mode, activeId, data }));
     },
     [dispatch]

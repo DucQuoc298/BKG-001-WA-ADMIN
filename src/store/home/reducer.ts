@@ -1,9 +1,9 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IFormMode } from 'types';
+import { EFormMode } from 'types/form';
 export type HomeFormData = {
   note: string;
-  formMode: IFormMode;
+  formMode: EFormMode;
   product?: string | null;
   products?: string[] | null;
 }
@@ -20,7 +20,7 @@ const initialState: IHomeState = {
   error: null,
   message: null,
   formData: {
-    formMode: IFormMode.VIEW,
+    formMode: EFormMode.VIEW,
     note: '',
     product: null,
     products: null,

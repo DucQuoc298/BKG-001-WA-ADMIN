@@ -6,6 +6,7 @@ import React, { useCallback, useMemo } from 'react';
 import { EGridColTypes, IGridColDef } from 'types/components/grid';
 import { useInvoice } from 'hooks/useInvoice';
 import { useSnackbar } from 'hooks/useSnackbar';
+import { EFormMode, DataTableMode } from 'types';
 
 type Product = {
   id: number;
@@ -41,7 +42,7 @@ export default function Invoice() {
   // Store for List DataTable (Remote search for phone)
   const productStore1 = useMemo(() => ({
     cacheKey: 'invoice-products',
-    mode: 'remote' as const,
+    mode: DataTableMode.REMOTE as const,
     params: { keyword: 'phone' },
     fnGetData: (
       params: { keyword: string; page: number; pageSize: number },
@@ -103,7 +104,7 @@ export default function Invoice() {
   const handleActionClick = useCallback((actionKey: any, row: any) => {
     if (actionKey === 'form') {
       // Mở Form ở chế độ Edit và điền dữ liệu của row vào
-      openForm('edit', row.id, {
+      openForm(EFormMode.FORM, row.id, {
         customerName: `Khách hàng - Hóa đơn #${row.id}`,
         product: row,
       });
@@ -117,8 +118,8 @@ export default function Invoice() {
   // Handle Tab change
   const handleTabChange = useCallback((event: React.SyntheticEvent, newValue: string) => {
     updateTab(newValue);
-    if (newValue === 'form' && formState?.mode === 'view') {
-      openForm('create'); // Nếu click vào tab Form mà chưa có gì thì mặc định là tạo mới
+    if (newValue === 'form' && formState?.mode === EFormMode.VIEW) {
+      openForm(EFormMode.FORM); // Nếu click vào tab Form mà chưa có gì thì mặc định là tạo mới
     }
   }, [updateTab, formState?.mode, openForm]);
 
@@ -138,7 +139,7 @@ export default function Invoice() {
     setTimeout(() => {
       setSaving(false);
       success(
-        formState?.mode === 'create'
+        formState?.mode === EFormMode.FORM
           ? 'Tạo mới hóa đơn thành công!'
           : `Cập nhật hóa đơn #${formState?.activeId} thành công!`
       );
@@ -163,7 +164,7 @@ export default function Invoice() {
           <Tab value="view" label="Danh Sách Hóa Đơn" onClick={(e) => handleTabChange(e, 'view')} />
           <Tab
             value="form"
-            label={formState?.mode === 'create' ? 'Tạo Mới Hóa Đơn' : `Chỉnh Sửa (#${formState?.activeId})`}
+            label={formState?.mode === EFormMode.FORM ? 'Tạo Mới Hóa Đơn' : `Chỉnh Sửa (#${formState?.activeId})`}
             onClick={(e) => handleTabChange(e, 'form')}
           />
         </Tabs>
@@ -178,7 +179,7 @@ export default function Invoice() {
                 variant="contained"
                 startIcon={<Icons name={IconName.NEW} size={18} />}
                 onClick={() => {
-                  openForm('create');
+                  openForm(EFormMode.FORM);
                   updateTab('form');
                 }}
               />
@@ -199,7 +200,7 @@ export default function Invoice() {
         {listState?.activeTab === 'form' && (
           <Box sx={{ py: 2 }}>
             <Typography variant="h5" sx={{ mb: 3 }}>
-              {formState?.mode === 'create' ? 'Tạo mới hóa đơn nghiệp vụ' : `Cập nhật hóa đơn nghiệp vụ #${formState?.activeId}`}
+              {formState?.mode === EFormMode.FORM ? 'Tạo mới hóa đơn nghiệp vụ' : `Cập nhật hóa đơn nghiệp vụ #${formState?.activeId}`}
             </Typography>
 
             <Stack sx={{ gap: 3, maxWidth: 600 }}>

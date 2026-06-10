@@ -6,4 +6,9 @@ export enum IFormKey {
   BILL = "BILL",
 }
 
-export type FormMode = 'create' | 'edit' | 'view';
+// Form modes for handling different states of a form (viewing, editing, creating new)
+export enum EFormMode {
+  VIEW = "view",
+  FORM = "form",
+  LIST = "list",
+}

@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import useSWR from "swr";
+import { DataTableMode } from "types";
 
 const globalSelectionCache = new Map<string, any>();
 
-export type DataTableMode = "local" | "remote";
+
 
 export type FnGetTableData<T> = (
   params: Record<string, any> & { page: number; pageSize: number },

@@ -3,7 +3,7 @@ import DataTableView from './DataTableView';
 import { IGridColDef } from 'types/components/grid';
 import { DataGridProProps, GridCallbackDetails, GridPaginationModel, GridRowSelectionModel } from '@mui/x-data-grid-pro';
 import { IconName } from 'assets/Icon';
-import { IAction } from 'types';
+import { DataTableMode, IAction } from 'types';
 
 export interface ITableAction {
   key: IAction;
@@ -16,7 +16,7 @@ export interface IDataTableStore {
   data?: any[];
   params?: any;
   fnGetData?: (params: any, onSuccess?: (data: any[], total?: number) => void) => void;
-  mode?: "local" | "remote";
+  mode?: DataTableMode
   cacheKey?: string;
 }
 
