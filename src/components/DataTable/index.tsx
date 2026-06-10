@@ -1,6 +1,6 @@
 import { forwardRef, memo } from 'react';
 import DataTableView from './DataTableView';
-import { IGridColDef } from 'types/grid';
+import { IGridColDef } from 'types/components/grid';
 import { DataGridProProps, GridCallbackDetails, GridPaginationModel, GridRowSelectionModel } from '@mui/x-data-grid-pro';
 import { IconName } from 'assets/Icon';
 import { IAction } from 'types';

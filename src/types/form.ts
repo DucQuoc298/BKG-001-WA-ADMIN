@@ -5,3 +5,5 @@ export enum IFormKey {
   INVOICE = "INVOICE",
   BILL = "BILL",
 }
+
+export type FormMode = 'create' | 'edit' | 'view';

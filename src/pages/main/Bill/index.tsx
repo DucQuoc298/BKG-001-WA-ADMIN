@@ -1,79 +1,31 @@
-import { Box, Tab, Tabs, Typography } from '@mui/material';
-import { IconName } from 'assets/Icon';
-import { ContainerWrapper, MainCard } from 'components';
+import { Box, Typography } from '@mui/material';
+import { ContainerWrapper, MainCard, Tabs } from 'components';
+import { useBill } from 'hooks/useBill';
 import React from 'react';
-import { IAction } from 'types/commom';
-import { BillListPage } from './ListPage';
-import { InvoiceCreatePage } from './CreateBill';
-// ==============================|| DASHBOARD - DEFAULT ||============================== //
+import { ITab } from 'types';
 
-
-export const pageRegistry = {
-  billList: BillListPage,
-  billCreate: InvoiceCreatePage,
-  // billDetail: <Box>billDetail</Box>,
-};
-type KeepAlivePanelProps = {
-  active: boolean;
-  children: React.ReactNode;
-};
-
-export type PageType = keyof typeof pageRegistry;
-export type AppTab = {
-  id: string;
-  title: string;
-  pageType: PageType;
-  params?: Record<string, any>;
-  closable?: boolean;
-};
-export function KeepAlivePanel({ active, children }: KeepAlivePanelProps) {
-  return (
-    <div
-      style={{
-        display: active ? "block" : "none",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      {children}
-    </div>
-  );
+enum EKeyTab {
+  All = "all",
+  ACTIVE = "active",
+  INACTIVE = "inactive",
 }
-type WorkspaceProps = {
-  tabs: AppTab[];
-  activeTabId: string;
-};
 
 export default function Bill() {
+  const {
+    listState,
+    updateTab,
+  } = useBill()
 
-  const tabs: AppTab[] = [
-    {
-      id: "billList",
-      title: "Bills",
-      pageType: "billList",
-    },
-    {
-      id: "billCreate",
-      title: "New Bill",
-      pageType: "billCreate",
-    },
-    // {
-    //   id: "billDetail",
-    //   title: "Bill INV001",
-    //   pageType: "billDetail",
-    //   params: {
-    //     billId: "INV001",
-    //   },
-    // },
+  const { activeTab } = listState;
+  const handleTabChange = (newValue: EKeyTab) => {
+    updateTab(newValue);
+  }
+
+  const tabsList: ITab[] = [
+    { key: EKeyTab.All, label: "All" },
+    { key: EKeyTab.ACTIVE, label: "Active", count: 130 },
+    { key: EKeyTab.INACTIVE, label: "Inactive", count: 4 },
   ];
-
-  const [activeTabId, setActiveTabId] = React.useState("billList");
-
-  const openTab = React.useCallback((tab: AppTab) => {
-    setActiveTabId(tab.id);
-    // nếu là view thì mở ra còn không là tabs sẽ ko mở ra
-  }, []);
-
   return (
     <ContainerWrapper
       toolbarLocalProps={{
@@ -82,26 +34,25 @@ export default function Bill() {
     >
       <MainCard>
         <Tabs
-          value={activeTabId}
-          onChange={(event, newValue) => {
-            setActiveTabId(newValue);
-          }}
-          variant="scrollable">
-          {
-            tabs.map((tab) => (
-              <Tab key={tab.id} label={tab.title} onClick={() => openTab(tab)} />
-            ))
-          }
-        </Tabs>
-        <>
-
-          <KeepAlivePanel active={activeTabId === "billList"}>
-            <BillListPage tabId="billList" params={{}} />
-          </KeepAlivePanel>
-          <KeepAlivePanel active={activeTabId === "billCreate"}>
-            <InvoiceCreatePage tabId="billCreate" params={{}} />
-          </KeepAlivePanel>
-        </>
+          tabs={tabsList}
+          activeTab={activeTab}
+          handleTabChange={handleTabChange}
+        />
+        {activeTab === EKeyTab.All && (
+          <Box>
+            <Typography variant="h6">All</Typography>
+          </Box>
+        )}
+        {activeTab === EKeyTab.ACTIVE && (
+          <Box>
+            <Typography variant="h6">Active</Typography>
+          </Box>
+        )}
+        {activeTab === EKeyTab.INACTIVE && (
+          <Box>
+            <Typography variant="h6">Inactive</Typography>
+          </Box>
+        )}
       </MainCard>
     </ContainerWrapper>
   );

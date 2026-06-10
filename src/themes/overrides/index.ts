@@ -4,7 +4,7 @@ import { merge } from 'lodash-es';
 // project imports
 import Badge from './Badge';
 import Button from './Button';
-import ButtonBase from './ButtonBase';
+
 import CardContent from './CardContent';
 import Checkbox from './Checkbox';
 import Chip from './Chip';
@@ -33,7 +33,7 @@ export default function ComponentsOverrides(theme) {
   return merge(
     Badge(theme),
     Button(theme),
-    ButtonBase(),
+    // ButtonBase(),
     CardContent(),
     Checkbox(theme),
     Chip(theme),

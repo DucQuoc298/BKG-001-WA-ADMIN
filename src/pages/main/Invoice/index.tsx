@@ -3,7 +3,7 @@ import { useGridApiRef } from '@mui/x-data-grid-pro';
 import Icons, { IconName } from 'assets/Icon';
 import { ContainerWrapper, MainCard, DataTable, TextField, Autocomplete, Button } from 'components';
 import React, { useCallback, useMemo } from 'react';
-import { EGridColTypes, IGridColDef } from 'types/grid';
+import { EGridColTypes, IGridColDef } from 'types/components/grid';
 import { useInvoice } from 'hooks/useInvoice';
 import { useSnackbar } from 'hooks/useSnackbar';
 
@@ -24,7 +24,6 @@ const columnsDefinition: IGridColDef[] = [
 
 export default function Invoice() {
   const apiGridRef1 = useGridApiRef();
-  const apiGridRef2 = useGridApiRef();
 
   const {
     invoiceForm,
@@ -68,34 +67,7 @@ export default function Invoice() {
         });
     }
   }), []);
-  const productStore2 = useMemo(() => ({
-    cacheKey: 'invoice-products1',
-    mode: 'remote' as const,
-    params: { keyword: 'phone' },
-    fnGetData: (
-      params: { keyword: string; page: number; pageSize: number },
-      onSuccess?: (data: Product[], total?: number) => void
-    ) => {
-      const { keyword, page, pageSize } = params;
-      if (!keyword || !keyword.trim()) {
-        onSuccess?.([]);
-        return;
-      }
 
-      fetch(
-        `https://dummyjson.com/products/search?q=${encodeURIComponent(
-          keyword
-        )}&limit=${pageSize}&skip=${page * pageSize}`
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          onSuccess?.(data.products ?? [], data.total ?? 0);
-        })
-        .catch(() => {
-          onSuccess?.([]);
-        });
-    }
-  }), []);
 
   // Store for Autocomplete in Form (Remote search for any product)
   const productSearchStore = useMemo(() => ({

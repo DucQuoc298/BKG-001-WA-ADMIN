@@ -13,7 +13,7 @@ import {
 } from '@mui/x-data-grid-pro';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useStyles from '../styles';
-import { IGridColDef } from 'types/grid';
+import { IGridColDef } from 'types/components/grid';
 import { useTranslation } from 'react-i18next';
 import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 import { date2Srting, datetime2Srting, number2String } from 'utils';
