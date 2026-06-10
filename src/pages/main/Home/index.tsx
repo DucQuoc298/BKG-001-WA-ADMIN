@@ -6,6 +6,7 @@ import {useHome} from 'hooks';
 import { useForm } from 'react-hook-form';
 import DateField from 'components/DateField/DateField';
 import dayjs from 'dayjs';
+import DateFieldMultiple from 'components/DateField/DateFieldMultiple';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 type Product = {
@@ -18,6 +19,7 @@ interface FormValues {
   product: Product | null;
   products: Product[] | null;
   date: Date | null;
+  dateRange: [Date | null, Date | null] | null;
 }
 export default function Home() {
 
@@ -33,7 +35,7 @@ export default function Home() {
   };
 const [loading, setLoading] = useState(false);
   
-  const { register, formState: { errors } } = useForm<FormValues>({defaultValues: { product: null, products: null, date: null }, mode: 'onChange'});
+  const { register, formState: { errors }, handleSubmit } = useForm<FormValues>({defaultValues: { product: null, products: null, date: null }, mode: 'onChange'});
 
   const fetchProducts = useCallback(async ({ keyword, page}: {
       keyword: string;
@@ -93,6 +95,7 @@ const [loading, setLoading] = useState(false);
       }),
       [fetchProducts, getProductById]
     );
+
   return (
     <ContainerWrapper
       toolbarLocalProps={{ 
@@ -106,6 +109,9 @@ const [loading, setLoading] = useState(false);
         Home {homeForm.formMode === IFormMode.VIEW ? 'View Mode' : homeForm.formMode === IFormMode.FORM ? 'Edit Mode' : 'New Mode'}
       </Typography>
       <Button variant='contained' text="Open Form" onClick={() => update({ formMode: homeForm.formMode === IFormMode.FORM ? IFormMode.VIEW : IFormMode.FORM })} />
+      <Button variant="contained" text="Submit" onClick={handleSubmit((data) => {
+        console.log("Form data:", data);
+      })} />
       {homeForm.formMode === IFormMode.FORM && (
         <TextField label="Search" variant="outlined" value={homeForm.note} fullWidth onChange={handleChange} />
       )}
@@ -152,6 +158,7 @@ const [loading, setLoading] = useState(false);
       />
       <DateField
         label={"Choose date"}
+        required
         error={errors.date?.message}
         value={homeForm.date ? dayjs(homeForm.date) : null}
         {...register('date', {
@@ -170,13 +177,19 @@ const [loading, setLoading] = useState(false);
         label={"Chose month"}
         error={errors.date?.message}
         value={homeForm.date ? dayjs(homeForm.date) : null}
-        {...register('date', {
-          validate: (value: Date | null) => {
-            if (!value) {
-              return 'Date is required';
+        {...register('date')}
+      />
+      <DateFieldMultiple 
+        label={"Choose date range"}
+        required
+        error={errors.dateRange?.message}
+        value={homeForm.dateRange ? [dayjs(homeForm.dateRange[0]), dayjs(homeForm.dateRange[1])] : [null, null]}
+        {...register('dateRange', {
+          validate: (value: [Date | null, Date | null] | null) => {
+            if (!value || !value[0] || !value[1]) {
+              return 'Date range is required';
             }
-
-            update({ date: dayjs(value).toDate() });
+            update({ dateRange: [dayjs(value[0]).toDate(), dayjs(value[1]).toDate()] });
             return true;
           }
         })}

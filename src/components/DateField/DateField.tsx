@@ -4,7 +4,6 @@ import { DatePicker } from "components";
 import dayjs from "dayjs";
 import { forwardRef, useEffect, useMemo, useState } from "react";
 import { UseFormRegister } from "react-hook-form";
-import { useTranslation } from "react-i18next";
 
 
 type IDateFieldProps = Omit<DatePickerProps, "onChange" | "label"> & ReturnType<UseFormRegister<any>> & {
@@ -19,7 +18,6 @@ const DateField = forwardRef<HTMLInputElement, IDateFieldProps>(function DateFie
   ref
 ) {
   const { type = "date", label, name, defaultValue, onChange, error } = props;
-  const { t } = useTranslation();
 
   const defaultValueAfterConverted = useMemo(() => {
     const d = dayjs(defaultValue);
