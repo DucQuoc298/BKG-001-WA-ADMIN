@@ -14,7 +14,7 @@ interface IDateTimePickerProps extends Omit<DatePickerProps, 'value' | 'onChange
   label?: string;
 }
 
-const DateTimePicker = ({ onChange, value, error, label, ...rest }: IDateTimePickerProps) => {
+const DateTimePicker = ({ onChange, value, error, label, slotProps, ...rest }: IDateTimePickerProps) => {
   const iStyles = inputStyles();
   const isInvalidDate = value ? !value.isValid() : false;
   const hasError = Boolean(error) || isInvalidDate;
@@ -24,6 +24,7 @@ const DateTimePicker = ({ onChange, value, error, label, ...rest }: IDateTimePic
       <FormLabel sx={{...iStyles.labelDefault}}>{label}</FormLabel>
       <DatePicker
         slotProps={{
+          ...slotProps,
           textField: {
             variant: "outlined",
             fullWidth: true,
@@ -38,6 +39,7 @@ const DateTimePicker = ({ onChange, value, error, label, ...rest }: IDateTimePic
               
             },
             error: hasError,
+            ...slotProps?.textField,
           },
         }}
         defaultValue={value as PickerValue}

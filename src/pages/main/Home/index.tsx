@@ -4,6 +4,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { IFormMode } from 'types/commom';
 import {useHome} from 'hooks';
 import { useForm } from 'react-hook-form';
+import DateField from 'components/DateField/DateField';
+import dayjs from 'dayjs';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 type Product = {
@@ -15,6 +17,7 @@ type Product = {
 interface FormValues {
   product: Product | null;
   products: Product[] | null;
+  date: Date | null;
 }
 export default function Home() {
 
@@ -30,7 +33,7 @@ export default function Home() {
   };
 const [loading, setLoading] = useState(false);
   
-  const { register, formState: { errors } } = useForm<FormValues>({defaultValues: { product: null, products: null }, mode: 'onChange'});
+  const { register, formState: { errors } } = useForm<FormValues>({defaultValues: { product: null, products: null, date: null }, mode: 'onChange'});
 
   const fetchProducts = useCallback(async ({ keyword, page}: {
       keyword: string;
@@ -146,6 +149,37 @@ const [loading, setLoading] = useState(false);
         update({ products: value as any });
         return true;
       } })}
+      />
+      <DateField
+        label={"Choose date"}
+        error={errors.date?.message}
+        value={homeForm.date ? dayjs(homeForm.date) : null}
+        {...register('date', {
+          validate: (value: Date | null) => {
+            if (!value) {
+              return 'Date is required';
+            }
+
+            update({ date: dayjs(value).toDate() });
+            return true;
+          }
+        })}
+      />
+      <DateField
+        type={"month"}
+        label={"Chose month"}
+        error={errors.date?.message}
+        value={homeForm.date ? dayjs(homeForm.date) : null}
+        {...register('date', {
+          validate: (value: Date | null) => {
+            if (!value) {
+              return 'Date is required';
+            }
+
+            update({ date: dayjs(value).toDate() });
+            return true;
+          }
+        })}
       />
       </MainCard>
     </ContainerWrapper>

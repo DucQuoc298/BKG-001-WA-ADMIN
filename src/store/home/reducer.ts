@@ -6,6 +6,7 @@ export type HomeFormData = {
   formMode: IFormMode;
   product?: string | null;
   products?: string[] | null;
+  date?: Date | null;
 }
 export interface IHomeState {
   loading: boolean;
@@ -24,6 +25,7 @@ const initialState: IHomeState = {
     note: '',
     product: null,
     products: null,
+    date: null,
   },
 };
 
