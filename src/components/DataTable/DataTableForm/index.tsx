@@ -17,7 +17,6 @@ const isKeyboardEvent = (event: any): event is React.KeyboardEvent => {
   return !!event && 'key' in event;
 };
 import useStyles from '../styles';
-import { getDefaultGridHeight } from 'utils'
 import { DataTableProps } from '..';
 import { DataTableMode, EGridColTypes, ROW_HEIGHT, getGridColumns } from 'types';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +29,7 @@ import {
 } from './components'
 
 const DataTableForm = ({
-  height,
+  height: _height,
   columns = [],
   rows = [],
   rowCount: _rowCount,
