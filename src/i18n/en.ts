@@ -50,6 +50,9 @@ export default {
     max_length: "{{0}} must be less than {{1}} characters",
     confirm_password_must_match_new_password: "Confirm password must match new password",
     invalid_email: "Invalid email address",
+    min_date: "Date cannot be before 01/01/1911",
+    invalid_date: "Invalid date",
+    at_least_one_value: "{{0}} must have at least one value",
   },
   languages: {
     EN: "English (US)",

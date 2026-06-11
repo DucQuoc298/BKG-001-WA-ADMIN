@@ -6,6 +6,8 @@ export type HomeFormData = {
   formMode: EFormMode;
   product?: string | null;
   products?: string[] | null;
+  date?: Date | null;
+  dateRange?: [Date | null, Date | null] | null;
 }
 export interface IHomeState {
   loading: boolean;
@@ -24,6 +26,8 @@ const initialState: IHomeState = {
     note: '',
     product: null,
     products: null,
+    date: null,
+    dateRange: null,
   },
 };
 
