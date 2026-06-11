@@ -7,7 +7,7 @@ export const dimension = {
   width: window.innerWidth,
   height: window.innerHeight,
 };
-export const getDefaultGridHeight = () => dimension.height - 178;
+export const getDefaultGridHeight = () => dimension.height - 280;
 
 
 export const formatDateToString = (date: Date | string, locale?: ILanguage) => {

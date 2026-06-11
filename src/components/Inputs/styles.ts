@@ -1,3 +1,4 @@
+import { maxWidth } from "@mui/system";
 
 export default () => {
   return {
@@ -36,8 +37,9 @@ export default () => {
     searchfield: {
       width: "100%",
       minWidth: "200px",
+      maxWidth: "300px",
       "& .MuiInputBase-root": {
-        height: '38px !important',
+        height: '34px !important',
         px: "6px !important",
         borderRadius: "8px",
       },

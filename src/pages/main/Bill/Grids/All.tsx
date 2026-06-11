@@ -25,7 +25,6 @@ const GridAll = ({ onButtonClick }: GridAllProps) => {
   const { t } = useTranslation();
   const { success } = useSnackbar();
   const { updateSearch, listState } = useBill();
-  console.log(listState.searchKeyword)
 
   const productStore = useMemo(() => ({
     cacheKey: 'bill-products',
@@ -91,8 +90,6 @@ const GridAll = ({ onButtonClick }: GridAllProps) => {
   const buttonsResolved = useMemo(() => {
     return resolveActionButtons(actionButtons, buttons)
   }, [buttons, t]);
-
-  console.log(buttonsResolved)
 
   return (
     <Box >
