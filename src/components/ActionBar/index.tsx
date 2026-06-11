@@ -6,6 +6,7 @@ import { SearchField } from "components/Inputs";
 import { IAction, IActionAndSub, IToolbarButton } from "types";
 import { useTranslation } from "react-i18next";
 import { MdMoreVert } from "react-icons/md";
+import styles from "./styles";
 
 interface IActionBar {
   buttons: IToolbarButton[];
@@ -134,7 +135,7 @@ const ActionBar = ({
       {/* Hidden measure layer — full buttons (icon + text) */}
       <Box
         ref={measureFullRef}
-        sx={{ display: 'flex', visibility: 'hidden', position: 'absolute', pointerEvents: 'none', overflow: 'hidden', height: 0 }}
+        sx={styles.measureLayer}
       >
         {buttons.map((button, idx) => renderFullButton(button, idx))}
       </Box>
@@ -142,7 +143,7 @@ const ActionBar = ({
       {/* Hidden measure layer — compact buttons (icon only) */}
       <Box
         ref={measureCompactRef}
-        sx={{ display: 'flex', visibility: 'hidden', position: 'absolute', pointerEvents: 'none', overflow: 'hidden', height: 0 }}
+        sx={styles.measureLayer}
       >
         {buttons.map((button, idx) => renderCompactButton(button, idx))}
       </Box>
@@ -187,7 +188,7 @@ const ActionBar = ({
       </Box>
 
       {/* Search + Filter */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box sx={styles.searchAndFilterBox}>
         <SearchField value={searchValue} onSearchChange={(value) => {
           onSearchChange?.(value ?? "")
         }} />
