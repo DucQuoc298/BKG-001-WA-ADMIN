@@ -3,10 +3,11 @@ import { Autocomplete, Button, ContainerWrapper, MainCard, TextField } from 'com
 import React, { useCallback, useMemo, useState } from 'react';
 import { IFormMode } from 'types/commom';
 import {useHome} from 'hooks';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import DateField from 'components/DateField/DateField';
 import dayjs from 'dayjs';
 import DateRangeField from 'components/DateField/DateRangeField';
+import { useTranslation } from 'react-i18next';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 type Product = {
@@ -23,6 +24,7 @@ interface FormValues {
 }
 export default function Home() {
 
+  const { t } = useTranslation();
   const { homeForm, update } = useHome();
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -35,7 +37,7 @@ export default function Home() {
   };
 const [loading, setLoading] = useState(false);
   
-  const { register, formState: { errors }, handleSubmit } = useForm<FormValues>({defaultValues: { product: null, products: null, date: null }, mode: 'onChange'});
+  const { register, control, formState: { errors }, handleSubmit, trigger } = useForm<FormValues>({defaultValues: { product: null, products: null, date: null }, mode: 'onChange'});
 
   const fetchProducts = useCallback(async ({ keyword, page}: {
       keyword: string;
@@ -173,34 +175,49 @@ const [loading, setLoading] = useState(false);
           }
         })}
       /> */}
-      <DateField
-        type={"month"}
-        label={"Chose month"}
-        error={!!errors.date}
-        helperText={errors.date?.message}
-        value={homeForm.date ? dayjs(homeForm.date) : null}
-        {...register('date')}
+      <Controller
+        name="date"
+        control={control}
+        rules={{
+          required: t('errors.required', { 0: "Date" }),
+        }}
+        render={({ field, fieldState }) => (
+          <DateField
+            required
+            label={"Chose month"}
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
+            value={field.value ? dayjs(field.value) : null}
+            onChange={(value) => {
+              field.onChange(value?.toDate() ?? null);
+            }}
+            onBlur={field.onBlur}
+          />
+        )}
       />
-      <DateRangeField 
-        label={"Choose date range"}
-        required
-        error={!!errors.dateRange}
-        value={homeForm.dateRange ? [homeForm.dateRange[0] ? dayjs(homeForm.dateRange[0]) : null, homeForm.dateRange[1] ? dayjs(homeForm.dateRange[1]) : null] : [null, null]}
-        {...register('dateRange', {
-          validate: (value: [Date | null, Date | null] | null) => {
-            if (!value || (!value[0] && !value[1])) {
-              return 'At least one date is required';
-            }
-
-            update({
-              dateRange: [
-                value[0] ? dayjs(value[0]).toDate() : null,
-                value[1] ? dayjs(value[1]).toDate() : null,
-              ],
-            });
+      <Controller 
+        name="dateRange"
+        control={control}
+        rules={{
+          validate: (value) => {
+            if (!value?.[0] && !value?.[1]) return t('errors.at_least_one_value', { 0: "Date Range" });
             return true;
-          }
-        })}
+          },
+        }}
+        render={({ field, fieldState }) => (
+          <DateRangeField 
+            label={"Choose date range"}
+            required
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
+            value={field.value ? [field.value[0] ? dayjs(field.value[0]) : null, field.value[1] ? dayjs(field.value[1]) : null] : [null, null]}
+            onChange={(value) => {
+              field.onChange([value[0]?.toDate() ?? null, value[1]?.toDate() ?? null]);
+              trigger('dateRange');
+            }}
+            onBlur={field.onBlur}
+          />
+        )}
       />
       </MainCard>
     </ContainerWrapper>

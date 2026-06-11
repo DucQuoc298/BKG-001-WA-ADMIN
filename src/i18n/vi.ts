@@ -47,6 +47,9 @@ export default {
     max_length: "{{0}} phải ít hơn {{1}} ký tự",
     confirm_password_must_match_new_password: "Xác nhận mật khẩu phải khớp với mật khẩu mới",
     invalid_email: "Email không hợp lệ",
+    min_date: "Ngày không được trước 01/01/1911",
+    invalid_date: "Ngày không hợp lệ",
+    at_least_one_value: "{{0}} phải có ít nhất một giá trị",
   },
   languages: {
     EN: "English (US)",
