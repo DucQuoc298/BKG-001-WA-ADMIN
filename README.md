@@ -39,6 +39,55 @@ graph LR
 - **Vai trò**: Cho phép phát triển các form/mô-đun độc lập bằng React + TypeScript.
 - **Công cụ đóng gói (Bundler)**: Sử dụng **Esbuild** để compile và đóng gói mã nguồn thành định dạng ESM (`.mjs`) độc lập, tự động loại bỏ các thư viện đã có sẵn ở Host App (externalize React, MUI, etc.) và xuất bản trực tiếp vào thư mục `public/plugins/` của Host App.
 
+### 1.3 Cấu trúc thư mục dự án (Project Structure)
+
+```text
+react-template/ (Host App - Thư mục gốc)
+├── .cert/                     # Khóa SSL tự cấp để chạy HTTPS cục bộ (key.pem, cert.pem)
+├── public/                    # Thư mục chứa asset tĩnh
+│   └── plugins/               # Thư mục lưu trữ tài nguyên plugin chạy động
+│       ├── manifest.json      # File cấu hình đăng ký danh sách các plugin hiện có
+│       └── *.mjs              # Các file plugin sau khi được biên dịch (VD: demo-form.mjs)
+├── src/                       # Source code của ứng dụng chính
+│   ├── assets/                # Ảnh, font và style tĩnh
+│   ├── components/            # Các UI component dùng chung có tính tái sử dụng cao
+│   │   ├── Autocomplete/      # Thành phần Autocomplete tuyển chọn
+│   │   ├── Buttons/           # Nút bấm tùy chỉnh
+│   │   ├── DataTable/         # Bảng hiển thị dữ liệu nâng cao
+│   │   ├── Dialog/            # Hộp thoại modal
+│   │   ├── Inputs/            # Các trường nhập liệu tiêu chuẩn
+│   │   ├── MainCard.tsx       # Component khung bao bọc (Card) chuẩn của template
+│   │   ├── Loader.tsx         # Hiệu ứng tải trang (Spinner/Progress)
+│   │   └── Snackbar.tsx       # Hiển thị thông báo Toast nhanh
+│   ├── contexts/              # Các Context API (ConfigContext, Theme...)
+│   ├── hooks/                 # Custom React Hooks dùng chung (useForm, useLocalStorage...)
+│   ├── i18n/                  # Cấu hình đa ngôn ngữ (vi, en...)
+│   ├── layout/                # Layout của hệ thống (MainLayout gồm Header, Drawer, Footer)
+│   ├── menu-items/            # Khai báo cấu trúc sidebar menu của Admin
+│   ├── pages/                 # Các trang tĩnh được định nghĩa sẵn
+│   │   ├── auth/              # Các trang Login, Register...
+│   │   └── main/              # Các trang chính như Home, Bill, Invoice...
+│   ├── routes/                # Cấu hình định tuyến (React Router)
+│   ├── runtime/               # Engine chạy plugin động (Plugin Loader, SDK, Declarations)
+│   │   ├── LoadFormRuntime/   # Component xử lý tải plugin & render dynamic component
+│   │   ├── AppPlugin.tsx      # Điểm đăng ký và map `plugin.id` với SDK Runtime tương ứng
+│   │   ├── services/          # Các service hỗ trợ runtime
+│   │   └── types/             # Định nghĩa SDK và API được cung cấp cho plugin (MUI, utils, components)
+│   ├── store/                 # Cấu hình Redux Store, Middleware, Root Saga
+│   ├── themes/                # Định nghĩa theme tùy chỉnh cho Material UI
+│   ├── types/                 # Các TypeScript interface dùng chung toàn app
+│   └── utils/                 # Các hàm tiện ích dùng chung (format, helper...)
+│
+└── plugin-form-builder/       # Workspace phát triển & build plugin động độc lập
+    ├── src/
+    │   └── plugins/           # Chứa source code của từng plugin (mỗi plugin là 1 folder)
+    │       ├── demo-form/     # Plugin mẫu mặc định
+    │       └── ...
+    ├── scripts/               # Các script build, watch và publish plugin
+    ├── dist/                  # Output file sau khi build (các file .mjs tạm thời)
+    └── package.json           # Danh sách các script build của builder
+```
+
 ---
 
 ## 2. Yêu cầu xử lý dữ liệu (Data Processing Requirements)
