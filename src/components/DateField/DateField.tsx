@@ -10,15 +10,16 @@ type IDateFieldProps = Omit<DatePickerProps, "onChange" | "label"> & ReturnType<
   type?: "date" | "month",
   textFieldProps?: Omit<TextFieldProps, "onChange" | "onBlur">,
   label?: string,
-  error?: string,
+  error?: boolean,
   helperText?: string,
+  onBlur?: () => void,
 }
 
 const DateField = forwardRef<HTMLInputElement, IDateFieldProps>(function DateField(
   props,
   ref
 ) {
-  const { type = "date", label, name, defaultValue, onChange, error, helperText } = props;
+  const { type = "date", label, defaultValue, onChange, onBlur, error, helperText } = props;
 
   const defaultValueAfterConverted = useMemo(() => {
     const d = dayjs(defaultValue);
@@ -30,44 +31,12 @@ const DateField = forwardRef<HTMLInputElement, IDateFieldProps>(function DateFie
   const [value, setValue] = useState(defaultValueAfterConverted);
 
   const handleChange = (newValue) => {
-    if (!newValue) {
-      onChange?.({
-        target: {
-          name,
-          value: null
-        }
-      })
-      setValue(null);
-      return;
-    }
-
-    onChange?.({
-      target: {
-        name,
-        value: newValue
-      }
-    })
     setValue(newValue);
+    onChange?.(newValue)
   }
 
-  const handleBlur = (_e) => {
-    if (value !== null) {
-      onChange?.({
-        target: {
-          name,
-          value
-        },
-        type: "blur"
-      })
-    } else {
-      onChange?.({
-        target: {
-          name,
-          value: null,
-        },
-        type: "blur",
-      });
-    }
+  const handleBlur = () => {
+    onBlur?.();
   }
 
   useEffect(() => {
@@ -86,9 +55,7 @@ const DateField = forwardRef<HTMLInputElement, IDateFieldProps>(function DateFie
       helperText={helperText}
       slotProps={{
         textField: {
-          onBlur: (e) => {
-            handleBlur(e);
-          },
+          onBlur: handleBlur,
         }
       }}
       views={type === "month" ? ['year', 'month'] : undefined}

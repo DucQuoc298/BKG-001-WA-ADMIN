@@ -1,33 +1,49 @@
 import React, { useState } from "react";
 import inputStyles from "components/Inputs/styles";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import 'dayjs/locale/en-gb';
 import { FormHelperText, FormLabel, IconButton, InputAdornment } from "@mui/material";
-import { DateRangePickerProps, DateRangePicker } from "@mui/x-date-pickers-pro";
-import { PickerRangeValue } from "@mui/x-date-pickers/internals";
+import { DateRangePickerProps, DateRangePicker, DateRangeValidationError } from "@mui/x-date-pickers-pro";
 import Icons, { IconName } from "assets/Icon";
+import { useTranslation } from "react-i18next";
 
 interface IDateRangePickerProps extends Omit<DateRangePickerProps, 'value' | 'onChange'> {
   onChange: (date: [Dayjs | null, Dayjs | null]) => void;
   value: [Dayjs | null, Dayjs | null];
-  error?: string;
+  error?: boolean;
   label?: string;
   required?: boolean;
+  helperText?: string;
 }
 
-const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, required, ...rest }: IDateRangePickerProps) => {
+const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, required, helperText, minDate = dayjs("1911-01-01"), onError, ...rest }: IDateRangePickerProps) => {
   const iStyles = inputStyles();
-  const hasBothDates = value?.[0] != null && value?.[1] != null;
-  const isInvalidRange = hasBothDates && (!value[0]?.isValid() || !value[1]?.isValid());
-  const hasError = Boolean(error) || isInvalidRange;
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const [dateRangeError, setDateRangeError] = useState<DateRangeValidationError>([null, null]);
+
+  const getValidationMessage = (reason: DateRangeValidationError[number]) => {
+    if (reason === 'minDate') return t("errors.min_date");
+    if (reason === 'invalidDate') return t("errors.invalid_date");
+    return "";
+  };
+
+  const getHelperText = (position: 'start' | 'end') => {
+    if (helperText) return helperText;
+    const e = dateRangeError[position === 'start' ? 0 : 1];
+    return getValidationMessage(e);
+  };
+
+  const getFieldError = (position: 'start' | 'end') =>
+    Boolean(error) || dateRangeError[position === 'start' ? 0 : 1] !== null;
 
   return (
     <LocalizationProvider adapterLocale={"en-gb"} dateAdapter={AdapterDayjs}>
       <FormLabel sx={{...iStyles.labelDefault}}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
       <DateRangePicker
+        minDate={minDate}
         slotProps={{
           ...slotProps,
           textField: ({ position }) => ({
@@ -69,6 +85,8 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
             label: "",
             variant: "outlined",
             fullWidth: true,
+            error: getFieldError(position),
+            helperText: getHelperText(position),
             sx: { 
               "& .MuiPickersOutlinedInput-root": { 
                 ...iStyles.textfield,
@@ -87,20 +105,19 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
                 pointerEvents: "auto",
               },
             },
-            error: hasError,
           }),
         }}
-        defaultValue={value as PickerRangeValue}
         value={value}
         open={open}
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         onChange={onChange}
+        onError={(newError, context) => {
+          setDateRangeError(newError);
+          onError?.(newError, context);
+        }}
         {...rest}
       />
-      {error && <FormHelperText error id="helper-text-company-signup">
-        {error}
-      </FormHelperText>}
     </LocalizationProvider>
   );
 };
