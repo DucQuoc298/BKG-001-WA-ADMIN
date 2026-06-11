@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useMemo, useState } from "react";
-import { Box, IconButton, Menu, MenuItem, Stack } from "@mui/material";
+import { Box, IconButton, Menu, MenuItem, Stack, Tooltip } from "@mui/material";
 import Icons, { IconName } from "assets/Icon";
 import { Button } from "components/Buttons";
 import { SearchField } from "components/Inputs";
@@ -13,47 +13,73 @@ interface IActionBar {
   searchField?: boolean;
   filterButton?: boolean;
   onSearchChange?: (value: string) => void;
+  onFilterClick?: () => void;
   searchValue?: string;
 }
+
+type DisplayMode = 'full' | 'compact' | 'overflow';
 
 const ActionBar = ({
   buttons,
   onButtonClick,
   onSearchChange,
+  onFilterClick,
   searchValue,
 }: IActionBar) => {
 
   const { t } = useTranslation();
 
-  // --- Responsive collapse logic (same pattern as ToolBarLocal) ---
+  // --- Responsive collapse logic ---
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const measureRef = React.useRef<HTMLDivElement>(null);
+  const measureFullRef = React.useRef<HTMLDivElement>(null);
+  const measureCompactRef = React.useRef<HTMLDivElement>(null);
 
+  const [displayMode, setDisplayMode] = useState<DisplayMode>('full');
   const [visibleCount, setVisibleCount] = useState(buttons.length);
 
   useLayoutEffect(() => {
-    if (!containerRef.current || !measureRef.current) return;
+    if (!containerRef.current || !measureFullRef.current || !measureCompactRef.current) return;
 
     const ro = new ResizeObserver(() => {
-      if (!containerRef.current || !measureRef.current) return;
+      if (!containerRef.current || !measureFullRef.current || !measureCompactRef.current) return;
 
       const containerW = containerRef.current.offsetWidth;
-      // Reserve space for the right-side search + filter section (~300px) and the "more" icon (~40px)
-      const available = containerW - 360;
-      let used = 0;
-      let count = 0;
+      const reserved = 260;
+      const available = containerW - reserved;
+      const total = buttons.length;
 
-      const nodes = measureRef.current.childNodes as NodeListOf<HTMLElement>;
-      nodes.forEach((node) => {
-        used += node.offsetWidth;
-        if (used <= available) count++;
+      // 1. Try full mode (icon + text)
+      let fullUsed = 0;
+      let fullCount = 0;
+      const fullNodes = measureFullRef.current.childNodes as NodeListOf<HTMLElement>;
+      fullNodes.forEach((node) => {
+        fullUsed += node.offsetWidth;
+        if (fullUsed <= available) fullCount++;
       });
 
-      // If all buttons fit, show them all. Otherwise, hide at least 2
-      // (since the "Actions" dropdown itself takes space like a button).
-      const total = buttons.length;
-      const nextCount = count >= total ? total : Math.max(0, Math.min(count, total - 2));
-      setVisibleCount((prev) => (prev === nextCount ? prev : nextCount));
+      if (fullCount >= total) {
+        setDisplayMode('full');
+        setVisibleCount(total);
+        return;
+      }
+
+      // 2. Try compact mode (icon only)
+      let compactUsed = 0;
+      let compactCount = 0;
+      const compactNodes = measureCompactRef.current.childNodes as NodeListOf<HTMLElement>;
+      compactNodes.forEach((node) => {
+        compactUsed += node.offsetWidth;
+        if (compactUsed <= available) compactCount++;
+      });
+
+      if (compactCount >= total) {
+        setDisplayMode('compact');
+        setVisibleCount(total);
+        return;
+      }
+      const nextCount = Math.max(0, Math.min(compactCount, total - 2));
+      setDisplayMode('overflow');
+      setVisibleCount(nextCount);
     });
 
     ro.observe(containerRef.current);
@@ -67,45 +93,73 @@ const ActionBar = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
 
-  const renderButton = (button: IToolbarButton, idx: number) => (
+  const getButtonLabel = (button: IToolbarButton) => button.label ?? t(`button.${button.key}`);
+  const getButtonColor = (button: IToolbarButton) =>
+    button.key === IAction.DELETE ? 'error' : (button.color ?? 'primary');
+
+  // Full button: icon + text
+  const renderFullButton = (button: IToolbarButton, idx: number) => (
     <Button
       variant="text"
       key={`action-${button.key}-${idx}`}
-      text={button.label ?? t(`button.${button.key}`)}
-      onClick={() => {
-        onButtonClick?.(button.key);
-      }}
+      text={getButtonLabel(button)}
+      onClick={() => onButtonClick?.(button.key)}
       startIcon={
-        button.icon
-          ? <Icons name={button.icon} size={12} />
-          : undefined
+        button.icon ? <Icons name={button.icon} size={12} /> : undefined
       }
-      color={button.key === IAction.DELETE ? 'error' : (button.color ?? 'primary') as any}
+      color={getButtonColor(button) as any}
       sx={{ whiteSpace: 'nowrap' }}
     />
   );
 
+  // Compact button: icon only with tooltip
+  const renderCompactButton = (button: IToolbarButton, idx: number) => (
+    <Tooltip title={getButtonLabel(button)} key={`compact-${button.key}-${idx}`}>
+      <IconButton
+        size="small"
+        onClick={() => onButtonClick?.(button.key)}
+        color={getButtonColor(button) as any}
+        sx={{ mx: 0.25 }}
+      >
+        {button.icon
+          ? <Icons name={button.icon} size={16} />
+          : <span style={{ fontSize: 12, fontWeight: 500 }}>{getButtonLabel(button).charAt(0)}</span>
+        }
+      </IconButton>
+    </Tooltip>
+  );
+
   return (
     <Stack ref={containerRef} direction="row" spacing={1} sx={{ my: 1, justifyContent: 'space-between' }}>
-      {/* Hidden measure layer — renders all buttons offscreen to measure widths */}
+      {/* Hidden measure layer — full buttons (icon + text) */}
       <Box
-        ref={measureRef}
+        ref={measureFullRef}
         sx={{ display: 'flex', visibility: 'hidden', position: 'absolute', pointerEvents: 'none', overflow: 'hidden', height: 0 }}
       >
-        {buttons.map((button, idx) => renderButton(button, idx))}
+        {buttons.map((button, idx) => renderFullButton(button, idx))}
+      </Box>
+
+      {/* Hidden measure layer — compact buttons (icon only) */}
+      <Box
+        ref={measureCompactRef}
+        sx={{ display: 'flex', visibility: 'hidden', position: 'absolute', pointerEvents: 'none', overflow: 'hidden', height: 0 }}
+      >
+        {buttons.map((button, idx) => renderCompactButton(button, idx))}
       </Box>
 
       {/* Visible buttons */}
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {visible.map((button, idx) => renderButton(button, idx))}
+        {displayMode === 'full' && visible.map((button, idx) => renderFullButton(button, idx))}
+        {displayMode !== 'full' && visible.map((button, idx) => renderCompactButton(button, idx))}
         {hidden.length > 0 && (
           <>
-            <Button
-              variant="text"
-              text="Actions"
+            <IconButton
+              size="small"
               onClick={(e) => setAnchorEl(e.currentTarget)}
-              startIcon={<MdMoreVert size={18} />}
-            />
+              sx={{ mx: 0.25 }}
+            >
+              <MdMoreVert size={18} />
+            </IconButton>
             <Menu
               anchorEl={anchorEl}
               open={menuOpen}
@@ -124,7 +178,7 @@ const ActionBar = ({
                   }}
                 >
                   {button.icon && <Icons name={button.icon} size={14} />}
-                  {button.label ?? t(`button.${button.key}`)}
+                  {getButtonLabel(button)}
                 </MenuItem>
               ))}
             </Menu>
@@ -137,9 +191,11 @@ const ActionBar = ({
         <SearchField value={searchValue} onSearchChange={(value) => {
           onSearchChange?.(value ?? "")
         }} />
-        <IconButton onClick={() => { console.log("filter") }}>
-          <Icons name={IconName.FILTER} size={16} />
-        </IconButton>
+        {onFilterClick && (
+          <IconButton onClick={onFilterClick}>
+            <Icons name={IconName.FILTER} size={16} />
+          </IconButton>
+        )}
       </Box>
     </Stack>
   )

@@ -145,7 +145,6 @@ export default function Invoice() {
       updateTab('view'); // Quay lại trang danh sách
     }, 1200);
   }, [invoiceForm, formState, setSaving, success, toastError, resetForm, updateTab]);
-  console.log(formState);
   return (
     <ContainerWrapper
       toolbarLocalProps={{

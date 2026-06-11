@@ -6,6 +6,7 @@ import { GridActive, GridAll } from './Grids';
 import GridArchive from './Grids/Archive';
 import { IconName } from 'assets/Icon';
 import BillForm from './Form/Form';
+import { useSnackbar } from 'hooks';
 enum EKeyTab {
   All = "all",
   ACTIVE = "active",
@@ -19,7 +20,7 @@ export default function Bill() {
     updateTab,
     openForm
   } = useBill()
-
+  const { success } = useSnackbar();
   const { activeTab } = listState;
   const { mode } = formState;
   const handleTabChange = (newValue: EKeyTab) => {
@@ -32,11 +33,13 @@ export default function Bill() {
     { key: EKeyTab.ARCHIVE, label: "Archive", count: 4 },
   ];
 
-  const handleActionClick = useCallback((actionKey: IAction | IActionAndSub) => {
+  const handleActionClick = useCallback((actionKey: IAction | IActionAndSub, row?: any) => {
     if (actionKey === IAction.NEW) {
       openForm(EFormMode.FORM);
+    } else if (actionKey === IAction.DELETE) {
+      success(`Xóa thành công hóa đơn #${row.id} (Giả lập)`);
     }
-  }, [openForm])
+  }, [openForm, success])
   return (
     <ContainerWrapper
       toolbarLocalProps={{
@@ -65,7 +68,7 @@ export default function Bill() {
       </MainCard>)}
       {mode === EFormMode.FORM && (
         <BillForm
-
+          handleActionClick={handleActionClick}
         />
       )}
     </ContainerWrapper>

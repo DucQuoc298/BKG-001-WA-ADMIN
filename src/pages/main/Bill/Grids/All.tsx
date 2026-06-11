@@ -69,6 +69,7 @@ const GridAll = ({ onButtonClick }: GridAllProps) => {
   ];
 
   const handleActionClick = useCallback((actionKey: any, row: any) => {
+    console.log(actionKey, row);
     if (actionKey === 'form') {
       success(`Đã tải thông tin hóa đơn #${row.id} lên Form.`);
     } else if (actionKey === 'delete') {
