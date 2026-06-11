@@ -38,46 +38,101 @@ export const styles = {
   },
   grid: {
     container: {
-      rowSpacing: 4.5,
+      rowSpacing: 3,
       columnSpacing: 2.75
     },
     gridItem1Columns: {
-      size: 1
+      size: {
+        xs: 3,
+        sm: 2,
+        md: 1,
+        lg: 1
+      }
     },
     gridItem2Columns: {
-      size: 2
+      size: {
+        xs: 4,
+        sm: 4,
+        md: 2,
+        lg: 2
+      }
     },
     gridItem3Columns: {
-      size: 3
+      size: {
+        xs: 12,
+        sm: 6,
+        md: 3,
+        lg: 3
+      }
     },
     gridItem4Columns: {
-      size: 4
+      size: {
+        xs: 12,
+        sm: 6,
+        md: 4,
+        lg: 4
+      }
     },
     gridItem5Columns: {
-      size: 5
+      size: {
+        xs: 12,
+        sm: 6,
+        md: 5,
+        lg: 5
+      }
     },
     gridItem6Columns: {
-      size: 6
+      size: {
+        xs: 12,
+        sm: 6,
+        md: 6,
+        lg: 6
+      }
     },
     gridItem7Columns: {
-      size: 7
+      size: {
+        xs: 12,
+        sm: 6,
+        md: 7,
+        lg: 7
+      }
     },
     gridItem8Columns: {
-      size: 8
+      size: {
+        xs: 12,
+        sm: 6,
+        md: 8,
+        lg: 8
+      }
     },
     gridItem9Columns: {
-      size: 9
+      size: {
+        xs: 12,
+        sm: 6,
+        md: 9,
+        lg: 9
+      }
     },
     gridItem10Columns: {
-      size: 10
+      size: {
+        xs: 8,
+        sm: 8,
+        md: 10,
+        lg: 10
+      }
     },
     gridItem11Columns: {
-      size: 11
+      size: {
+        xs: 9,
+        sm: 10,
+        md: 11,
+        lg: 11
+      }
     },
     gridItem12Columns: {
       size: 12
     }
-  
+
   },
   modal: {
     position: 'absolute',

@@ -5,6 +5,7 @@ import { IAction, IActionAndSub, EFormMode, ITab } from 'types';
 import { GridActive, GridAll } from './Grids';
 import GridArchive from './Grids/Archive';
 import { IconName } from 'assets/Icon';
+import BillForm from './Form/Form';
 enum EKeyTab {
   All = "all",
   ACTIVE = "active",
@@ -63,9 +64,9 @@ export default function Bill() {
         )}
       </MainCard>)}
       {mode === EFormMode.FORM && (
-        <MainCard>
-          <Button text="Back" onClick={() => { openForm(EFormMode.LIST) }} />
-        </MainCard>
+        <BillForm
+
+        />
       )}
     </ContainerWrapper>
   );

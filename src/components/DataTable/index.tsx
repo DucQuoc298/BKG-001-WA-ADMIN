@@ -4,6 +4,7 @@ import { IGridColDef } from 'types/components/grid';
 import { DataGridProProps, GridCallbackDetails, GridPaginationModel, GridRowSelectionModel } from '@mui/x-data-grid-pro';
 import { IconName } from 'assets/Icon';
 import { DataTableMode, IAction, DataTableVariant } from 'types';
+import DataTableForm from './DataTableForm';
 
 export interface ITableAction {
   key: IAction;
@@ -42,8 +43,8 @@ export type DataTableProps = Omit<DataGridProProps, 'columns'> & {
 
 const DataTable = forwardRef<any, DataTableProps>(({ variant, ...props }, ref) => {
   return variant === DataTableVariant.VIEW
-    ? <DataTableView {...props} apiRef={ref as any} /> : null
-  // : <DataTableForm {...props} apiRef={ref as any} />;
+    ? <DataTableView {...props} apiRef={ref as any} />
+    : <DataTableForm {...props} apiRef={ref as any} />;
 });
 
 DataTable.displayName = 'DataTable';

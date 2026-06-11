@@ -17,7 +17,7 @@ export default () => {
         color: "red",
       },
       "& .MuiInputBase-input": {
-        padding: "10px 10px",
+        padding: "6px 10px",
         height: '24px !important',
       },
       "& .MuiOutlinedInput-root": {

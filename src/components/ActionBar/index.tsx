@@ -39,7 +39,7 @@ const ActionBar = ({
 
       const containerW = containerRef.current.offsetWidth;
       // Reserve space for the right-side search + filter section (~300px) and the "more" icon (~40px)
-      const available = containerW - 340;
+      const available = containerW - 360;
       let used = 0;
       let count = 0;
 
@@ -49,7 +49,10 @@ const ActionBar = ({
         if (used <= available) count++;
       });
 
-      const nextCount = Math.max(0, count);
+      // If all buttons fit, show them all. Otherwise, hide at least 2
+      // (since the "Actions" dropdown itself takes space like a button).
+      const total = buttons.length;
+      const nextCount = count >= total ? total : Math.max(0, Math.min(count, total - 2));
       setVisibleCount((prev) => (prev === nextCount ? prev : nextCount));
     });
 
@@ -78,6 +81,7 @@ const ActionBar = ({
           : undefined
       }
       color={button.key === IAction.DELETE ? 'error' : (button.color ?? 'primary') as any}
+      sx={{ whiteSpace: 'nowrap' }}
     />
   );
 

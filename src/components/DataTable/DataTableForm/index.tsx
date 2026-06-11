@@ -1,328 +1,239 @@
 import { Grid, SxProps } from '@mui/material';
-import {
-  DataGridPro,
-  GridCellModesModel,
-  GridCellParams,
-  useGridApiRef,
-  DataGridProProps,
-  GridPaginationModel,
-  GridRowOrderChangeParams,
-  GridRowSelectionModel,
-  GridCallbackDetails,
-  GridCellModes,
-} from '@mui/x-data-grid-pro';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { DataGridPro, DataGridProProps, useGridApiRef, GridActionsCellItem, GridRowParams } from '@mui/x-data-grid-pro';
+import { useMemo, useState } from 'react';
 import useStyles from '../styles';
-import { IGridColDef } from 'types/components/grid';
+import { Pagination } from '../components';
+import { getDefaultGridHeight } from 'utils'
+import { DataTableProps } from '..';
+import { DataTableMode, ROW_HEIGHT, getGridColumns } from 'types';
 import { useTranslation } from 'react-i18next';
-import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
-import { date2Srting, datetime2Srting, number2String } from 'utils';
-import { ILanguage } from 'types/commom';
-import CellEditNumber from '../CellEditNumber';
-import CellEditText from '../CellEditText';
-
-
-type IDataTable = DataGridProProps & {
-  height?: number;
-  // buttons?: IButton[];
-  // rightBtns?: IButton[];
-  // getActionBars?: (rowId: any) => IButton[];
-  // actionBars?: IButton[];
-  // groupActionBars?: {
-  //   label: string,
-  //   buttons: IButton[]
-  // }[];
-  useI18n?: boolean;
-  autoRowHeight?: boolean;
-  parameters?: any;
-  readOnlyCells?: {
-    row: any;
-    field?: string;
-  }[];
-  tableId?: string;
-  forceEnableButtonsHeader?: boolean;
-  handleButtonClick?: (key: string, rowId: any | any[]) => void;
-  handleItemPaginationClick?: (key: string) => void;
-  handlePagination?: (data: GridPaginationModel) => void;
-  handleRowOrderChange?: (params: GridRowOrderChangeParams) => void;
-  getData?: (params?: any, onSuccess?: (data) => void) => void;
-  onProcessRowUpdate?: (row?) => void;
-  addRowByTabKey?: () => void;
-  handleDialogAdd?: (params) => void;
-  handleRowSelectionModelChange?: (
-    rowSelectionModel: GridRowSelectionModel,
-    details: GridCallbackDetails<any>
-  ) => void;
-  onGridEditing?: (isEditing: boolean) => void;
-  type?: 'default' | 'view' | 'edit';
-  autoHeight?: boolean;
-}
-
-const currencies = [
-  {
-    currencycode: "USD",
-    decimalplace: "2",
-  },
-  {
-    currencycode: "JPY",
-    decimalplace: "0",
-  },
-];
-
-const info = {
-  lbllanguage: "en"
-}
+import Icons from 'assets/Icon';
+import { useDataTable } from 'hooks';
 
 const DataTableForm = ({
-  columns,
-  rows,
-  apiRef: propApiRef,
-  onCellClick,
-  onGridEditing,
-  readOnlyCells = [],
-  tableId,
-  onProcessRowUpdate,
-}: IDataTable) => {
+  height,
+  columns = [],
+  rows = [],
+  rowCount,
+  initialState,
+  paginationModel: defaultPagination,
+  autoRowHeight,
+  checkboxSelection,
+  handleRowSelectionModelChange,
+  handlePagination,
+  disableRowSelectionOnClick = false,
+  actionBars,
+  handleActionClick,
+  store,
+  ...props
+}: DataTableProps) => {
+  const defaultApiRef = useGridApiRef();
+  const apiRef = props.apiRef ?? defaultApiRef;
+  const { t } = useTranslation();
+
+  // 1. Integrate useDataTable hook
+  const {
+    rows: storeRows,
+    rowCount: storeRowCount,
+    loading: storeLoading,
+    paginationModel: storePaginationModel,
+    handlePaginationModelChange,
+    rowSelectionModel: storeRowSelectionModel,
+    setRowSelectionModel: setStoreRowSelectionModel,
+  } = useDataTable({
+    cacheKey: store?.cacheKey ?? '',
+    mode: store?.mode ?? DataTableMode.LOCAL,
+    data: store?.data,
+    params: store?.params,
+    fnGetData: store?.fnGetData,
+    initialPageSize: defaultPagination?.pageSize ?? initialState?.pagination?.paginationModel?.pageSize ?? 14,
+    initialPage: defaultPagination?.page ?? initialState?.pagination?.paginationModel?.page ?? 0,
+  });
+
+  //pagination
+  const [paginationModel, setPaginationModel] = useState(
+    defaultPagination ?? {
+      pageSize: initialState?.pagination?.paginationModel?.pageSize ?? 14,
+      page: initialState?.pagination?.paginationModel?.page ?? 0,
+    }
+  );
+
+  const hasStore = !!store;
+  const activeRows = hasStore ? storeRows : rows;
+  const activeRowCount = hasStore ? storeRowCount : rowCount;
+  const activePaginationModel = hasStore ? storePaginationModel : paginationModel;
+  const activeLoading = hasStore ? storeLoading : props.loading;
+
+  //styles
   const styles = useStyles();
-  const { t, i18n } = useTranslation();
-  const internalApiRef = useGridApiRef();
-  const apiRef = propApiRef ?? internalApiRef;
-  const [dataRows, setDataRows] = useState(rows);
-  const refCellModesModel = useRef<GridCellModesModel>({});
-  const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
+  const dataGridStyles = useMemo(() => ({
+    ...styles.dataTable,
 
-  const buildColumns = useMemo(() => {
-    const colItems: IGridColDef[] = (columns as IGridColDef[]).map((col: IGridColDef) => {
-      const {
-        type,
-        valueFormatter,
-        valueGetter,
-        renderEditCell,
-        decimalPlaces = 2,
-        useI18n = true,
-        formatNumberByCurrency = false,
-        absNumber = false,
-        ...colProps
-      } = {
-        ...col
-      } as IGridColDef;
+    ...(activeRows.length === 0 ? {
+      "& .MuiDataGrid-virtualScroller": {
+        overflowY: "hidden !important",
+      },
+    } : {})
+  }), [activeRows, styles.dataTable]) as SxProps;
 
-      const width = colProps.width
-        ? colProps.width
-        : type === "date"
-          ? 110
-          : (type === "dateTime" ? 150 : 100);
-      const title = col.headerName
-        ? useI18n
-          ? t(col.headerName)
-          : col.headerName
-        : "";
+  //select rows
+  const [localRowSelectionModel, setLocalRowSelectionModel] = useState<any>(props.rowSelectionModel ?? { type: 'include', ids: new Set() });
+  const activeRowSelectionModel = props.rowSelectionModel !== undefined
+    ? props.rowSelectionModel
+    : (hasStore && storeRowSelectionModel ? storeRowSelectionModel : localRowSelectionModel);
 
-      if (type === "checkbox") {
-        return {
-          ...colProps,
-          headerName: title,
-          type: type as any,
-          width,
-          align: 'center',
-          renderCell: (params) => params.value === 'Y'
-            ? <CheckBox color="action" />
-            : <CheckBoxOutlineBlank color="action" />
-        }
-      }
+  // props
+  const gridProps: Partial<DataGridProProps> = {
+    localeText: {
+      noRowsLabel: t("grid.no_row_label"),
+    },
+    disableColumnMenu: true,
+    headerFilters: false,
+    isCellEditable: () => false,
+    hideFooterSelectedRowCount: true,
+    keepNonExistentRowsSelected: true,
+    ...props,
+  };
 
-      return {
-        ...colProps,
-        headerName: title,
-        type,
-        width,
-        valueGetter: valueGetter ?? ((value: any, row: any) => {
-          const field = colProps.field as string;
-          if (!field) return value;
-          let result
+  const [prevDefaultPagination, setPrevDefaultPagination] = useState(defaultPagination);
 
-          if (field.includes(".")) {
-            const fields = field.split(".");
-            result = row?.[fields[0]]?.[fields[1]];
+  if (JSON.stringify(defaultPagination) !== JSON.stringify(prevDefaultPagination)) {
+    setPrevDefaultPagination(defaultPagination);
+    if (defaultPagination) {
+      setPaginationModel(defaultPagination);
+    }
+  }
+
+  //customization
+  const CustomPagination = () => {
+    return (
+      <Pagination
+        totalRowCount={activeRowCount}
+        paginationModel={activePaginationModel}
+        handleChangePage={(page) => {
+          if (page < 0 || page * activePaginationModel.pageSize > (activeRowCount ?? 0))
+            return;
+          if (hasStore) {
+            handlePaginationModelChange({ ...activePaginationModel, page });
           } else {
-            result = row?.[field];
+            setPaginationModel((prev) => {
+              const newModel = { ...prev, page };
+              handlePagination?.(newModel);
+              return newModel;
+            });
           }
-
-          if (
-            (type === "date" ||
-              type === "dateTime") &&
-            typeof result === "string"
-          ) {
-            return new Date(result);
+        }}
+        handleChangePageSize={(pageSize) => {
+          if (hasStore) {
+            handlePaginationModelChange({ page: 0, pageSize });
+          } else {
+            setPaginationModel((prev) => {
+              const newModel = { ...prev, page: 0, pageSize };
+              handlePagination?.(newModel);
+              return newModel;
+            });
           }
-
-          return result;
-        }),
-        valueFormatter: valueFormatter ?? ((value: string | number | Date, row) => {
-          if (type === "date") {
-            const l = info
-              ? info.lbllanguage
-                ? info.lbllanguage
-                : ILanguage.EN
-              : ILanguage.EN;
-            return date2Srting(value as Date, l as ILanguage);
-          }
-          if (type === "dateTime") {
-            const l = info
-              ? info.lbllanguage
-                ? info.lbllanguage
-                : ILanguage.EN
-              : ILanguage.EN;
-            return datetime2Srting(value as Date, l as ILanguage);
-          }
-          if (type === "number" && typeof value === "number") {
-            const v = absNumber ? Math.abs(value) : value;
-            if (formatNumberByCurrency && row?.currencycode) {
-              const c = currencies.filter(
-                (x) => x.currencycode === row.currencycode
-              );
-              if (c.length > 0 && c[0].decimalplace)
-                return number2String(v, parseInt(c[0].decimalplace));
-              else return number2String(v, decimalPlaces);
-            }
-            return number2String(v, decimalPlaces);
-          }
-
-          if (col.translateContent && typeof value === "string" && value?.trim() !== "") {
-            return t(`${col.prexFixTranslate}.${value}`);
-          }
-          return value;
-        }),
-
-        renderEditCell: renderEditCell ?? ((params) => {
-          if (col.editable === false) return null;
-
-          if (type === "number") {
-            return (
-              <CellEditNumber
-                value={params.value}
-                hasFocus={params.hasFocus}
-                apiRef={apiRef}
-                rowId={params.id}
-                field={params.field}
-                decimalScale={decimalPlaces}
-                isAbs={absNumber}
-                handleChange={colProps.handleCellValueChange}
-              />
-            );
-          }
-          if (col.type === "textArea") {
-            return (
-              <CellEditText
-                value={params.value}
-                multiline={true}
-                hasFocus={params.hasFocus}
-                apiRef={apiRef}
-                rowId={params.id}
-                field={params.field}
-              />
-            );
-          }
-
-          return (
-            <CellEditText
-              value={params.value}
-              multiline={false}
-              hasFocus={params.hasFocus}
-              apiRef={apiRef}
-              rowId={params.id}
-              field={params.field}
+        }}
+      />
+    )
+  }
+  //columns 
+  const gridColumns = useMemo(() => {
+    const baseCols = getGridColumns(columns, disableRowSelectionOnClick);
+    if (actionBars && actionBars.length > 0) {
+      baseCols.push({
+        field: 'actions',
+        type: 'actions',
+        width: 50,
+        resizable: false,
+        getActions: (params: GridRowParams) => {
+          return actionBars.map((act) => (
+            <GridActionsCellItem
+              key={act.key}
+              icon={act.icon ? <Icons name={act.icon} size={16} /> : undefined}
+              label={act.label}
+              disabled={act.disabled}
+              showInMenu
+              onClick={() => handleActionClick?.(act.key, params.row)}
             />
-          );
-        })
-      }
-    });
-    return colItems;
-  }, [i18n.language, cellModesModel]);
-
-  const handleCellClick = useCallback((params: GridCellParams, event, _detail) => {
-    if (onCellClick) {
-      onCellClick(params, event, _detail);
+          ));
+        }
+      });
     }
+    return baseCols;
+  }, [columns, disableRowSelectionOnClick, actionBars, handleActionClick, t]);
 
-    if (event.target.classList.contains("MuiAutocomplete-option")) {
-      return;
+  const gridPinnedColumns = useMemo(() => {
+    if (props.pinnedColumns) {
+      return props.pinnedColumns;
     }
-    if (params.isEditable === false) return;
-
-    setCellModesModel((prevModel) => {
-      const temp = {
-        ...Object.keys(prevModel).reduce(
-          (acc, id) => ({
-            ...acc,
-            [id]: Object.keys(prevModel[id]).reduce(
-              (acc2, field) => ({
-                ...acc2,
-                [field]: { mode: GridCellModes.View },
-              }),
-              {}
-            ),
-          }),
-          {}
-        ),
-        [params.id]: {
-          // Revert the mode of other cells in the same row
-          ...Object.keys(prevModel[params.id] || {}).reduce(
-            (acc, field) => ({
-              ...acc,
-              [field]: { mode: GridCellModes.View },
-            }),
-            {}
-          ),
-          [params.field]: { mode: GridCellModes.Edit },
-        },
-      };
-      onGridEditing?.(true);
-      refCellModesModel.current = temp;
-
-      return temp;
-    });
-  }, [readOnlyCells, tableId])
-
-  const handleRowUpdate = useCallback((_newRow, _oldRow) => {
-    setDataRows((prevRows) =>
-      prevRows?.map((row) => (row.id === _newRow.id ? _newRow : row))
-    );
-
-    onProcessRowUpdate?.(_newRow);
-    onGridEditing?.(false);
-    return _newRow;
-  }, [onProcessRowUpdate, onGridEditing]);
-
-  const dataGridStyles = useMemo(() => [
-    styles.dataTableView,
-    rows?.length === 0
-      ? {
-        "& .MuiDataGrid-virtualScroller": {
-          overflowY: "hidden !important",
-        },
-      }
-      : {},
-  ], [rows]) as SxProps;
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setDataRows(rows);
-  }, [JSON.stringify(rows)]);
+    const pinned: { left?: string[]; right?: string[] } = {};
+    if (checkboxSelection) {
+      pinned.left = ['__check__'];
+    }
+    if (actionBars && actionBars.length > 0) {
+      pinned.right = ['actions'];
+    }
+    return pinned;
+  }, [props.pinnedColumns, checkboxSelection, actionBars]);
 
   return (
-    <Grid container size={12}>
-      <DataGridPro
-        apiRef={apiRef}
-        columns={buildColumns as any}
-        rows={dataRows}
-        hideFooter={true}
-        sx={dataGridStyles}
-        disableColumnMenu
-        headerFilters={false}
-        onCellClick={handleCellClick}
-        processRowUpdate={handleRowUpdate}
-      />
+    <Grid container size={12}
+      sx={{
+        height: height ?? getDefaultGridHeight(),
+      }}
+    >
+      <Grid size={12}>
+        <DataGridPro
+          apiRef={apiRef}
+          sx={{
+            height: height ?? getDefaultGridHeight(),
+            ...dataGridStyles
+          }}
+          columns={gridColumns as any}
+          rows={activeRows}
+          initialState={initialState}
+          rowHeight={ROW_HEIGHT}
+          {...gridProps}
+          pinnedColumns={gridPinnedColumns}
+          pagination
+          loading={activeLoading}
+          rowCount={activeRowCount}
+          paginationModel={activePaginationModel}
+          paginationMode={hasStore ? (store?.mode === 'remote' ? 'server' : 'client') : (props.paginationMode ?? (handlePagination ? 'server' : 'client'))}
+          onPaginationModelChange={(model, details) => {
+            if (hasStore) {
+              handlePaginationModelChange(model);
+            } else {
+              props.onPaginationModelChange?.(model, details);
+            }
+          }}
+          getRowHeight={() => (autoRowHeight ? "auto" : ROW_HEIGHT)}
+          slots={{
+            pagination: CustomPagination
+          }}
+          checkboxSelection={checkboxSelection}
+          disableRowSelectionOnClick={disableRowSelectionOnClick}
+          rowSelectionModel={activeRowSelectionModel as any}
+          onRowSelectionModelChange={(params, details) => {
+            handleRowSelectionModelChange?.(params, details);
+            props.onRowSelectionModelChange?.(params, details);
+            if (props.rowSelectionModel === undefined) {
+              let newModel: any;
+              if (Array.isArray(params)) {
+                newModel = { type: 'include', ids: new Set(params) };
+              } else {
+                newModel = { type: params?.type || 'include', ids: new Set(params?.ids || []) };
+              }
+              if (hasStore) {
+                setStoreRowSelectionModel?.(newModel);
+              } else {
+                setLocalRowSelectionModel(newModel);
+              }
+            }
+          }}
+        />
+      </Grid>
     </Grid>
   )
 }

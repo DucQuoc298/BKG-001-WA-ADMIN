@@ -42,7 +42,7 @@ const initialState: IBillState = {
     filters: {},
   },
   form: {
-    mode: EFormMode.LIST,
+    mode: EFormMode.FORM,
     activeId: null,
     formData: {
       customerName: '',
