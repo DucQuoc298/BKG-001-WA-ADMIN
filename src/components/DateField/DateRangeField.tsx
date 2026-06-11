@@ -4,6 +4,7 @@ import { UseFormRegister } from "react-hook-form";
 import { TextFieldProps } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import DateRangePicker from "components/@extended/DateRangePicker";
+import Icons, { IconName } from 'assets/Icon';
 
 type IDateRangeFieldProps  = Omit<DateRangePickerProps, "onChange" | "label"> & ReturnType<UseFormRegister<any>> & {
   textFieldProps?: Omit<TextFieldProps, "onChange" | "onBlur">,
@@ -62,7 +63,7 @@ const DateRangeField = forwardRef<HTMLInputElement, IDateRangeFieldProps>(functi
           onBlur: () => {
             handleBlur();
           },
-        }
+        },
       }}
       error={error}
     />

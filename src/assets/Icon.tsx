@@ -8,7 +8,8 @@ import {
   LuUndo2,
   LuX
 } from "react-icons/lu";
-import { MdMoreVert } from "react-icons/md";
+import { MdMoreVert, MdClear } from "react-icons/md";
+import { IoMdCalendar } from "react-icons/io";
 
 interface IconProps {
   name: IconName;
@@ -25,6 +26,8 @@ export enum IconName {
   DEFAULT = "default",
   MORE = "more",
   CLOSE = "close",
+  CALENDAR = "calendar",
+  CLEAR = "clear",
 }
 const Icons = ({ name, size, color, onClick }: IconProps) => {
   switch (name) {
@@ -35,7 +38,8 @@ const Icons = ({ name, size, color, onClick }: IconProps) => {
     case IconName.CANCEL: return <LuUndo2 size={size} color={color} onClick={onClick} />;
     case IconName.MORE: return <MdMoreVert size={size} color={color} onClick={onClick} />;
     case IconName.CLOSE: return <LuX size={size} color={color} onClick={onClick} />;
-
+    case IconName.CALENDAR: return <IoMdCalendar size={size} color={color} onClick={onClick} />;
+    case IconName.CLEAR: return <MdClear size={size} color={color} onClick={onClick} />;
     default: return null;
   }
 }

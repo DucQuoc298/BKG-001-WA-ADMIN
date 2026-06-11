@@ -156,10 +156,11 @@ const [loading, setLoading] = useState(false);
         return true;
       } })}
       />
-      <DateField
+      {/* <DateField
         label={"Choose date"}
-        required
-        error={errors.date?.message}
+        // required
+        error={!!errors.date}
+        helperText={errors.date?.message}
         value={homeForm.date ? dayjs(homeForm.date) : null}
         {...register('date', {
           validate: (value: Date | null) => {
@@ -171,25 +172,32 @@ const [loading, setLoading] = useState(false);
             return true;
           }
         })}
-      />
+      /> */}
       <DateField
         type={"month"}
         label={"Chose month"}
-        error={errors.date?.message}
+        error={!!errors.date}
+        helperText={errors.date?.message}
         value={homeForm.date ? dayjs(homeForm.date) : null}
         {...register('date')}
       />
       <DateRangeField 
         label={"Choose date range"}
         required
-        error={errors.dateRange?.message}
-        value={homeForm.dateRange ? [dayjs(homeForm.dateRange[0]), dayjs(homeForm.dateRange[1])] : [null, null]}
+        error={!!errors.dateRange}
+        value={homeForm.dateRange ? [homeForm.dateRange[0] ? dayjs(homeForm.dateRange[0]) : null, homeForm.dateRange[1] ? dayjs(homeForm.dateRange[1]) : null] : [null, null]}
         {...register('dateRange', {
           validate: (value: [Date | null, Date | null] | null) => {
-            if (!value || !value[0] || !value[1]) {
-              return 'Date range is required';
+            if (!value || (!value[0] && !value[1])) {
+              return 'At least one date is required';
             }
-            update({ dateRange: [dayjs(value[0]).toDate(), dayjs(value[1]).toDate()] });
+
+            update({
+              dateRange: [
+                value[0] ? dayjs(value[0]).toDate() : null,
+                value[1] ? dayjs(value[1]).toDate() : null,
+              ],
+            });
             return true;
           }
         })}

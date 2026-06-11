@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import inputStyles from "components/Inputs/styles";
 import { Dayjs } from "dayjs";
 import { DatePicker, LocalizationProvider, DatePickerProps } from "@mui/x-date-pickers";
@@ -13,19 +13,29 @@ interface IDateTimePickerProps extends Omit<DatePickerProps, 'value' | 'onChange
   error?: string;
   label?: string;
   required?: boolean;
+  helperText?: string;
 }
 
-const DateTimePicker = ({ onChange, value, error, label, slotProps, required, ...rest }: IDateTimePickerProps) => {
+const DateTimePicker = ({ onChange, value, error, label, slotProps, required, helperText, ...rest }: IDateTimePickerProps) => {
   const iStyles = inputStyles();
   const isInvalidDate = value ? !value.isValid() : false;
   const hasError = Boolean(error) || isInvalidDate;
+  const [open, setOpen] = useState(false);
 
   return (
     <LocalizationProvider adapterLocale={"en-gb"} dateAdapter={AdapterDayjs}>
       <FormLabel sx={{...iStyles.labelDefault}}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
       <DatePicker
+        open={open}
+        onOpen={() => setOpen(true)}
+        onClose={() => setOpen(false)}
         slotProps={{
           ...slotProps,
+          openPickerButton: {
+            sx: {
+              marginRight: 0,
+            },
+          },
           textField: {
             variant: "outlined",
             fullWidth: true,
@@ -40,8 +50,11 @@ const DateTimePicker = ({ onChange, value, error, label, slotProps, required, ..
               
             },
             error: hasError,
+            helperText: helperText,
+            onClick: () => setOpen(true),
             ...slotProps?.textField,
           },
+          field: { clearable: true },
         }}
         defaultValue={value as PickerValue}
         value={value}

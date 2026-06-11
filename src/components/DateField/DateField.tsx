@@ -11,13 +11,14 @@ type IDateFieldProps = Omit<DatePickerProps, "onChange" | "label"> & ReturnType<
   textFieldProps?: Omit<TextFieldProps, "onChange" | "onBlur">,
   label?: string,
   error?: string,
+  helperText?: string,
 }
 
 const DateField = forwardRef<HTMLInputElement, IDateFieldProps>(function DateField(
   props,
   ref
 ) {
-  const { type = "date", label, name, defaultValue, onChange, error } = props;
+  const { type = "date", label, name, defaultValue, onChange, error, helperText } = props;
 
   const defaultValueAfterConverted = useMemo(() => {
     const d = dayjs(defaultValue);
@@ -82,6 +83,7 @@ const DateField = forwardRef<HTMLInputElement, IDateFieldProps>(function DateFie
       value={value}
       onChange={handleChange}
       error={error}
+      helperText={helperText}
       slotProps={{
         textField: {
           onBlur: (e) => {
