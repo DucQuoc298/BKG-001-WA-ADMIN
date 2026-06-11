@@ -39,6 +39,8 @@ export type DataTableProps = Omit<DataGridProProps, 'columns'> & {
   }[];
   tableId?: string;
   onGridEditing?: (isEditing: boolean) => void;
+  onProcessRowUpdate?: (newRow: any) => void;
+  handleRowOrderChange?: (params: { row: any; oldIndex: number; targetIndex: number }) => void;
 }
 
 const DataTable = forwardRef<any, DataTableProps>(({ variant, ...props }, ref) => {

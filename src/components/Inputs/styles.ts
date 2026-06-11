@@ -1,4 +1,3 @@
-import { maxWidth } from "@mui/system";
 
 export default () => {
   return {

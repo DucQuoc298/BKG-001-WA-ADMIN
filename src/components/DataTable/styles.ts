@@ -1,5 +1,3 @@
-// import { useTheme } from "@mui/material";
-
 export default () => {
   // const { palette } = useTheme();
 
@@ -33,7 +31,13 @@ export default () => {
       },
     },
     dataTableForm: {
-
+      "& .MuiDataGrid-row--dynamicHeight": {
+        "& .MuiDataGrid-cell": {
+          display: "flex",
+          alignItems: "center",
+          minHeight: '40px'
+        }
+      }
     },
     baseInputEdit: {
       width: "100%",

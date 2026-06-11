@@ -3,8 +3,7 @@ import useSWR from "swr";
 import { DataTableMode } from "types";
 
 const globalSelectionCache = new Map<string, any>();
-
-
+const globalDataCache = new Map<string, any>();
 
 export type FnGetTableData<T> = (
   params: Record<string, any> & { page: number; pageSize: number },
@@ -31,6 +30,24 @@ export function useDataTable<T = Record<string, any>>({
   initialPage = 0,
 }: UseDataTableOptions<T>) {
   const isRemote = mode === "remote" && !!fnGetData;
+
+  // Cache data locally for local mode
+  const [localStaticData, setLocalStaticData] = useState<T[]>(() => {
+    if (mode === "local" && cacheKey && globalDataCache.has(cacheKey)) {
+      return globalDataCache.get(cacheKey);
+    }
+    return staticData || [];
+  });
+
+  // Derived state to sync staticData updates from outside
+  const [prevStaticData, setPrevStaticData] = useState(staticData);
+  if (staticData !== prevStaticData) {
+    setPrevStaticData(staticData);
+    setLocalStaticData(staticData || []);
+    if (mode === "local" && cacheKey) {
+      globalDataCache.set(cacheKey, staticData || []);
+    }
+  }
 
   // Internal pagination state inside hook
   const [paginationModel, setPaginationModel] = useState({
@@ -64,19 +81,19 @@ export function useDataTable<T = Record<string, any>>({
   // Format rows depending on mode
   const rows = useMemo(() => {
     if (mode === "local") {
-      if (!staticData) return [];
+      if (!localStaticData) return [];
       const keyword = params?.keyword as string | undefined;
-      if (!keyword) return staticData;
+      if (!keyword) return localStaticData;
 
       const lower = keyword.toLowerCase();
-      return staticData.filter((item) =>
+      return localStaticData.filter((item) =>
         Object.values(item as any).some((v) =>
           String(v ?? "").toLowerCase().includes(lower)
         )
       );
     }
     return resData?.data ?? [];
-  }, [mode, staticData, params?.keyword, resData]);
+  }, [mode, localStaticData, params?.keyword, resData]);
 
   // Calculate total row count
   const rowCount = useMemo(() => {
@@ -111,6 +128,26 @@ export function useDataTable<T = Record<string, any>>({
     }
   };
 
+  const setRows = (newRowsOrFn: T[] | ((prev: T[]) => T[])) => {
+    if (mode === "local") {
+      setLocalStaticData((prev) => {
+        const updated = typeof newRowsOrFn === 'function'
+          ? (newRowsOrFn as any)(prev)
+          : newRowsOrFn;
+        if (cacheKey) {
+          globalDataCache.set(cacheKey, updated);
+        }
+        return updated;
+      });
+    } else if (isRemote) {
+      const currentData = resData?.data ?? [];
+      const updated = typeof newRowsOrFn === 'function'
+        ? (newRowsOrFn as any)(currentData)
+        : newRowsOrFn;
+      mutate({ ...resData, data: updated }, false);
+    }
+  };
+
   return {
     rows,
     rowCount,
@@ -120,5 +157,6 @@ export function useDataTable<T = Record<string, any>>({
     refreshTable,
     rowSelectionModel,
     setRowSelectionModel,
+    setRows,
   };
 }
