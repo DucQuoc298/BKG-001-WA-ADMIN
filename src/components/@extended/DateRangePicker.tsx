@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import inputStyles from "components/Inputs/styles";
 import dayjs, { Dayjs } from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import 'dayjs/locale/en-gb';
+import 'dayjs/locale/vi';
 import { FormHelperText, FormLabel, IconButton, InputAdornment } from "@mui/material";
-import { DateRangePickerProps, DateRangePicker, DateRangeValidationError } from "@mui/x-date-pickers-pro";
+import { DateRangePickerProps, DateRangePicker, DateRangeValidationError, LocalizationProvider } from "@mui/x-date-pickers-pro";
 import Icons, { IconName } from "assets/Icon";
 import { useTranslation } from "react-i18next";
 
@@ -20,9 +20,11 @@ interface IDateRangePickerProps extends Omit<DateRangePickerProps, 'value' | 'on
 
 const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, required, helperText, minDate = dayjs("1911-01-01"), onError, ...rest }: IDateRangePickerProps) => {
   const iStyles = inputStyles();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [dateRangeError, setDateRangeError] = useState<DateRangeValidationError>([null, null]);
+
+  const currentLocale = i18n.language === 'vi' ? 'vi' : 'en-gb';
 
   const getValidationMessage = (reason: DateRangeValidationError[number]) => {
     if (reason === 'minDate') return t("errors.min_date");
@@ -40,13 +42,13 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
     Boolean(error) || dateRangeError[position === 'start' ? 0 : 1] !== null;
 
   return (
-    <LocalizationProvider adapterLocale={"en-gb"} dateAdapter={AdapterDayjs}>
+    <LocalizationProvider adapterLocale={currentLocale} dateAdapter={AdapterDayjs}>
       <FormLabel sx={{...iStyles.labelDefault}}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
       <DateRangePicker
         minDate={minDate}
         slotProps={{
           ...slotProps,
-          textField: ({ position }) => ({
+          textField: ({ position }: any) => ({
             ...slotProps?.textField,
             slotProps: {
               input: {

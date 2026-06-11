@@ -88,7 +88,8 @@ export default function AuthRegister() {
                   label={t('AUTH.expired_date')}
                   value={field.value}
                   onChange={(date: Dayjs | null) => field.onChange(date)}
-                  error={errors.expiryDate?.message}
+                  error={Boolean(errors.expiryDate)}
+                  helperText={errors.expiryDate?.message}
                   disabled={isRevise}
                 />
               )}

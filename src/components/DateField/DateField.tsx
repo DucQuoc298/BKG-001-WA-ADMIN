@@ -1,57 +1,67 @@
 import { TextFieldProps } from "@mui/material";
 import { DatePickerProps } from "@mui/x-date-pickers";
 import { DatePicker } from "components";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { forwardRef, useEffect, useMemo, useState } from "react";
-import { UseFormRegister } from "react-hook-form";
 
-
-type IDateFieldProps = Omit<DatePickerProps, "onChange" | "label"> & ReturnType<UseFormRegister<any>> & {
-  type?: "date" | "month",
-  textFieldProps?: Omit<TextFieldProps, "onChange" | "onBlur">,
-  label?: string,
-  error?: boolean,
-  helperText?: string,
-  onBlur?: () => void,
+interface IDateFieldProps {
+  type?: "date" | "month";
+  onChange?: (val: Dayjs | null) => void;
+  onBlur?: () => void;
+  textFieldProps?: Omit<TextFieldProps, "onChange" | "onBlur">;
+  label?: string;
+  error?: boolean | string;
+  helperText?: string;
+  defaultValue?: Dayjs | Date | string | null;
+  value?: Dayjs | Date | string | null;
+  required?: boolean;
+  name?: string;
 }
 
 const DateField = forwardRef<HTMLInputElement, IDateFieldProps>(function DateField(
   props,
   ref
 ) {
-  const { type = "date", label, defaultValue, onChange, onBlur, error, helperText } = props;
+  const { type = "date", label, defaultValue, value: controlledValue, onChange, onBlur, error, helperText, required } = props;
 
   const defaultValueAfterConverted = useMemo(() => {
-    const d = dayjs(defaultValue);
     if (!defaultValue) return null;
+    const d = dayjs(defaultValue);
     if (d.format("YYYY-MM-DD") === "1911-01-01") return null;
-    return d;
+    return d.isValid() ? d : null;
   }, [defaultValue]);
 
-  const [value, setValue] = useState(defaultValueAfterConverted);
+  const [localValue, setLocalValue] = useState<Dayjs | null>(defaultValueAfterConverted);
 
-  const handleChange = (newValue) => {
-    setValue(newValue);
-    onChange?.(newValue)
-  }
+  const activeValue = useMemo(() => {
+    if (controlledValue === undefined) return localValue;
+    if (!controlledValue) return null;
+    const d = dayjs(controlledValue);
+    return d.isValid() ? d : null;
+  }, [controlledValue, localValue]);
+
+  const handleChange = (newValue: Dayjs | null) => {
+    setLocalValue(newValue);
+    onChange?.(newValue);
+  };
 
   const handleBlur = () => {
     onBlur?.();
-  }
+  };
 
   useEffect(() => {
-    setValue(defaultValueAfterConverted);
+    setLocalValue(defaultValueAfterConverted);
   }, [defaultValueAfterConverted]);
 
   return (
     <DatePicker
       {...props}
       label={label}
-      inputRef={ref}
+      required={required}
       defaultValue={defaultValueAfterConverted}
-      value={value}
+      value={activeValue}
       onChange={handleChange}
-      error={error}
+      error={Boolean(error)}
       helperText={helperText}
       slotProps={{
         textField: {
@@ -60,7 +70,7 @@ const DateField = forwardRef<HTMLInputElement, IDateFieldProps>(function DateFie
       }}
       views={type === "month" ? ['year', 'month'] : undefined}
     />
-  )
-})
+  );
+});
 
 export default DateField;

@@ -22,7 +22,7 @@ const DateTimePicker = ({ onChange, value, error, label, slotProps, required, he
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [validationError, setValidationError] = useState<DateValidationError | null>(null);
-  
+
   const getValidationMessage = (reason: DateValidationError | null) => {
     switch (reason) {
       case "invalidDate":
@@ -38,7 +38,7 @@ const DateTimePicker = ({ onChange, value, error, label, slotProps, required, he
 
   return (
     <LocalizationProvider adapterLocale={"en-gb"} dateAdapter={AdapterDayjs}>
-      <FormLabel sx={{...iStyles.labelDefault}}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
+      <FormLabel sx={{ ...iStyles.labelDefault }}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
       <DatePicker
         minDate={minDate}
         open={open}
@@ -59,15 +59,15 @@ const DateTimePicker = ({ onChange, value, error, label, slotProps, required, he
           textField: {
             variant: "outlined",
             fullWidth: true,
-            sx: { 
-              "& .MuiPickersOutlinedInput-root": { 
+            sx: {
+              "& .MuiPickersOutlinedInput-root": {
                 ...iStyles.textfield,
                 padding: '0px 10px',
-               },
-              "& .MuiPickersSectionList-root":{
+              },
+              "& .MuiPickersSectionList-root": {
                 padding: '10px 0px !important',
               },
-              
+
             },
             onClick: () => setOpen(true),
             ...slotProps?.textField,
