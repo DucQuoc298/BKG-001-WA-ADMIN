@@ -1,4 +1,4 @@
-import TextField from "./Inputs/TextField";
+import { TextField, SearchField } from "./Inputs";
 import { Button } from "./Buttons";
 import DatePicker from "./@extended/DatePicker";
 import Dialog from "./Dialog";
@@ -9,9 +9,11 @@ import DataTable from "./DataTable";
 import { ToolBarLocal } from "./ToolBar";
 import Autocomplete from "./Autocomplete";
 import { Tabs } from "./Tabs";
+import ActionBar from "./ActionBar";
 
 export {
   TextField,
+  SearchField,
   Button,
   DatePicker,
   Dialog,
@@ -21,5 +23,6 @@ export {
   DataTable,
   ToolBarLocal,
   Autocomplete,
-  Tabs
+  Tabs,
+  ActionBar
 };

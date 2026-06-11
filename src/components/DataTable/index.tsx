@@ -3,7 +3,7 @@ import DataTableView from './DataTableView';
 import { IGridColDef } from 'types/components/grid';
 import { DataGridProProps, GridCallbackDetails, GridPaginationModel, GridRowSelectionModel } from '@mui/x-data-grid-pro';
 import { IconName } from 'assets/Icon';
-import { DataTableMode, IAction } from 'types';
+import { DataTableMode, IAction, DataTableVariant } from 'types';
 
 export interface ITableAction {
   key: IAction;
@@ -21,7 +21,7 @@ export interface IDataTableStore {
 }
 
 export type DataTableProps = Omit<DataGridProProps, 'columns'> & {
-  variant?: 'view' | 'edit';
+  variant?: DataTableVariant;
   height?: number;
   columns: IGridColDef[];
   handlePagination?: (data: GridPaginationModel) => void;
@@ -41,7 +41,7 @@ export type DataTableProps = Omit<DataGridProProps, 'columns'> & {
 }
 
 const DataTable = forwardRef<any, DataTableProps>(({ variant, ...props }, ref) => {
-  return variant === 'view'
+  return variant === DataTableVariant.VIEW
     ? <DataTableView {...props} apiRef={ref as any} /> : null
   // : <DataTableForm {...props} apiRef={ref as any} />;
 });

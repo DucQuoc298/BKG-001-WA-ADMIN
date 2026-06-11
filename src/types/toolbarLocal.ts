@@ -5,7 +5,8 @@ export interface IToolbarButton {
   key: IAction;
   type?: "submit" | "reset" | "button" | undefined;
   label?: string;
-  icon?: IconName;
+  icon?: IconName | string;
+  color?: string;
   items?: { key: IAction | "splitRegion"; sub?: string; label?: string, icon?: IconName; }[];
   isEditting?: boolean;
 }

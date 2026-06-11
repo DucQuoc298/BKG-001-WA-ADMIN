@@ -1,4 +1,3 @@
-import { Box, Typography } from '@mui/material';
 import { Button, ContainerWrapper, MainCard, Tabs } from 'components';
 import { useBill } from 'hooks/useBill';
 import React, { useCallback } from 'react';
@@ -54,7 +53,7 @@ export default function Bill() {
           handleTabChange={handleTabChange}
         />
         {activeTab === EKeyTab.All && (
-          <GridAll />
+          <GridAll onButtonClick={handleActionClick} />
         )}
         {activeTab === EKeyTab.ACTIVE && (
           <GridActive />

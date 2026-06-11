@@ -6,12 +6,13 @@ import {
   LuTrash,
   LuEye,
   LuUndo2,
-  LuX
+  LuX,
+  LuFilter,
 } from "react-icons/lu";
 import { MdMoreVert } from "react-icons/md";
 
 interface IconProps {
-  name: IconName;
+  name: IconName | string;
   size: number;
   color?: string;
   onClick?: (e: React.MouseEvent<SVGElement, MouseEvent>) => void;
@@ -25,6 +26,7 @@ export enum IconName {
   DEFAULT = "default",
   MORE = "more",
   CLOSE = "close",
+  FILTER = "filter",
 }
 const Icons = ({ name, size, color, onClick }: IconProps) => {
   switch (name) {
@@ -35,7 +37,7 @@ const Icons = ({ name, size, color, onClick }: IconProps) => {
     case IconName.CANCEL: return <LuUndo2 size={size} color={color} onClick={onClick} />;
     case IconName.MORE: return <MdMoreVert size={size} color={color} onClick={onClick} />;
     case IconName.CLOSE: return <LuX size={size} color={color} onClick={onClick} />;
-
+    case IconName.FILTER: return <LuFilter size={size} color={color} onClick={onClick} />;
     default: return null;
   }
 }

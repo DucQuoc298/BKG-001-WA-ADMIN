@@ -1,3 +1,5 @@
+import { IToolbarButton } from "./toolbarLocal";
+
 export enum IThemeMode {
   LIGHT = "light",
   DARK = "dark",
@@ -41,30 +43,25 @@ export interface IActionAndSub {
   sub: string;
 }
 
-export const actionButtons = [
+export const actionButtons: IToolbarButton[] = [
   {
     key: IAction.NEW,
-    label: "New",
     icon: "plus",
   },
   {
     key: IAction.EDIT,
-    label: "Edit",
     icon: "edit",
   },
   {
     key: IAction.DELETE,
-    label: "Delete",
     icon: "delete",
   },
   {
     key: IAction.VIEW,
-    label: "View",
     icon: "eye",
   },
   {
     key: IAction.CANCEL,
-    label: "Cancel",
     icon: "close",
   },
 

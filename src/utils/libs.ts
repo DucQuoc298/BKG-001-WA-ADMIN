@@ -20,6 +20,27 @@ export const findItemInArray = (array, value, key = "key") => {
     typeof item === "object" ? item[key] === value : item === value
   );
 };
+export const findItemsInArray = (array, value, key = "key") => {
+  if (Array.isArray(value))
+    return array.filter((item) =>
+      typeof item === "object"
+        ? value.indexOf(item[key]) !== -1
+        : value.indexOf(item) !== -1
+    );
+  return array.filter((item) =>
+    typeof item === "object" ? item[key] === value : item === value
+  );
+};
+export const debounce = (func, timeout = 300) => {
+  let timer;
+  return function (...args) {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null;
+      func.apply(debounce, args);
+    }, timeout);
+  };
+};
 export const updateRow = (
   api: React.MutableRefObject<GridApiPro> | GridApiCommunity,
   rowId,

@@ -28,7 +28,7 @@ const Tabs = ({
         event.stopPropagation();
         handleTabChange(value);
       }}
-      sx={styles.tabs}
+      sx={[styles.tabs, sx] as SxProps}
     >
       {
         tabs.map((tab) => (

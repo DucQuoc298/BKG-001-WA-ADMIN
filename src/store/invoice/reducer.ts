@@ -86,7 +86,7 @@ const invoiceSlice = createSlice({
       state.form.activeId = action.payload.activeId ?? null;
       if (action.payload.data) {
         state.form.formData = action.payload.data;
-      } else if (action.payload.mode === EFormMode.NEW) {
+      } else if (action.payload.mode === EFormMode.FORM) {
         state.form.formData = initialState.form.formData;
       }
     },

@@ -4,3 +4,8 @@ export enum DataTableMode {
   LOCAL = "local",
 }
 export const ROW_HEIGHT = 40
+
+export enum DataTableVariant {
+  VIEW = "view",
+  FORM = "form",
+}

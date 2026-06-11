@@ -1,12 +1,11 @@
 import { Box, Tab, Tabs, Stack, Typography } from '@mui/material';
-import { useGridApiRef } from '@mui/x-data-grid-pro';
 import Icons, { IconName } from 'assets/Icon';
 import { ContainerWrapper, MainCard, DataTable, TextField, Autocomplete, Button } from 'components';
 import React, { useCallback, useMemo } from 'react';
 import { EGridColTypes, IGridColDef } from 'types/components/grid';
 import { useInvoice } from 'hooks/useInvoice';
 import { useSnackbar } from 'hooks/useSnackbar';
-import { EFormMode, DataTableMode } from 'types';
+import { EFormMode, DataTableMode, DataTableVariant } from 'types';
 
 type Product = {
   id: number;
@@ -24,7 +23,6 @@ const columnsDefinition: IGridColDef[] = [
 ];
 
 export default function Invoice() {
-  const apiGridRef1 = useGridApiRef();
 
   const {
     invoiceForm,
@@ -185,8 +183,7 @@ export default function Invoice() {
               />
             </Stack>
             <DataTable
-              apiRef={apiGridRef1}
-              variant="view"
+              variant={DataTableVariant.VIEW}
               columns={columnsDefinition}
               store={productStore1}
               actionBars={actionItems as any}
