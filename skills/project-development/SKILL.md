@@ -23,29 +23,121 @@ export enum IFormKey {
 ```
 
 ### Bước 2: Tạo Redux Slice (`reducer.ts`)
-Tạo file `reducer.ts` trong thư mục `src/store/customer/`. Đảm bảo đặt tên Slice và Reducer Reset theo đúng quy ước:
-```typescript
-import { createSlice } from '@reduxjs/toolkit';
-import { IFormKey } from 'types';
 
-const initialState = {
-  list: { searchKeyword: '', filters: {} },
-  form: { mode: 'view', activeId: null, formData: {} }
+Tạo file `reducer.ts` trong thư mục `src/store/customer/`. Tuân thủ đúng cấu trúc state phân cấp theo trang như sau:
+
+```typescript
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { EFormMode } from 'types/form';
+
+// 1. Khai báo FormFields — chỉ chứa giá trị trường nhập liệu
+//    (Dùng làm kiểu dữ liệu cho useForm<CustomerFormFields>)
+export type CustomerFormFields = {
+  name: string;
+  email: string;
+};
+
+// 2. Khai báo FormState — chứa data + dirtyFields + formMode
+//    (Snapshot đầy đủ được lưu vào Redux)
+export type CustomerFormState = {
+  data: CustomerFormFields;
+  dirtyFields: Record<string, any>;
+  formMode: EFormMode;
+};
+
+// 3. (Tùy chọn) Khai báo ListState nếu module có trang danh sách
+export type CustomerListState = {
+  searchKeyword: string;
+};
+
+// 4. Khai báo IState tổng với cấu trúc phân cấp
+export interface ICustomerState {
+  loading: boolean;
+  saving: boolean;
+  error: any;
+  message: any;
+  customer: {             // Đặt tên trùng với tên module
+    list: CustomerListState;
+    form: CustomerFormState;
+  };
+}
+
+const initialState: ICustomerState = {
+  loading: false, saving: false, error: null, message: null,
+  customer: {
+    list: { searchKeyword: '' },
+    form: {
+      data: { name: '', email: '' },
+      dirtyFields: {},
+      formMode: EFormMode.VIEW,
+    },
+  },
 };
 
 const customerSlice = createSlice({
-  name: IFormKey.CUSTOMER.toLowerCase(), // Bắt buộc: 'customer'
+  name: 'customer', // Bắt buộc: IFormKey.CUSTOMER.toLowerCase()
   initialState,
   reducers: {
-    // Reducer reset bắt buộc đặt tên là resetCustomerForm
+    updateCustomerForm: (state, action: PayloadAction<Partial<CustomerFormState>>) => {
+      state.customer.form = {
+        ...state.customer.form,
+        ...action.payload,
+        data: { ...state.customer.form.data, ...(action.payload.data ?? {}) },
+      };
+    },
+    // BẮT BUỘC: reset[Key]Form để hook useFormActions tự động dispatch
     resetCustomerForm: (state) => {
-      state.form = initialState.form;
-    }
-  }
+      state.customer.form = initialState.customer.form;
+    },
+    updateCustomerList: (state, action: PayloadAction<Partial<CustomerListState>>) => {
+      state.customer.list = { ...state.customer.list, ...action.payload };
+    },
+  },
 });
 ```
 
-### Bước 3: Đăng ký Reducer vào Store
+### Bước 3: Tạo Selectors (`selector.ts`)
+
+Tạo selectors có cấu trúc phân cấp tương ứng:
+
+```typescript
+// Chọn từng trang con riêng biệt
+const selectCustomerFormState = createSelector(selectCustomerModule, ({ form }) => form);
+const selectCustomerFormData = createSelector(selectCustomerFormState, ({ data }) => data);
+const selectCustomerListState = createSelector(selectCustomerModule, ({ list }) => list);
+```
+
+### Bước 4: Tạo Custom Hook (`useCustomer.ts`)
+
+Hook phân nhóm các state và action theo trang con:
+
+```typescript
+export const useCustomer = () => {
+  const formState = useSelector(selectCustomerFormState);
+  const updateForm = useCallback((data: Partial<CustomerFormState>) => dispatch(updateCustomerForm(data)), [dispatch]);
+  const listState = useSelector(selectCustomerListState);
+  return { formState, updateForm, listState };
+};
+```
+
+### Bước 5: Sử dụng `useReduxFormSync` trong Component
+
+```typescript
+const { formState, updateForm } = useCustomer();
+
+useReduxFormSync<CustomerFormFields>({
+  methods,
+  // Truyền data + dirtyFields làm snapshot để khôi phục form
+  values: { ...(formState?.data ?? {}), dirtyFields: formState?.dirtyFields },
+  // Khi unmount: lưu data + dirtyFields mới nhất vào Redux
+  onSave: (snapshot) => {
+    const { dirtyFields: savedDirtyFields, ...data } = snapshot;
+    updateForm({ data: data as CustomerFormFields, dirtyFields: savedDirtyFields ?? {} });
+  },
+});
+```
+
+### Bước 6: Đăng ký Reducer vào Store
 Mở file [createStore.ts](file:///Volumes/KINGSTON/Code/react-template/src/store/createStore.ts) và import reducer mới để chèn vào `rootReducer`.
 
 ---
