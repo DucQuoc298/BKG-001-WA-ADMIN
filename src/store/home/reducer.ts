@@ -18,6 +18,7 @@ export type HomeFormFields = {
   products?: string[] | null;
   date?: PickerValue | null;
   dateRange?: [Date | null, Date | null] | null;
+  number?: number | null;
 };
 
 /**
@@ -74,11 +75,12 @@ export interface IHomeState {
 
 /** Giá trị khởi tạo ban đầu của form */
 export const initialHomeFormFields: HomeFormFields = {
-  note: '',
+  note: 'ssss',
   product: null,
   products: null,
   date: null,
   dateRange: null,
+  number: 0,
 };
 
 /** State khởi tạo của form, bao gồm cả dirtyFields và formMode */

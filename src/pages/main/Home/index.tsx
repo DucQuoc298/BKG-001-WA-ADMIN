@@ -1,4 +1,4 @@
-import { Button, ContainerWrapper, MainCard, TextField } from 'components';
+import { Button, ContainerWrapper, MainCard, TextField, NumberField } from 'components';
 import React, { useCallback } from 'react';
 import { useHome, useReduxFormSync } from 'hooks';
 import { Controller, useForm, FormProvider } from 'react-hook-form';
@@ -27,6 +27,7 @@ export default function Home() {
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: {
       dirtyFields,
     },
@@ -95,6 +96,11 @@ export default function Home() {
                 }}
               />
             )}
+          />
+          <NumberField
+            label="Number"
+            value={getValues('number')}
+            {...register('number')}
           />
         </MainCard>
       </ContainerWrapper>

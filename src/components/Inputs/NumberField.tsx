@@ -1,17 +1,15 @@
 import { SxProps } from "@mui/material";
-import React, { forwardRef, useState, useEffect } from "react";
-import { UseFormRegister, UseFormTrigger } from "react-hook-form";
+import React, { forwardRef } from "react";
+import { UseFormRegister } from "react-hook-form";
 import { NumericFormat, NumericFormatProps } from "react-number-format";
 import inputStyles from "./styles";
 import TextField from "./TextField";
 
 type INumberFieldProps = Omit<NumericFormatProps, "onChange"> & ReturnType<UseFormRegister<any>> & {
   label?: string;
-  fullWidth?: boolean;
   handleChange?: (e: any) => void;
   sx?: SxProps;
   inputRef?: any;
-  trigger?: UseFormTrigger<any>;
   error?: boolean;
   helperText?: string;
   isAbs?: boolean;
@@ -26,8 +24,6 @@ const NumberField = forwardRef<HTMLInputElement, INumberFieldProps>(function Num
   decimalScale = 2,
   required = false,
   disabled = false,
-  // fullWidth = true,
-  defaultValue,
   value,
   sx,
   onChange,
@@ -38,6 +34,8 @@ const NumberField = forwardRef<HTMLInputElement, INumberFieldProps>(function Num
   error,
   onFocus,
   helperText,
+  handleChange,
+  endAdornment,
   ...props
 }, ref) {
   const iStyles = inputStyles();
@@ -47,28 +45,39 @@ const NumberField = forwardRef<HTMLInputElement, INumberFieldProps>(function Num
       customInput={TextField}
       {...props}
       sx={{
-        ...sx, 
         ...iStyles.textfield,
+        ...sx, 
       }}
       label={label}
       placeholder={label}
-      // defaultValue={defaultValue}
-      value={value ?? 0}
+      value={value}
       getInputRef={inputRef || ref}
       error={error}
       helperText={helperText}
+      disabled={disabled}
+      required={required}
       variant="outlined"
       allowNegative={!isAbs}
       thousandSeparator={thousandSeparator}
       decimalSeparator={decimalSeparator}
       decimalScale={decimalScale}
+      onBlur={onBlur}
+      onFocus={onFocus}
       onValueChange={(v) => {
         const { floatValue } = v
-        onChange(floatValue);
+        const event = {
+          target: {
+            name,
+            value: floatValue,
+          }
+        };
+        onChange?.(event as any);
+        handleChange?.(event);
       }}
       slotProps={{
         input: {
           autoFocus,
+          endAdornment,
         }
       }}
     />
