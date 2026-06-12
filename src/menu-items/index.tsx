@@ -43,6 +43,14 @@ const menuItems : ISideBarMenuItem = {
       icon: icons.Bill,
       breadcrumbs: false
     },
+    {
+      id: 'COMPONENTS',
+      title: 'COMPONENTS',
+      type: 'item',
+      url: MainNameRoutes.COMPONENTS,
+      icon: icons.Components,
+      breadcrumbs: false
+    },
   ]
 };
 

@@ -7,5 +7,6 @@ export enum MainNameRoutes {
   HOME = '/home',
   INVOICE = '/invoice',
   BILL = '/bill',
+  COMPONENTS = '/components',
   USER_FORMS = '/user-forms/*'
 }

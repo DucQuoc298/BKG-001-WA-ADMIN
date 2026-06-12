@@ -1,4 +1,4 @@
-import { Button, ContainerWrapper, MainCard, TextField } from 'components';
+import { Button, Chip, ContainerWrapper, MainCard, TextField } from 'components';
 import React, { useCallback } from 'react';
 import { useHome, useReduxFormSync } from 'hooks';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -27,7 +27,7 @@ export default function Home() {
   const {
     register,
     handleSubmit,
-    setValues,
+    setValue,
     formState: {
       dirtyFields,
     },
@@ -84,20 +84,27 @@ export default function Home() {
             {...register('date')}
           />
           <DateRangeField
-            label="Chose month"
+            label="Chose month range"
             value={[formState?.data?.fromDate, formState?.data?.toDate]}
             {...register('fromDate', {
               onChange: (event) => {
-                const value = event.target.value;
-                console.log(value)
-                setValues({
-                  ...formState?.data,
-                  fromDate: value[0],
-                  toDate: value[1],
-                })
+                // DateRangeField emit [startDate, endDate] qua event.target.value
+                // Vì fromDate và toDate là 2 field riêng biệt trong RHF,
+                // ta phải set từng field một thay vì dùng setValues
+                const [from, to] = event.target.value ?? [null, null];
+                setValue('fromDate', from, { shouldDirty: true });
+                setValue('toDate', to, { shouldDirty: true });
               }
             })}
           />
+        </MainCard>
+
+        <MainCard>
+          <Chip color='primary' title='primary' />
+          <Chip color='secondary' title='secondary' />
+          <Chip color='success' title='success' />
+          <Chip color='error' title='error' />
+          <Chip color='warning' title='warning' />
         </MainCard>
       </ContainerWrapper>
     </FormProvider>

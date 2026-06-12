@@ -87,6 +87,7 @@ export default {
     HOME: "Home",
     INVOICE: "Invoice",
     BILL: "Bill",
+    COMPONENTS: "Components",
   },
   alert: {
     update_avatar_successfully: "Update avatar successfully",
