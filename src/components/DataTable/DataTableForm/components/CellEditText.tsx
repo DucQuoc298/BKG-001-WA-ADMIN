@@ -3,19 +3,30 @@ import { TextField, TextFieldProps } from "@mui/material";
 import { GridEditInputCellProps, GridApiPro } from "@mui/x-data-grid-pro";
 import { unstable_useEnhancedEffect as useEnhancedEffect } from "@mui/utils";
 import { updateRow } from "utils";
-import createStyle from "./styles";
+import createStyle from "../../styles";
 
 type IEditTextField = GridEditInputCellProps &
   Omit<TextFieldProps, "onChange" | "onBlur"> & {
     apiRef: React.RefObject<GridApiPro>;
     rowId: any;
     field: string;
+    autoRowHeight?: boolean;
+    onTabNavigation?: (rowId: any, field: string, isShift: boolean, event: any) => void;
   };
 
 const CellEditText = forwardRef<HTMLInputElement, IEditTextField>(
   function Input(
     { value, hasFocus, multiline = false, apiRef, rowId, field,
       api,
+      autoRowHeight,
+      onTabNavigation,
+      // Omit DataGrid cell props to avoid DOM warnings
+      cellMode: _cellMode,
+      row: _row,
+      rowNode: _rowNode,
+      colDef: _colDef,
+      isEditable: _isEditable,
+      formattedValue: _formattedValue,
       ...props },
     ref
   ) {
@@ -33,7 +44,23 @@ const CellEditText = forwardRef<HTMLInputElement, IEditTextField>(
         ref={ref}
         inputRef={inputRef}
         {...props}
-        sx={styles.baseInputEdit}
+        sx={{
+          ...styles.baseInputEdit,
+          ...(autoRowHeight ? {
+            height: "auto",
+            "& .MuiInputBase-root": {
+              height: "auto !important",
+              minHeight: "unset",
+            }
+          } : {})
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Tab') {
+            onTabNavigation?.(rowId, field, e.shiftKey, e);
+          } else {
+            props.onKeyDown?.(e);
+          }
+        }}
         onFocus={(e) =>
           e.currentTarget.setSelectionRange(
             e.currentTarget.value.length,

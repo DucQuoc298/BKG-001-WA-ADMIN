@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { ILanguage } from "types";
+import { IAction, ILanguage, IToolbarButton } from "types";
 import { emptyDate } from "./constants";
 import { KEY_CONTEXT } from "themes/config";
 
@@ -7,7 +7,7 @@ export const dimension = {
   width: window.innerWidth,
   height: window.innerHeight,
 };
-export const getDefaultGridHeight = () => dimension.height - 178;
+export const getDefaultGridHeight = () => dimension.height - 280;
 
 
 export const formatDateToString = (date: Date | string, locale?: ILanguage) => {
@@ -31,9 +31,24 @@ export const formatDateTimeToString = (date: Date | string, locale?: ILanguage) 
 
 export const formatNumberToString = (number: number | null | undefined, decimalPlaces = 0) => {
   if (number === null || number === undefined) return "";
-  console.log(number)
   return number.toLocaleString("en-US", {
     minimumFractionDigits: decimalPlaces,
     maximumFractionDigits: decimalPlaces,
   });
+}
+
+export const resolveActionButtons = (initButtons: IToolbarButton[], buttons: (IAction | IToolbarButton)[]) => {
+  return buttons.reduce((acc, button) => {
+    if (typeof button === "object") {
+      acc.push(button);
+    } else {
+      const resolvedButton = initButtons.find((item) => item.key === button);
+      if (resolvedButton) {
+        acc.push(resolvedButton);
+      } else {
+        acc.push({ key: button });
+      }
+    }
+    return acc;
+  }, [] as IToolbarButton[]);
 }

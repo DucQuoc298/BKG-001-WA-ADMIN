@@ -1,22 +1,16 @@
-import TextField from "./Inputs/TextField";
-import {Button} from "./Buttons";
-import DatePicker from "./@extended/DatePicker";
-import Dialog from "./Dialog";
-import Snackbar from "./Snackbar";
-import MainCard from "./MainCard";
-import ContainerWrapper from "./ContainerWrapper";
-import DataTable from "./DataTable";
-import { ToolBarLocal } from "./ToolBar";
-import Autocomplete from "./Autocomplete";
-export {
-  TextField,
-  Button,
-  DatePicker,
-  Dialog,
-  Snackbar,
-  MainCard,
-  ContainerWrapper,
-  DataTable,
-  ToolBarLocal,
-  Autocomplete
-};
+// 1. Dùng "export * from" cho các thư mục/file có Named Exports
+export * from "./Inputs";
+export * from "./Buttons";
+export * from "./ToolBar";
+export * from "./Tabs";
+export * from "./SideIndex";
+
+// 2. Bắt buộc dùng "export { default as ... } from" cho các Default Exports
+export { default as DatePicker } from "./@extended/DatePicker";
+export { default as Dialog } from "./Dialog";
+export { default as Snackbar } from "./Snackbar";
+export { default as MainCard } from "./MainCard";
+export { default as ContainerWrapper } from "./ContainerWrapper";
+export { default as DataTable } from "./DataTable";
+export { default as Autocomplete } from "./Autocomplete";
+export { default as ActionBar } from "./ActionBar";

@@ -1,10 +1,11 @@
+
 export default () => {
   return {
     autocomplete: {
-      "& .MuiAutocomplete-input":{
+      "& .MuiAutocomplete-input": {
         padding: '10px 10px !important'
       },
-      "& .MuiOutlinedInput-root":{
+      "& .MuiOutlinedInput-root": {
         padding: '0px !important'
       }
     },
@@ -15,10 +16,10 @@ export default () => {
         color: "red",
       },
       "& .MuiInputBase-input": {
-        padding: "10px 10px",
+        padding: "6px 10px",
         height: '24px !important',
       },
-      "& .MuiOutlinedInput-root":{
+      "& .MuiOutlinedInput-root": {
         borderRadius: '8px',
       },
     },
@@ -33,11 +34,14 @@ export default () => {
       // mb: "4px",
     },
     searchfield: {
-      width: "270px",
-      height: '38px !important',
-      "& .MuiInputBase-root": { 
+      width: "100%",
+      minWidth: "200px",
+      maxWidth: "300px",
+      "& .MuiInputBase-root": {
+        height: '34px !important',
         px: "6px !important",
-        borderRadius: "8px", },
+        borderRadius: "8px",
+      },
       "& input": {
         "&::placeholder": { fontSize: "12px" },
         fontSize: "14px",

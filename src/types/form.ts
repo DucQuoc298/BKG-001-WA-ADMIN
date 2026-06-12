@@ -5,3 +5,10 @@ export enum IFormKey {
   INVOICE = "INVOICE",
   BILL = "BILL",
 }
+
+// Form modes for handling different states of a form (viewing, editing, creating new)
+export enum EFormMode {
+  VIEW = "view",
+  FORM = "form",
+  LIST = "list",
+}

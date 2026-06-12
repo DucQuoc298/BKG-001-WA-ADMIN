@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ISnackbarState, show as showActions, hide as hideActions} from "store/snackbar/reducer";
+import { ISnackbarState, show as showActions, hide as hideActions } from "store/snackbar/reducer";
 import {
   getLoading,
   getMessage,

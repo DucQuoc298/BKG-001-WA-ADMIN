@@ -94,4 +94,9 @@ export default {
     update_company_successfully: "Cập nhật công ty thành công",
     register_success: "Đăng ký thành công",
   },
+  button: {
+    new: "Thêm mới",
+    edit: "Chỉnh sửa",
+    delete: "Xóa",
+  }
 };

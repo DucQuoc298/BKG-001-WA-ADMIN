@@ -1,61 +1,85 @@
 import { forwardRef, useEffect, useMemo, useState } from "react";
-import { DateRangePickerProps, MultiInputDateRangeField } from "@mui/x-date-pickers-pro";
-import { UseFormRegister } from "react-hook-form";
+import { MultiInputDateRangeField } from "@mui/x-date-pickers-pro";
 import { TextFieldProps } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import DateRangePicker from "components/@extended/DateRangePicker";
 
-type IDateRangeFieldProps  = Omit<DateRangePickerProps, "onChange" | "label"> & ReturnType<UseFormRegister<any>> & {
-  textFieldProps?: Omit<TextFieldProps, "onChange" | "onBlur">,
-  label?: string,
-  error?: string,
-  helperText?: string,
-  onBlur?: () => void,
+interface IDateRangeFieldProps {
+  onChange?: (val: [Dayjs | null, Dayjs | null] | any) => void;
+  onBlur?: () => void;
+  textFieldProps?: Omit<TextFieldProps, "onChange" | "onBlur">;
+  label?: string;
+  error?: boolean | string;
+  helperText?: string;
+  defaultValue?: [any, any] | null;
+  value?: [any, any] | null;
+  required?: boolean;
+  name?: string;
 }
 
-type InputDateRangeType = [Dayjs | null, Dayjs | null] | null;
-
 const DateRangeField = forwardRef<HTMLInputElement, IDateRangeFieldProps>(function DateRangeField(props, ref) {
-  const { label, defaultValue, onChange, onBlur, error, helperText } = props;
+  const { label, defaultValue, value: controlledValue, onChange, onBlur, error, helperText, required, name, ...rest } = props;
 
-  const defaultValueAfterConverted = useMemo<InputDateRangeType>(() => {
-    if (!defaultValue) return [null, null];
-    const dStart = dayjs(defaultValue?.[0]);
-    const dEnd = dayjs(defaultValue?.[1]);
-    return [dStart, dEnd];
-  }, [defaultValue]);
 
-  const [value, setValue] = useState<InputDateRangeType>(defaultValueAfterConverted ?? [null, null]);
-  const handleChange =(newValue) => {
-    setValue(newValue);
-    onChange?.(newValue)
-  }
+
+  const parseValue = (val: any): [Dayjs | null, Dayjs | null] => {
+    if (!val || !Array.isArray(val)) return [null, null];
+    return [
+      val[0] ? (dayjs.isDayjs(val[0]) ? val[0] : dayjs(val[0])) : null,
+      val[1] ? (dayjs.isDayjs(val[1]) ? val[1] : dayjs(val[1])) : null,
+    ];
+  };
+
+  const [localValue, setLocalValue] = useState<[Dayjs | null, Dayjs | null]>(() => parseValue(defaultValue));
+
+  const activeValue = useMemo(() => {
+    const rawValue = controlledValue !== undefined ? controlledValue : localValue;
+    return parseValue(rawValue);
+  }, [controlledValue, localValue]);
+
+  const handleChange = (newValue: [Dayjs | null, Dayjs | null]) => {
+    const safeValue = newValue || [null, null];
+    setLocalValue(safeValue);
+    if (onChange) {
+      if (name) {
+        onChange({
+          target: {
+            name,
+            value: safeValue,
+          },
+        });
+      } else {
+        onChange(safeValue);
+      }
+    }
+  };
 
   const handleBlur = () => {
     onBlur?.();
   };
+
   useEffect(() => {
-    setValue(defaultValueAfterConverted);
-  }, [defaultValueAfterConverted]);
+    setLocalValue(parseValue(defaultValue));
+  }, [defaultValue]);
 
   return (
-    <DateRangePicker 
-      {...props}
+    <DateRangePicker
+      {...rest}
       label={label}
+      required={required}
       inputRef={ref}
-      defaultValue={defaultValueAfterConverted}
-      value={value}
-      onChange={handleChange}
+      value={activeValue as any}
+      onChange={handleChange as any}
       slots={{ field: MultiInputDateRangeField }}
       slotProps={{
         textField: {
           onBlur: handleBlur,
         },
       }}
-      error={error}
+      error={Boolean(error)}
       helperText={helperText}
     />
-  )
-})
+  );
+});
 
 export default DateRangeField;

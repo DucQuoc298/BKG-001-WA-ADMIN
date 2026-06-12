@@ -188,3 +188,14 @@ Khi tạo một plugin mới, hãy đảm bảo tuân thủ các bước:
 | **`No plugin found for route...`** | Chưa khai báo plugin trong manifest hoặc trường `routePath` bị sai lệch. | Kiểm tra thuộc tính `routePath` trong manifest xem có khớp với URL đang mở không, đảm bảo `enabled: true`. |
 | **`Plugin <id> has no valid exported component`** | Plugin không export đúng chuẩn `default` hoặc `createPluginComponent`. | Kiểm tra file nguồn của plugin. Mở file `.mjs` sau khi build để đảm bảo phần export hợp lệ. |
 | **Plugin hiển thị không đúng giao diện/SDK** | Chưa định cấu hình map SDK cho Plugin ID mới nên hệ thống fallback. | Mở file `src/runtime/AppPlugin.tsx` và đăng ký SDK Declaration mới khớp với `id` của plugin. |
+
+---
+
+## 8. Hướng dẫn dành riêng cho AI Agents & Nhà phát triển mới
+
+Để duy trì chất lượng mã nguồn và tự động hóa các tác vụ phát triển, hệ thống đã trang bị bộ quy tắc và kỹ năng (skills) chuyên biệt:
+
+1. **Bộ Quy tắc Dự án**:
+   - Vui lòng xem [PROJECT_RULES.md](file:///Volumes/KINGSTON/Code/react-template/PROJECT_RULES.md) để biết các quy ước cụ thể về lập trình Redux, DataTable, chỉnh sửa ô lưới và phát triển Runtime Plugins.
+2. **Kỹ năng Phát triển Dự án (Project Development Skill)**:
+   - Một bộ skill hướng dẫn từng bước đã được lưu trữ tại [SKILL.md](file:///Volumes/KINGSTON/Code/react-template/skills/project-development/SKILL.md). Các tác nhân AI khi hoạt động trong workspace này nên tham khảo skill này trước khi thực thi viết mã để đảm bảo tuân thủ đúng quy trình.

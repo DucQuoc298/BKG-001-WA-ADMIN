@@ -13,10 +13,13 @@ export type IGridColDef = Omit<GridColDef, 'type' | 'getActions'> & {
   absNumber?: boolean;
   handleCellValueChange?: (v, rowId) => void;
   useI18n?: boolean;
+  store?: any;
+  idField?: string;
+  textField?: string;
 };
 
 
-export type TGridColTypes = GridColType | 'textArea' | 'checkbox' | 'absNumber';
+export type TGridColTypes = GridColType | 'textArea' | 'checkbox' | 'absNumber' | 'autocomplete';
 export enum EGridColTypes {
   TEXT = "text",
   NUMBER = "number",
@@ -30,6 +33,7 @@ export enum EGridColTypes {
   ACTIONS = "actions",
   CUSTOM = "custom",
   LONG_TEXT = "longText",
+  AUTOCOMPLETE = "autocomplete",
 }
 
 export const getGridColumns = (

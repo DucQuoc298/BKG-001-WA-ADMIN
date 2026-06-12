@@ -1,24 +1,58 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { EFormMode } from 'types/form';
+
 export type InvoiceFormData = {
   customerName: string;
-  product?: string | null;
+  product?: any;
+};
+
+export type InvoiceFilters = {
+  startDate?: string;
+  endDate?: string;
+  customerId?: string;
+};
+
+
+
+export interface ListState<TFilters = Record<string, any>> {
+  activeTab: string;
+  searchKeyword: string;
+  filters: TFilters;
 }
-export interface IInvoiceState {
+
+export interface FormState<TFormData> {
+  mode: EFormMode;
+  activeId: string | number | null;
+  formData: TFormData;
   loading: boolean;
   saving: boolean;
   error: any;
   message: any;
-  formData: InvoiceFormData;
 }
+
+export interface IInvoiceState {
+  list: ListState<InvoiceFilters>;
+  form: FormState<InvoiceFormData>;
+}
+
 const initialState: IInvoiceState = {
-  loading: false,
-  saving: false,
-  error: null,
-  message: null,
-  formData: {
-    customerName: '',
-    product: null,
+  list: {
+    activeTab: 'view',
+    searchKeyword: '',
+    filters: {},
+  },
+  form: {
+    mode: EFormMode.LIST,
+    activeId: null,
+    formData: {
+      customerName: '',
+      product: null,
+    },
+    loading: false,
+    saving: false,
+    error: null,
+    message: null,
   },
 };
 
@@ -26,17 +60,65 @@ const invoiceSlice = createSlice({
   name: 'invoice',
   initialState,
   reducers: {
-    updateInvoiceForm: (state, action: PayloadAction<Partial<InvoiceFormData>>) => {
-      state.formData = {
-        ...state.formData,
+    // Actions cho trang List
+    updateInvoiceListTab: (state, action: PayloadAction<string>) => {
+      state.list.activeTab = action.payload;
+    },
+    updateInvoiceListSearch: (state, action: PayloadAction<string>) => {
+      state.list.searchKeyword = action.payload;
+    },
+    updateInvoiceListFilters: (state, action: PayloadAction<Partial<InvoiceFilters>>) => {
+      state.list.filters = {
+        ...state.list.filters,
         ...action.payload,
       };
     },
-    resetInvoiceForm: (state) => {
-      state.formData = initialState.formData;
+    resetInvoiceList: (state) => {
+      state.list = initialState.list;
     },
-  }
+
+    // Actions cho trang Form
+    openInvoiceForm: (
+      state,
+      action: PayloadAction<{ mode: EFormMode; activeId?: string | number | null; data?: InvoiceFormData }>
+    ) => {
+      state.form.mode = action.payload.mode;
+      state.form.activeId = action.payload.activeId ?? null;
+      if (action.payload.data) {
+        state.form.formData = action.payload.data;
+      } else if (action.payload.mode === EFormMode.FORM) {
+        state.form.formData = initialState.form.formData;
+      }
+    },
+    updateInvoiceForm: (state, action: PayloadAction<Partial<InvoiceFormData>>) => {
+      state.form.formData = {
+        ...state.form.formData,
+        ...action.payload,
+      };
+    },
+    setInvoiceFormSaving: (state, action: PayloadAction<boolean>) => {
+      state.form.saving = action.payload;
+    },
+    setInvoiceFormLoading: (state, action: PayloadAction<boolean>) => {
+      state.form.loading = action.payload;
+    },
+    // resetInvoiceForm: Bắt buộc tuân thủ quy ước tự động reset form của useFormActions
+    resetInvoiceForm: (state) => {
+      state.form = initialState.form;
+    },
+  },
 });
 
-export const { updateInvoiceForm, resetInvoiceForm } = invoiceSlice.actions;
+export const {
+  updateInvoiceListTab,
+  updateInvoiceListSearch,
+  updateInvoiceListFilters,
+  resetInvoiceList,
+  openInvoiceForm,
+  updateInvoiceForm,
+  setInvoiceFormSaving,
+  setInvoiceFormLoading,
+  resetInvoiceForm,
+} = invoiceSlice.actions;
+
 export default invoiceSlice.reducer;

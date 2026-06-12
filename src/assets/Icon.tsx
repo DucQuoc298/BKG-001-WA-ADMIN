@@ -6,13 +6,14 @@ import {
   LuTrash,
   LuEye,
   LuUndo2,
-  LuX
+  LuX,
+  LuFilter,
 } from "react-icons/lu";
 import { MdMoreVert, MdClear } from "react-icons/md";
 import { IoMdCalendar } from "react-icons/io";
 
 interface IconProps {
-  name: IconName;
+  name: IconName | string;
   size: number;
   color?: string;
   onClick?: (e: React.MouseEvent<SVGElement, MouseEvent>) => void;
@@ -28,6 +29,7 @@ export enum IconName {
   CLOSE = "close",
   CALENDAR = "calendar",
   CLEAR = "clear",
+  FILTER = "filter",
 }
 const Icons = ({ name, size, color, onClick }: IconProps) => {
   switch (name) {
@@ -40,6 +42,7 @@ const Icons = ({ name, size, color, onClick }: IconProps) => {
     case IconName.CLOSE: return <LuX size={size} color={color} onClick={onClick} />;
     case IconName.CALENDAR: return <IoMdCalendar size={size} color={color} onClick={onClick} />;
     case IconName.CLEAR: return <MdClear size={size} color={color} onClick={onClick} />;
+    case IconName.FILTER: return <LuFilter size={size} color={color} onClick={onClick} />;
     default: return null;
   }
 }

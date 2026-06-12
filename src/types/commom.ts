@@ -1,3 +1,5 @@
+import { IToolbarButton } from "./toolbarLocal";
+
 export enum IThemeMode {
   LIGHT = "light",
   DARK = "dark",
@@ -41,38 +43,25 @@ export interface IActionAndSub {
   sub: string;
 }
 
-// Form modes for handling different states of a form (viewing, editing, creating new)
-export enum IFormMode {
-  VIEW = "view",
-  FORM = "form",
-  NEW = "new",
-  EDIT = "edit",
-}
-
-export const actionButtons = [
+export const actionButtons: IToolbarButton[] = [
   {
     key: IAction.NEW,
-    label: "New",
     icon: "plus",
   },
   {
     key: IAction.EDIT,
-    label: "Edit",
     icon: "edit",
   },
   {
     key: IAction.DELETE,
-    label: "Delete",
     icon: "delete",
   },
   {
     key: IAction.VIEW,
-    label: "View",
     icon: "eye",
   },
   {
     key: IAction.CANCEL,
-    label: "Cancel",
     icon: "close",
   },
 

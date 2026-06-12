@@ -1,9 +1,9 @@
 import React, { memo, useRef, forwardRef } from "react";
 import { NumericFormat, NumericFormatProps } from "react-number-format";
-import { SxProps, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import { GridEditInputCellProps, GridApiPro } from "@mui/x-data-grid-pro";
 import { unstable_useEnhancedEffect as useEnhancedEffect } from "@mui/utils";
-import createStyle from "./styles";
+import createStyle from "../../styles";
 
 type ICellEditNumber = GridEditInputCellProps &
   Omit<NumericFormatProps, "onChange" | "onBlur"> & {
@@ -12,6 +12,8 @@ type ICellEditNumber = GridEditInputCellProps &
     field: string;
     isAbs?: boolean;
     handleChange?: (v, detail) => void;
+    autoRowHeight?: boolean;
+    onTabNavigation?: (rowId: any, field: string, isShift: boolean, event: any) => void;
   };
 const CellEditNumber = forwardRef<HTMLInputElement, ICellEditNumber>(
   function Input(
@@ -27,6 +29,8 @@ const CellEditNumber = forwardRef<HTMLInputElement, ICellEditNumber>(
       hasFocus,
       handleChange,
       api,
+      autoRowHeight,
+      onTabNavigation,
       // Extract props that should not be passed to NumericFormat
       id: _id,
       className: _className,
@@ -34,6 +38,13 @@ const CellEditNumber = forwardRef<HTMLInputElement, ICellEditNumber>(
       inputProps: _inputProps,
       InputProps: _InputProps,
       slotProps: _slotProps,
+      // Omit DataGrid cell props to avoid DOM warnings
+      cellMode: _cellMode,
+      row: _row,
+      rowNode: _rowNode,
+      colDef: _colDef,
+      isEditable: _isEditable,
+      formattedValue: _formattedValue,
       ...numericFormatProps
     },
     ref
@@ -53,11 +64,27 @@ const CellEditNumber = forwardRef<HTMLInputElement, ICellEditNumber>(
       <NumericFormat
         {...numericFormatProps}
         value={currency}
-        sx={styles.baseInputEdit as SxProps}
+        sx={{
+          ...(styles.baseInputEdit as any),
+          ...(autoRowHeight ? {
+            height: "auto",
+            "& .MuiInputBase-root": {
+              height: "auto !important",
+              minHeight: "unset",
+            }
+          } : {})
+        }}
         variant="outlined"
         thousandSeparator={thousandSeparator}
         decimalSeparator={decimalSeparator}
         decimalScale={decimalScale}
+        onKeyDown={(e) => {
+          if (e.key === 'Tab') {
+            onTabNavigation?.(rowId, field, e.shiftKey, e);
+          } else {
+            numericFormatProps.onKeyDown?.(e);
+          }
+        }}
         getInputRef={(el) => {
           if (el && "select" in el) {
             inputRef.current = el as HTMLInputElement;

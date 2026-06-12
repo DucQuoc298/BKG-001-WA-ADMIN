@@ -1,295 +1,261 @@
-# React Template + Runtime Plugin Forms
+# React Template + Runtime Plugin Forms (Mantis Admin Dashboard)
 
-Template admin app su dung React + Vite + MUI, ho tro runtime plugin forms thong qua file `.mjs` va `public/plugins/manifest.json`.
+Dự án này là một hệ thống Admin Dashboard được xây dựng trên nền tảng **Mantis Free React Admin Template**, tích hợp kiến trúc **Runtime Plugin Forms** linh hoạt, cho phép tải động và thực thi các form chức năng được viết bằng React + TypeScript dưới dạng file `.mjs` tại runtime.
 
-README nay tong hop cac note can thiet de:
-- Chay app local nhanh
-- Hieu cau truc project
-- Build/publish plugin form
-- Them plugin moi dung quy trinh
-- Debug cac loi thuong gap
+Tài liệu này cung cấp chi tiết về kiến trúc hệ thống, yêu cầu và luồng xử lý dữ liệu của từng mô-đun, cách triển khai Redux slice/hook theo đúng quy ước, cùng các hướng dẫn kỹ thuật quan trọng khác.
 
-## 1) Tong quan
+---
 
-Project gom 2 phan:
+## 1. Kiến trúc dự án (Project Architecture)
 
-1. Host app (thu muc goc)
-- App chinh React/Vite
-- Render cac page co san + route runtime plugin
-- Doc manifest plugin va dynamic import module `.mjs`
+Hệ thống được chia làm hai khu vực làm việc (workspaces) độc lập:
 
-2. Plugin builder (`plugin-form-builder/`)
-- Build plugin tu source TS/TSX thanh ESM (`.mjs`)
-- Copy output sang `public/plugins/` de host app tai runtime
-
-## 2) Tech stack chinh
-
-- React 19
-- Vite 8
-- TypeScript
-- Material UI
-- Redux Toolkit + Redux Saga
-- SWR
-- Formik + Yup
-- i18next
-- Esbuild (cho plugin builder)
-
-## 3) Yeu cau moi truong
-
-- Node.js 20+ (khuyen nghi)
-- Yarn 4 (duoc khai bao trong `packageManager`)
-
-Ban van co the dung npm, nhung de dong bo lockfile va hanh vi dependency thi nen uu tien Yarn.
-
-## 4) Cai dat va chay nhanh
-
-### Host app
-
-```bash
-yarn install
-yarn start
+```mermaid
+graph LR
+    subgraph Host App (Shell)
+        A[App chính - Vite + React 19]
+        B[Redux Store / Global State]
+        C[Runtime Loader Engine]
+        D[Router tĩnh: /, /bill, /invoice]
+    end
+    
+    subgraph Plugin Builder
+        E[Workspace độc lập: TS + ESBuild]
+        F[Source code plugins]
+    end
+    
+    F -->|ESBuild compile| G[File *.mjs]
+    G -->|Publish| H[public/plugins/]
+    C -->|Fetch| I[manifest.json]
+    C -->|Dynamic import| G
 ```
 
-Mac dinh Vite server chay o:
-- `http://localhost:2210`
-- Neu co cert trong `./.cert/key.pem` va `./.cert/cert.pem` thi app se chay HTTPS.
+### 1.1 Host App (Ứng dụng chính - Thư mục gốc)
+- **Vai trò**: Đóng vai trò là lớp vỏ (Shell) chứa layout chính, cơ chế phân quyền, hệ thống định tuyến tĩnh (`/`, `/invoice`, `/bill`), global state (Redux), đa ngôn ngữ (i18n) và theme.
+- **Động cơ chạy Plugin (Runtime Engine)**: Khi người dùng truy cập một route động (ví dụ `/user-forms/customer-form`), component `LoadFormRuntime` sẽ tải cấu hình từ `manifest.json`, kiểm tra xem plugin có tồn tại và được kích hoạt hay không, sau đó tiến hành tải động (Dynamic Import) file `.mjs` tương ứng.
+- **SDK Runtime**: Host app khởi tạo và tiêm (inject) một đối tượng `sdk` vào plugin. SDK này chứa các component dùng chung (MUI components, DataTable, Dialog, Inputs...) và các hàm tiện ích để plugin có thể sử dụng mà không cần đóng gói trực tiếp, giúp giảm dung lượng file plugin.
 
-### Plugin builder
+### 1.2 Plugin Builder (Trình đóng gói plugin - thư mục `plugin-form-builder/`)
+- **Vai trò**: Cho phép phát triển các form/mô-đun độc lập bằng React + TypeScript.
+- **Công cụ đóng gói (Bundler)**: Sử dụng **Esbuild** để compile và đóng gói mã nguồn thành định dạng ESM (`.mjs`) độc lập, tự động loại bỏ các thư viện đã có sẵn ở Host App (externalize React, MUI, etc.) và xuất bản trực tiếp vào thư mục `public/plugins/` của Host App.
 
-```bash
-cd plugin-form-builder
-yarn install
-yarn build demo-form
-yarn publish:local demo-form
-```
-
-Sau do quay lai host app va refresh route plugin de thay thay doi.
-
-## 5) Scripts quan trong
-
-### Host app (`package.json`)
-
-- `yarn start`: chay dev server Vite mode dev
-- `yarn build`: type-check + build production vao thu muc `build/`
-- `yarn preview`: preview ban build
-- `yarn lint`: lint code trong `src/`
-- `yarn lint:fix`: lint va auto-fix
-
-### Plugin builder (`plugin-form-builder/package.json`)
-
-- `yarn build [form-name]`: build 1 plugin (mac dinh `demo-form`)
-- `yarn watch [form-name]`: watch build 1 plugin
-- `yarn publish:local [form-name]`: copy `dist/<form-name>.mjs` -> `../public/plugins/<form-name>.mjs`
-- `yarn build:all`: build tat ca plugin trong `src/plugins/*`
-
-## 6) Cau truc thu muc chinh
+### 1.3 Cấu trúc thư mục dự án (Project Structure)
 
 ```text
-.
-|- src/
-|  |- pages/                 # Pages co san cua app
-|  |- routes/                # Route config
-|  |- runtime/               # Runtime plugin loader/services/types
-|  |- components/            # Reusable components
-|  |- themes/                # Theme setup
-|  |- store/                 # Redux store + saga
-|- public/
-|  |- plugins/
-|     |- manifest.json       # Danh sach plugin runtime
-|     |- *.mjs               # Plugin modules da build
-|- plugin-form-builder/
-|  |- src/plugins/<plugin>/  # Source moi plugin
-|  |- scripts/               # Build/publish scripts
-|  |- dist/                  # Output `.mjs`
-```
-
-## 7) Runtime plugin flow
-
-1. Route `/user-forms/*` duoc map toi runtime loader.
-2. Loader fetch `plugins/manifest.json` (hoac URL tu env).
-3. Tim plugin theo `routePath`.
-4. Resolve `moduleUrl` va dynamic import plugin module.
-5. Tao `sdk` theo plugin id (`createAppRuntime(plugin.id)`).
-6. Render component plugin.
-
-Plugin module hop le khi export 1 trong 2 kieu:
-- `default` la React component
-- `createPluginComponent` la factory tra ve React component
-
-## 8) Manifest plugin
-
-File: `public/plugins/manifest.json`
-
-```json
-{
-	"plugins": [
-		{
-			"id": "demo-form",
-			"name": "Demo Form Plugin",
-			"routePath": "/user-forms/demo-form",
-			"moduleUrl": "./demo-form.mjs",
-			"enabled": true
-		}
-	]
-}
-```
-
-Y nghia field:
-- `id`: dinh danh plugin, can dong bo voi runtime declaration neu co custom sdk
-- `name`: ten hien thi
-- `routePath`: duong dan route loader se match
-- `moduleUrl`: URL toi file `.mjs`, resolve tu vi tri manifest
-- `enabled`: `false` thi plugin bi bo qua
-
-## 9) Cach tao plugin moi
-
-### Buoc 1: Tao source plugin
-
-Tao folder moi:
-
-```text
-plugin-form-builder/src/plugins/customer-form/index.tsx
-```
-
-Vi du skeleton:
-
-```tsx
-import { definePlugin } from '../../types';
-
-export const createPluginComponent = definePlugin(({ sdk }) => {
-	const { Box, Typography } = sdk.components;
-
-	function CustomerFormPlugin() {
-		return (
-			<Box sx={{ p: 3 }}>
-				<Typography variant="h5">Customer Form</Typography>
-			</Box>
-		);
-	}
-
-	return CustomerFormPlugin;
-});
-```
-
-### Buoc 2: Build + publish local
-
-```bash
-cd plugin-form-builder
-yarn build customer-form
-yarn publish:local customer-form
-```
-
-### Buoc 3: Dang ky vao manifest
-
-Them item moi vao `public/plugins/manifest.json`:
-
-```json
-{
-	"id": "customer-form",
-	"name": "Customer Form",
-	"routePath": "/user-forms/customer-form",
-	"moduleUrl": "./customer-form.mjs",
-	"enabled": true
-}
-```
-
-### Buoc 4 (quan trong): Khai bao runtime sdk theo plugin id (neu can)
-
-Host app map `plugin.id` -> sdk runtime trong `src/runtime/AppPlugin.tsx`.
-
-Neu plugin moi can sdk rieng:
-- Tao runtime declaration moi trong `src/runtime/types/`
-- Import vao `src/runtime/AppPlugin.tsx`
-- Them vao `runtimeDeclarations`
-
-Neu khong co declaration theo id, plugin se fallback sang runtime cua `demo-form`.
-
-## 10) Bien moi truong lien quan plugin
-
-- `VITE_PLUGIN_MANIFEST_URL`: override URL manifest plugin.
-
-Neu khong dat bien nay, app dung mac dinh:
-- `plugins/manifest.json` theo `window.location.origin + BASE_URL`
-
-## 11) Checklist release plugin
-
-1. Build plugin (`yarn build <name>`)
-2. Verify output `plugin-form-builder/dist/<name>.mjs`
-3. Copy sang host static (`yarn publish:local <name>` hoac pipeline deploy rieng)
-4. Update manifest
-5. Neu can, update runtime declaration va map id
-6. Chay host app, vao route plugin, test case chinh
-7. Chay lint/build truoc merge
-
-## 12) Troubleshooting nhanh
-
-## 12a) Convention reset form khi dong tab
-
-Hook `src/hooks/useForm.ts` dang reset form theo convention action type, khong hard-code tung slice cu the.
-
-Khi tao form slice moi va muon `resetForm(formKey)` tu dong hoat dong, can giu dung 2 quy uoc sau:
-
-- `name` cua slice phai bang `IFormKey.X.toLowerCase()`
-- reducer reset phai co ten `resetXForm`
-
-Vi du voi `IFormKey.BILL`:
-
-```ts
-const billSlice = createSlice({
-	name: IFormKey.BILL.toLowerCase(),
-	initialState,
-	reducers: {
-		resetBillForm: (state) => {
-			state.formData = initialState.formData;
-		}
-	}
-});
-```
-
-Luc do `resetForm(IFormKey.BILL)` se tu dispatch action type:
-
-```ts
-bill/resetBillForm
-```
-
-Neu khong dung convention nay, can tu xu ly rieng trong logic reset form.
-
-### Loi: `Cannot load plugin manifest`
-
-- Kiem tra file `public/plugins/manifest.json`
-- Kiem tra URL sau khi set `VITE_PLUGIN_MANIFEST_URL`
-- Kiem tra network va status code manifest
-
-### Loi: `No plugin found for route ...`
-
-- Kiem tra `routePath` trong manifest co dung URL dang mo
-- Kiem tra plugin co `enabled: true`
-
-### Loi: `Plugin <id> has no valid exported component`
-
-- Plugin phai export `default` component hoac `createPluginComponent`
-- Kiem tra output `.mjs` co dung noi dung sau build
-
-### Plugin khong dung dung sdk mong muon
-
-- Kiem tra `id` trong manifest
-- Kiem tra map trong `src/runtime/AppPlugin.tsx`
-- Neu chua map id moi, plugin dang dung fallback runtime (`demo-form`)
-
-## 13) Lenh de kiem tra truoc khi merge
-
-Tai root:
-
-```bash
-yarn lint
-yarn build
-```
-
-Tai plugin builder:
-
-```bash
-cd plugin-form-builder
-yarn build:all
+react-template/ (Host App - Thư mục gốc)
+├── .cert/                     # Khóa SSL tự cấp để chạy HTTPS cục bộ (key.pem, cert.pem)
+├── public/                    # Thư mục chứa asset tĩnh
+│   └── plugins/               # Thư mục lưu trữ tài nguyên plugin chạy động
+│       ├── manifest.json      # File cấu hình đăng ký danh sách các plugin hiện có
+│       └── *.mjs              # Các file plugin sau khi được biên dịch (VD: demo-form.mjs)
+├── src/                       # Source code của ứng dụng chính
+│   ├── assets/                # Ảnh, font và style tĩnh
+│   ├── components/            # Các UI component dùng chung có tính tái sử dụng cao
+│   │   ├── Autocomplete/      # Thành phần Autocomplete tuyển chọn
+│   │   ├── Buttons/           # Nút bấm tùy chỉnh
+│   │   ├── DataTable/         # Bảng hiển thị dữ liệu nâng cao
+│   │   ├── Dialog/            # Hộp thoại modal
+│   │   ├── Inputs/            # Các trường nhập liệu tiêu chuẩn
+│   │   ├── MainCard.tsx       # Component khung bao bọc (Card) chuẩn của template
+│   │   ├── Loader.tsx         # Hiệu ứng tải trang (Spinner/Progress)
+│   │   └── Snackbar.tsx       # Hiển thị thông báo Toast nhanh
+│   ├── contexts/              # Các Context API (ConfigContext, Theme...)
+│   ├── hooks/                 # Custom React Hooks dùng chung (useForm, useLocalStorage...)
+│   ├── i18n/                  # Cấu hình đa ngôn ngữ (vi, en...)
+│   ├── layout/                # Layout của hệ thống (MainLayout gồm Header, Drawer, Footer)
+│   ├── menu-items/            # Khai báo cấu trúc sidebar menu của Admin
+│   ├── pages/                 # Các trang tĩnh được định nghĩa sẵn
+│   │   ├── auth/              # Các trang Login, Register...
+│   │   └── main/              # Các trang chính như Home, Bill, Invoice...
+│   ├── routes/                # Cấu hình định tuyến (React Router)
+│   ├── runtime/               # Engine chạy plugin động (Plugin Loader, SDK, Declarations)
+│   │   ├── LoadFormRuntime/   # Component xử lý tải plugin & render dynamic component
+│   │   ├── AppPlugin.tsx      # Điểm đăng ký và map `plugin.id` với SDK Runtime tương ứng
+│   │   ├── services/          # Các service hỗ trợ runtime
+│   │   └── types/             # Định nghĩa SDK và API được cung cấp cho plugin (MUI, utils, components)
+│   ├── store/                 # Cấu hình Redux Store, Middleware, Root Saga
+│   ├── themes/                # Định nghĩa theme tùy chỉnh cho Material UI
+│   ├── types/                 # Các TypeScript interface dùng chung toàn app
+│   └── utils/                 # Các hàm tiện ích dùng chung (format, helper...)
+│
+└── plugin-form-builder/       # Workspace phát triển & build plugin động độc lập
+    ├── src/
+    │   └── plugins/           # Chứa source code của từng plugin (mỗi plugin là 1 folder)
+    │       ├── demo-form/     # Plugin mẫu mặc định
+    │       └── ...
+    ├── scripts/               # Các script build, watch và publish plugin
+    ├── dist/                  # Output file sau khi build (các file .mjs tạm thời)
+    └── package.json           # Danh sách các script build của builder
 ```
 
 ---
+
+## 2. Yêu cầu xử lý dữ liệu (Data Processing Requirements)
+
+Hệ thống tuân thủ các nguyên tắc xử lý dữ liệu sau nhằm tối ưu hóa trải nghiệm người dùng và hiệu năng mạng:
+
+1. **Chiến lược Caching với SWR**:
+   - Đối với dữ liệu từ xa (`remote` mode), hệ thống sử dụng thư viện `useSWR` để quản lý trạng thái tải, dữ liệu và bộ nhớ đệm (cache).
+   - Tắt các tính năng revalidate tự động không cần thiết (`revalidateOnFocus: false`, `revalidateIfStale: false`, `revalidateOnReconnect: false`) nhằm tránh spam request lên server.
+   - Sử dụng `keepPreviousData: true` để giữ lại dữ liệu cũ khi lật trang, tránh hiện tượng chớp nháy màn hình.
+2. **Bộ nhớ đệm toàn cục (Global Cache)**:
+   - Các biến cache ở cấp độ module (như `globalSelectionCache` và `globalDataCache`) được dùng để lưu giữ trạng thái chọn dòng (selection model) và dữ liệu chỉnh sửa cục bộ khi component bị unmount hoặc khi lật trang/chuyển tab, giúp khôi phục trạng thái tức thì khi quay lại.
+3. **Lazy Loading & Infinite Scroll**:
+   - Đối với các bộ chọn dữ liệu lớn (như Autocomplete), hệ thống sử dụng `useSWRInfinite` để tải dữ liệu theo từng trang nhỏ (ví dụ 7 dòng một trang). Dữ liệu mới sẽ được nối thêm vào mảng cũ (`.flat()`) khi người dùng cuộn xuống đáy danh sách.
+4. **Xử lý Dữ liệu Cục bộ (Local Mode)**:
+   - Khi bảng hoạt động ở chế độ `local`, hệ thống tự động lọc dữ liệu dựa trên từ khóa tìm kiếm (`keyword`) bằng cách duyệt qua toàn bộ giá trị của các thuộc tính trong dòng dữ liệu một cách không phân biệt chữ hoa/thường (case-insensitive).
+
+---
+
+## 3. Luồng xử lý dữ liệu của mỗi Module (Module Data Flow)
+
+Hệ thống bao gồm hai luồng nghiệp vụ chính đại diện cho hai chế độ vận hành:
+
+### 3.1 Luồng nghiệp vụ Tĩnh (Ví dụ: Bill, Invoice)
+
+```mermaid
+sequenceDiagram
+    participant User as Người dùng
+    participant UI as Giao diện (Bill/Invoice)
+    participant Redux as Redux Store (Slice)
+    participant API as Backend API / SWR
+    
+    User->>UI: Truy cập danh sách /bill
+    UI->>API: Gọi useDataTable (Fetch dữ liệu trang 1)
+    API-->>UI: Trả về rows & rowCount -> Render bảng
+    User->>UI: Click nút "Sửa" hoặc "Thêm mới"
+    UI->>Redux: Dispatch action openBillForm(mode, data)
+    Redux-->>UI: Cập nhật form state & hiển thị Form Dialog
+    User->>UI: Thay đổi thông tin trên Form & Click Lưu
+    UI->>API: Gọi API lưu dữ liệu (Mutate/Post)
+    API-->>UI: Lưu thành công
+    UI->>Redux: Dispatch resetBillForm() (khi đóng form)
+```
+
+1. **Trang danh sách (List Page)**:
+   - Sử dụng `DataTable` ở chế độ chỉ xem (`variant: view`, `mode: remote`).
+   - SWR tự động tải dữ liệu dựa trên key là sự kết hợp của `page`, `pageSize` và bộ lọc `filters`.
+   - Khi thay đổi tìm kiếm hoặc bộ lọc, key của SWR thay đổi sẽ kích hoạt fetch dữ liệu mới.
+   - Khi người dùng tick chọn các dòng, danh sách ID được lưu tạm thời vào `globalSelectionCache`.
+2. **Trang nhập liệu (Form Page)**:
+   - Khi mở form (Thêm mới/Sửa), component dispatch action `openBillForm` để đồng bộ dữ liệu vào Redux Slice.
+   - Formik/React Hook Form đảm nhiệm việc quản lý giá trị input cục bộ và validate dữ liệu qua schema Yup.
+   - Khi đóng tab hoặc form, hook `useFormActions` được kích hoạt để tự động reset dữ liệu trong slice tương ứng về trạng thái ban đầu, tránh rò rỉ dữ liệu sang lần mở sau.
+
+### 3.2 Luồng nghiệp vụ Động (Runtime Plugins)
+1. **Khởi tạo**: Người dùng điều hướng tới `/user-forms/:plugin-name`.
+2. **Tải cấu hình**: `LoadFormRuntime` gọi API để lấy nội dung file `public/plugins/manifest.json`.
+3. **Nhập module**: Thực hiện `import(moduleUrl)` để tải động file `.mjs` đã biên dịch của plugin.
+4. **Tiêm SDK**: Host app lấy cấu hình SDK tương thích với `plugin.id` (khai báo trong `src/runtime/AppPlugin.tsx`) và truyền đối tượng `sdk` này vào hàm khởi tạo plugin.
+5. **Render**: Plugin nhận `sdk` để render UI và tương tác với các component của Host App.
+
+---
+
+## 4. Chi tiết cách triển khai một Redux Slice & Hook
+
+Để duy trì cơ chế tự động reset form khi đóng tab hoặc tắt form thông qua hook `useFormActions`, lập trình viên bắt buộc phải tuân thủ nghiêm ngặt quy trình và quy ước đặt tên sau khi triển khai Redux Slice.
+
+### 4.1 Quy tắc đặt tên và Cấu trúc thư mục
+Mỗi mô-đun Redux nằm trong thư mục riêng biệt tại `src/store/<module_name>/`:
+- `reducer.ts`: Khai báo State, Slice Reducers và Actions.
+- `selector.ts`: Khai báo các reselect memoized selectors để component subcribe.
+
+### 4.2 Chi tiết triển khai Redux Slice (`reducer.ts`)
+
+Bắt buộc tuân thủ 2 quy ước sau để hook `useFormActions.resetForm(formKey)` có thể tự động sinh ra action reset chính xác:
+1. **`name` của slice**: Phải trùng khớp với dạng chữ thường của `IFormKey` tương ứng (Ví dụ: `IFormKey.BILL` là `'BILL'` -> `name` phải là `'bill'`).
+2. **Reducer reset**: Phải đặt tên theo quy tắc `reset[Key]Form` với `Key` viết hoa chữ cái đầu (PascalCase) tương ứng với enum `IFormKey` (Ví dụ: `resetBillForm`).
+
+**Ví dụ mã nguồn mẫu cho Module `BILL`:**
+```typescript
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { EFormMode } from 'types/form';
+import { IFormKey } from 'types';
+
+// 1. Định nghĩa kiểu dữ liệu cho Form và State
+export type BillFormData = {
+  customerName: string;
+  product?: any;
+};
+
+export interface IBillState {
+  list: {
+    activeTab: string;
+    searchKeyword: string;
+    filters: Record<string, any>;
+  };
+  form: {
+    mode: EFormMode;
+    activeId: string | number | null;
+    formData: BillFormData;
+    loading: boolean;
+    saving: boolean;
+  };
+}
+
+const initialState: IBillState = {
+  list: {
+    activeTab: 'all',
+    searchKeyword: '',
+    filters: {},
+  },
+  form: {
+    mode: EFormMode.FORM,
+    activeId: null,
+    formData: {
+      customerName: '',
+      product: null,
+    },
+    loading: false,
+    saving: false,
+  },
+};
+
+// 2. Khởi tạo Slice với quy ước tên bắt buộc
+const billSlice = createSlice({
+  name: IFormKey.BILL.toLowerCase(), // Bắt buộc: 'bill'
+  initialState,
+  reducers: {
+    updateBillForm: (state, action: PayloadAction<Partial<BillFormData>>) => {
+      state.form.formData = { ...state.form.formData, ...action.payload };
+    },
+    // Bắt buộc: Tên reducer reset phải là resetBillForm
+    resetBillForm: (state) => {
+      state.form = initialState.form;
+    },
+  },
+});
+
+export const { updateBillForm, resetBillForm } = billSlice.actions;
+export default billSlice.reducer;
+```
+
+### 4.3 Cách sử dụng Hook Reset trong Component
+Khi component form unmount (hoặc khi đóng tab), ta gọi hook `useFormActions` để reset state của form:
+```tsx
+import { useEffect } from 'react';
+import { useFormActions } from 'hooks/useForm';
+import { IFormKey } from 'types';
+
+const BillFormContainer = () => {
+  const { resetForm } = useFormActions();
+
+  useEffect(() => {
+    return () => {
+      // Tự động sinh ra và dispatch action: bill/resetBillForm
+      resetForm(IFormKey.BILL);
+    };
+  }, [resetForm]);
+
+  return <FormLayout />;
+};
+```
+
+---
+
+## 5. Các yêu cầu kỹ thuật và Quy trình kiểm tra khác
+
+- **HTTPS cục bộ**: Khi khởi động server ở môi trường local (`yarn start`), ứng dụng sẽ tự động chạy dưới giao thức bảo mật HTTPS nếu phát hiện có khóa SSL tự ký nằm ở thư mục `./.cert/` (`key.pem` và `cert.pem`).
+- **Quy trình kiểm tra trước khi Merge**:
+  - Tại thư mục gốc: Chạy `yarn lint` để kiểm tra lỗi cú pháp và chạy `yarn build` để kiểm tra lỗi kiểu dữ liệu TypeScript của Host App.
+  - Tại thư mục plugin builder: Chạy `cd plugin-form-builder && yarn build:all` để kiểm tra lỗi biên dịch của tất cả các dynamic plugins hiện có.

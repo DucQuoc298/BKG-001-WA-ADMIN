@@ -54,7 +54,7 @@ export default function MainCard({
       sx={() => ({
         position: 'relative',
         // p: 1,
-        ...(border && { border: `1px solid ${theme.palette.grey['A800']}` }),
+        ...(border && { border: `1px solid ${theme.palette.divider}` }),
         borderRadius: 4,
         boxshadow: boxshadow && !border ? boxshadow : 'inherit',
         ':hover': { boxShadow: theme.customShadows.z1 },
@@ -77,7 +77,7 @@ export default function MainCard({
       {/* card header and action */}
       {!darkTitle && title && (
         <CardHeader
-          sx={{ p: 2.5 }} s
+          sx={{ p: 2.5, pb: 0 }} s
           slotProps={{
             title: { variant: darkTitle ? 'h4' : 'subtitle1' },
             action: { sx: { m: '0px auto', alignSelf: 'center' } }
@@ -89,7 +89,7 @@ export default function MainCard({
       )}
 
       {/* content & header divider */}
-      {title && divider && <Divider />}
+      {title && divider && <Divider sx={{ mx: 2.5 }} />}
 
       {/* card content */}
       {content && (

@@ -94,4 +94,9 @@ export default {
     update_company_successfully: "Update company successfully",
     register_success: "Register success",
   },
+  button: {
+    new: "New",
+    edit: "Edit",
+    delete: "Delete",
+  }
 };

@@ -1,40 +1,76 @@
-import { Typography } from '@mui/material';
+import { ContainerWrapper, MainCard, Tabs } from 'components';
+import { useBill } from 'hooks/useBill';
+import React, { useCallback } from 'react';
+import { IAction, IActionAndSub, EFormMode, ITab } from 'types';
+import { GridActive, GridAll } from './Grids';
+import GridArchive from './Grids/Archive';
 import { IconName } from 'assets/Icon';
-import { ContainerWrapper, MainCard } from 'components';
-import React from 'react';
-import { IAction } from 'types/commom';
-// ==============================|| DASHBOARD - DEFAULT ||============================== //
+import BillForm from './Form/Form';
+import { useSnackbar } from 'hooks';
+enum EKeyTab {
+  All = "all",
+  ACTIVE = "active",
+  ARCHIVE = "archive",
+}
 
 export default function Bill() {
+  const {
+    listState,
+    formState,
+    updateTab,
+    openForm
+  } = useBill()
+  const { success } = useSnackbar();
+  const { activeTab } = listState;
+  const { mode } = formState;
+  const handleTabChange = (newValue: EKeyTab) => {
+    updateTab(newValue);
+  }
 
+  const tabsList: ITab[] = [
+    { key: EKeyTab.All, label: "All" },
+    { key: EKeyTab.ACTIVE, label: "Active", count: 130 },
+    { key: EKeyTab.ARCHIVE, label: "Archive", count: 4 },
+  ];
+
+  const handleActionClick = useCallback((actionKey: IAction | IActionAndSub, row?: any) => {
+    if (actionKey === IAction.NEW) {
+      openForm(EFormMode.FORM);
+    } else if (actionKey === IAction.DELETE) {
+      success(`Xóa thành công hóa đơn #${row.id} (Giả lập)`);
+    }
+  }, [openForm, success])
   return (
     <ContainerWrapper
-      toolbarLocalProps={{ 
+      toolbarLocalProps={{
         title: 'Bill',
-        
         buttons: [
-          { 
-            key: IAction.NEW, 
-            label: 'Add', 
-            icon: IconName.NEW,
-            items: [
-              { key: IAction.NEW, label: 'Add', icon: IconName.NEW},
-            ]
-          },
-          { key: IAction.EDIT, label: 'Edit', icon: IconName.EDIT },
-          { key: IAction.DELETE, label: 'Delete', icon: IconName.DELETE },
-          { key: IAction.VIEW, label: 'View', icon: IconName.VIEW },
-          { key: IAction.CANCEL, label: 'Cancel', icon: IconName.CANCEL },
-          
-        ]
+          { key: IAction.NEW, icon: IconName.NEW, label: "New Bill" }
+        ],
+        handleButtonClick: handleActionClick,
       }}
     >
-      <MainCard>
-
-          <Typography variant="h5" sx={{ mb: 2 }}>
-            Bill
-          </Typography>
-      </MainCard>
+      {mode === EFormMode.LIST && (<MainCard>
+        <Tabs
+          tabs={tabsList}
+          activeTab={activeTab}
+          handleTabChange={handleTabChange}
+        />
+        {activeTab === EKeyTab.All && (
+          <GridAll onButtonClick={handleActionClick} />
+        )}
+        {activeTab === EKeyTab.ACTIVE && (
+          <GridActive />
+        )}
+        {activeTab === EKeyTab.ARCHIVE && (
+          <GridArchive />
+        )}
+      </MainCard>)}
+      {mode === EFormMode.FORM && (
+        <BillForm
+          handleActionClick={handleActionClick}
+        />
+      )}
     </ContainerWrapper>
   );
 }
