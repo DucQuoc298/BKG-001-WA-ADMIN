@@ -37,7 +37,7 @@ const DateTimePicker = ({ onChange, value, error, label, slotProps, required, he
   const hasError = Boolean(error) || Boolean(validationError);
 
   return (
-    <LocalizationProvider adapterLocale={"en-gb"} dateAdapter={AdapterDayjs}>
+    <LocalizationProvider adapterLocale={currentLocale} dateAdapter={AdapterDayjs}>
       <FormLabel sx={{ ...iStyles.labelDefault }}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
       <DatePicker
         minDate={minDate}
