@@ -1,218 +1,82 @@
-import { Typography } from '@mui/material';
-import { Autocomplete, Button, ContainerWrapper, MainCard, TextField } from 'components';
-import React, { useCallback, useMemo, useState } from 'react';
-import { useHome } from 'hooks';
-import { Controller, useForm } from 'react-hook-form';
+import { Button, ContainerWrapper, MainCard, TextField } from 'components';
+import React, { useCallback } from 'react';
+import { useHome, useReduxFormSync } from 'hooks';
+import { Controller, useForm, FormProvider } from 'react-hook-form';
 import DateField from 'components/DateField/DateField';
-import dayjs from 'dayjs';
-import DateRangeField from 'components/DateField/DateRangeField';
-import { useTranslation } from 'react-i18next';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { HomeFormData, initialHomeForm } from 'store/home/reducer';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
-type Product = {
-  id: number;
-  title: string;
-  brand?: string;
-};
 
-interface FormValues {
-  product: Product | null;
-  products: Product[] | null;
-  date: Date | null;
-  dateRange: [Date | null, Date | null] | null;
-}
 export default function Home() {
 
-  const { t } = useTranslation();
   const { homeForm, update } = useHome();
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { value } = e.target;
+  const validationSchema = Yup.object().shape({
+    // date: Yup.mixed<Dayjs>().required('Expired Date is required'),
 
-    update({
-      note: value,
-    })
-  };
-  const [loading, setLoading] = useState(false);
+  });
 
-  const { register, control, formState: { errors }, handleSubmit } = useForm<FormValues>({ defaultValues: { product: null, products: null, date: null }, mode: 'onChange' });
+  const methods = useForm<HomeFormData>({
+    defaultValues: initialHomeForm,
+    resolver: yupResolver(validationSchema) as any,
+    mode: 'onBlur'
+  });
 
-  const fetchProducts = useCallback(async ({ keyword, page }: {
-    keyword: string;
-    page: number;
-    isReset?: boolean;
-  }, onSuccess?: (data: Product[]) => void) => {
-    if (!keyword.trim()) return;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: {
+      dirtyFields,
+    },
+  } = methods;
 
-    try {
-      setLoading(true);
+  useReduxFormSync({
+    methods,
+    values: homeForm,
+    onSave: update,
+  });
 
-      const res = await fetch(
-        `https://dummyjson.com/products/search?q=${encodeURIComponent(
-          keyword
-        )}&limit=10&skip=${page * 10}`
-      );
-
-      const data = await res.json();
-
-      const newProducts: Product[] = data.products ?? [];
-
-      if (onSuccess) {
-        onSuccess(newProducts);
-      }
-    } finally {
-      setLoading(false);
-    }
-  },
-    []
-  );
-  const getProductById = useCallback(async (id: number, onSuccess?: (data: Product) => void) => {
-    if (!id) return null;
-
-    try {
-      setLoading(true);
-
-      const res = await fetch(
-        `https://dummyjson.com/products/${id}`
-      );
-
-      const data = await res.json();
-      if (onSuccess) {
-        onSuccess(data as Product);
-      }
-      return data as Product;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const productStore = useMemo(
-    () => ({
-      mode: 'remote' as const,
-      params: { keyword: 'phone', page: 0 },
-      fnGetData: fetchProducts,
-      fnGetDefaultData: getProductById,
-    }),
-    [fetchProducts, getProductById]
-  );
+  const onSubmit = useCallback((_data: HomeFormData) => {
+    console.log('homeForm', _data, dirtyFields)
+  }, [dirtyFields])
 
   return (
-    <ContainerWrapper
-      toolbarLocalProps={{
-        title: 'Homeasjkbdbajsdjbkabsdabjdsjbk',
+    <FormProvider {...methods}>
+      <ContainerWrapper
+        toolbarLocalProps={{
+          title: 'Home',
 
-      }}
-    >
-      <MainCard>
-
-
-        <Autocomplete
-          idField="id"
-          textField="title"
-          label="Product"
-          error={!!errors.product}
-          helperText={errors.product?.message}
-          loading={loading}
-          required
-          value={homeForm.product || null}
-          limitTags={1}
-          store={productStore}
-          {...register('product', {
-            validate: (value: Product | null) => {
-              if (!value) {
-                return 'Product is required';
-              }
-              console.log(value);
-              update({ product: value as any });
-              return true;
-            }
-          })}
-        />
-        <Autocomplete
-          idField="id"
-          textField="title"
-          label="Product"
-          error={!!errors.products}
-          multiple={true}
-          helperText={errors.products?.message}
-          loading={loading}
-          required
-          value={homeForm.products || null}
-          limitTags={1}
-          store={productStore}
-          {...register('products', {
-            validate: (value: Product[] | null) => {
-              if (!value || value.length === 0) {
-                return 'Products are required';
-              }
-              console.log(value);
-              update({ products: value as any });
-              return true;
-            }
-          })}
-        />
-        {/* <DateField
-        label={"Choose date"}
-        // required
-        error={!!errors.date}
-        helperText={errors.date?.message}
-        value={homeForm.date ? dayjs(homeForm.date) : null}
-        {...register('date', {
-          validate: (value: Date | null) => {
-            if (!value) {
-              return 'Date is required';
-            }
-
-            update({ date: dayjs(value).toDate() });
-            return true;
-          }
-        })}
-      /> */}
-        <Controller
-          name="date"
-          control={control}
-          rules={{
-            required: t('errors.required', { 0: "Date" }),
-          }}
-          render={({ field, fieldState }) => (
-            <DateField
-              required
-              label={"Chose month"}
-              error={!!fieldState.error}
-              helperText={fieldState.error?.message}
-              value={field.value ? dayjs(field.value) : null}
-              onChange={(value) => {
-                field.onChange(value?.toDate() ?? null);
-              }}
-              onBlur={field.onBlur}
-            />
-          )}
-        />
-        <Controller
-          name="dateRange"
-          control={control}
-          rules={{
-            validate: (value) => {
-              if (!value?.[0] && !value?.[1]) return t('errors.at_least_one_value', { 0: "Date Range" });
-              return true;
-            },
-          }}
-          render={({ field, fieldState }) => (
-            <DateRangeField
-              label={"Choose date range"}
-              required
-              error={!!fieldState.error}
-              helperText={fieldState.error?.message}
-              value={field.value ? [field.value[0] ? dayjs(field.value[0]) : null, field.value[1] ? dayjs(field.value[1]) : null] : [null, null]}
-              onChange={(value) => {
-                field.onChange([value[0]?.toDate() ?? null, value[1]?.toDate() ?? null]);
-              }}
-              onBlur={field.onBlur}
-            />
-          )}
-        />
-      </MainCard>
-    </ContainerWrapper>
+        }}
+      >
+        <MainCard>
+          <Button
+            onClick={handleSubmit(onSubmit)}
+            text='Submit'
+          />
+          <TextField label={'test'} {...register('note')} />
+          <Controller
+            name='date'
+            control={methods.control}
+            render={({ field }) => (
+              <DateField
+                label="Chose month"
+                name={field.name}
+                onBlur={field.onBlur}
+                onChange={field.onChange as any}
+                value={field.value as any}
+                setValue={(val) => {
+                  field.onChange(val);
+                  setValue('date', val, {
+                    shouldDirty: true,
+                  });
+                }}
+              />
+            )}
+          />
+        </MainCard>
+      </ContainerWrapper>
+    </FormProvider>
   );
 }

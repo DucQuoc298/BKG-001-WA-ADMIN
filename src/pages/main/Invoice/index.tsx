@@ -1,11 +1,6 @@
-import { Box, Stack, Typography } from '@mui/material';
-import Icons, { IconName } from 'assets/Icon';
-import { ContainerWrapper, MainCard, DataTable, TextField, Autocomplete, Button, SideIndex, ScrollIndexLayout, Tabs } from 'components';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { EGridColTypes, IGridColDef } from 'types/components/grid';
-import { useInvoice } from 'hooks/useInvoice';
-import { useSnackbar } from 'hooks/useSnackbar';
-import { EFormMode, DataTableMode, DataTableVariant } from 'types';
+import { Box, Typography } from '@mui/material';
+import { ContainerWrapper, MainCard, ScrollIndexLayout, Tabs } from 'components';
+import React, { useState } from 'react';
 import Section from 'components/SideIndex/Section';
 
 const SECTIONS = [
@@ -18,52 +13,6 @@ const SECTIONS = [
 
 export default function Invoice() {
   const [tabValue, setTabValue] = useState('list');
-  const [activeId, setActiveId] = useState(SECTIONS[0].id);
-  const isScrollingRef = useRef(false); // tránh loop khi click
-  const timerRef = useRef<any>(null);
-
-  // Scroll đến section khi click tab
-  const handleSelect = useCallback((id) => {
-    isScrollingRef.current = true;
-    setActiveId(id);
-
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    // Sau khi scroll xong (~600ms) mới để IntersectionObserver tiếp quản
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    timerRef.current = setTimeout(() => {
-      isScrollingRef.current = false;
-    }, 700);
-  }, []);
-
-  // IntersectionObserver: tự động highlight tab khi scroll tay
-  useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-
-    SECTIONS.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-
-      const obs = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting && !isScrollingRef.current) {
-            setActiveId(id);
-          }
-        },
-        { threshold: 0.4 }
-      );
-
-      obs.observe(el);
-      observers.push(obs);
-    });
-
-    return () => observers.forEach((obs) => obs.disconnect());
-  }, []);
   return (
     <ContainerWrapper
       toolbarLocalProps={{

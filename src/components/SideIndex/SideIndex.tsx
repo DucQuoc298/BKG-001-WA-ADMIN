@@ -1,4 +1,4 @@
-import { Box, Paper, Typography, Divider, List, ListItemButton, ListItemText } from '@mui/material';
+import { Box, Typography, List, ListItemButton, ListItemText } from '@mui/material';
 import MainCard from 'components/MainCard';
 import React from 'react';
 import { ISectionTab } from 'types';

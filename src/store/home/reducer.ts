@@ -1,4 +1,5 @@
 
+import { PickerValue } from '@mui/x-date-pickers/internals';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { EFormMode } from 'types/form';
 export type HomeFormData = {
@@ -6,7 +7,9 @@ export type HomeFormData = {
   formMode: EFormMode;
   product?: string | null;
   products?: string[] | null;
-  date?: Date | null;
+  date?: PickerValue | null;
+
+  dirtyFields?: Record<string, any>;
   dateRange?: [Date | null, Date | null] | null;
 }
 export interface IHomeState {
@@ -16,19 +19,22 @@ export interface IHomeState {
   message: any;
   formData: HomeFormData;
 }
+export const initialHomeForm: HomeFormData = {
+  dirtyFields: {},
+  formMode: EFormMode.VIEW,
+  note: '',
+  product: null,
+  products: null,
+  date: null,
+  dateRange: null,
+};
+
 const initialState: IHomeState = {
   loading: false,
   saving: false,
   error: null,
   message: null,
-  formData: {
-    formMode: EFormMode.VIEW,
-    note: '',
-    product: null,
-    products: null,
-    date: null,
-    dateRange: null,
-  },
+  formData: initialHomeForm,
 };
 
 const homeSlice = createSlice({

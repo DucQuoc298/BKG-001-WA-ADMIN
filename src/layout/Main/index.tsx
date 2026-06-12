@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Outlet} from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';

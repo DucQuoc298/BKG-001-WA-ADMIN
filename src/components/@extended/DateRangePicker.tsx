@@ -16,9 +16,10 @@ interface IDateRangePickerProps extends Omit<DateRangePickerProps, 'value' | 'on
   label?: string;
   required?: boolean;
   helperText?: string;
+  inputRef?: React.Ref<any>;
 }
 
-const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, required, helperText, minDate = dayjs("1911-01-01"), onError, ...rest }: IDateRangePickerProps) => {
+const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, required, helperText, minDate = dayjs("1911-01-01"), onError, inputRef, ...rest }: IDateRangePickerProps) => {
   const iStyles = inputStyles();
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -43,13 +44,14 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
 
   return (
     <LocalizationProvider adapterLocale={currentLocale} dateAdapter={AdapterDayjs}>
-      <FormLabel sx={{...iStyles.labelDefault}}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
+      <FormLabel sx={{ ...iStyles.labelDefault }}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
       <DateRangePicker
         minDate={minDate}
         slotProps={{
           ...slotProps,
           textField: ({ position }: any) => ({
             ...slotProps?.textField,
+            inputRef: position === 'start' ? inputRef : undefined,
             slotProps: {
               input: {
                 endAdornment: (
@@ -89,12 +91,12 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
             fullWidth: true,
             error: getFieldError(position),
             helperText: getHelperText(position),
-            sx: { 
-              "& .MuiPickersOutlinedInput-root": { 
+            sx: {
+              "& .MuiPickersOutlinedInput-root": {
                 ...iStyles.textfield,
                 padding: '0px 10px',
-               },
-              "& .MuiPickersSectionList-root":{
+              },
+              "& .MuiPickersSectionList-root": {
                 padding: '10px 0px !important',
               },
               "& .clear-range-btn": {

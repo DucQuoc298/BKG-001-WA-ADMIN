@@ -15,6 +15,7 @@ const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLay
   const [activeId, setActiveId] = React.useState(items[0].id);
   const isScrollingRef = useRef(false);
   const timerRef = useRef<any>(null);
+
   const handleSelect = useCallback((id) => {
     isScrollingRef.current = true;
     setActiveId(id);
@@ -32,6 +33,36 @@ const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLay
       isScrollingRef.current = false;
     }, 700);
   }, []);
+
+  // IntersectionObserver: tự động highlight tab khi scroll bằng chuột/tay
+  React.useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+
+    items.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting && !isScrollingRef.current) {
+            setActiveId(id);
+          }
+        },
+        { threshold: 0.4 }
+      );
+
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    return () => {
+      observers.forEach((obs) => obs.disconnect());
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [items]);
+
   return (
     <Box sx={styles.container}>
       <Box sx={{ ...styles.sideIndex, top: stickyTop }}>
@@ -45,4 +76,5 @@ const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLay
 }
 
 export default ScrollIndexLayout;
+
 

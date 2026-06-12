@@ -4,6 +4,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { DatePicker, LocalizationProvider, DatePickerProps } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import 'dayjs/locale/en-gb';
+import 'dayjs/locale/vi';
 import { FormHelperText, FormLabel } from "@mui/material";
 import { DateValidationError } from "@mui/x-date-pickers/models";
 import { useTranslation } from "react-i18next";
@@ -19,7 +20,7 @@ interface IDateTimePickerProps extends Omit<DatePickerProps, 'value' | 'onChange
 
 const DateTimePicker = ({ onChange, value, error, label, slotProps, required, helperText, minDate = dayjs("1911-01-01"), onError, ...rest }: IDateTimePickerProps) => {
   const iStyles = inputStyles();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const [validationError, setValidationError] = useState<DateValidationError | null>(null);
 
@@ -37,7 +38,7 @@ const DateTimePicker = ({ onChange, value, error, label, slotProps, required, he
   const hasError = Boolean(error) || Boolean(validationError);
 
   return (
-    <LocalizationProvider adapterLocale={currentLocale} dateAdapter={AdapterDayjs}>
+    <LocalizationProvider adapterLocale={i18n.language === 'vi' ? 'vi' : 'en-gb'} dateAdapter={AdapterDayjs}>
       <FormLabel sx={{ ...iStyles.labelDefault }}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
       <DatePicker
         minDate={minDate}
@@ -69,7 +70,6 @@ const DateTimePicker = ({ onChange, value, error, label, slotProps, required, he
               },
 
             },
-            onClick: () => setOpen(true),
             ...slotProps?.textField,
             error: hasError,
             helperText: resolvedHelperText,
