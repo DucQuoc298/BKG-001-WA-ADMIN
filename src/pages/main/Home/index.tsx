@@ -8,6 +8,7 @@ import DateField from 'components/DateField/DateField';
 import dayjs from 'dayjs';
 import DateRangeField from 'components/DateField/DateRangeField';
 import { useTranslation } from 'react-i18next';
+import NumberField from 'components/Inputs/NumberField';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 type Product = {
@@ -21,6 +22,7 @@ interface FormValues {
   products: Product[] | null;
   date: Date | null;
   dateRange: [Date | null, Date | null] | null;
+  number: number;
 }
 export default function Home() {
 
@@ -37,7 +39,7 @@ export default function Home() {
   };
 const [loading, setLoading] = useState(false);
   
-  const { register, control, formState: { errors }, handleSubmit } = useForm<FormValues>({defaultValues: { product: null, products: null, date: null }, mode: 'onChange'});
+  const { register, control, formState: { errors }, handleSubmit } = useForm<FormValues>({defaultValues: { product: null, products: null, date: null, number: 10 }, mode: 'onChange'});
 
   const fetchProducts = useCallback(async ({ keyword, page}: {
       keyword: string;
@@ -215,6 +217,27 @@ const [loading, setLoading] = useState(false);
               field.onChange([value[0]?.toDate() ?? null, value[1]?.toDate() ?? null]);
             }}
             onBlur={field.onBlur}
+          />
+        )}
+      />
+      <Controller
+        name="number"
+        control={control}
+        rules={{
+          validate: (value) => {
+            if (value < 0) return 'Error';
+            return true;
+          }
+        }}
+        render={({ field, fieldState }) => (
+          <NumberField 
+            label={"Number"}
+            value={field.value}
+            error={!!fieldState.error}
+            helperText={fieldState.error?.message}
+            onChange={(e) => {
+              field.onChange(e.target.value);
+            }}
           />
         )}
       />
