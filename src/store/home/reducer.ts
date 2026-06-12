@@ -19,6 +19,7 @@ export type HomeFormFields = {
   date?: PickerValue | null;
   fromDate?: Date | null;
   toDate?: Date | null;
+  number?: number | null;
 };
 
 /**
@@ -81,6 +82,7 @@ export const initialHomeFormFields: HomeFormFields = {
   date: null,
   fromDate: null,
   toDate: null,
+  number: 0,
 };
 
 /** State khởi tạo của form, bao gồm cả dirtyFields và formMode */
