@@ -1,27 +1,71 @@
-import { forwardRef, useEffect, useMemo, useState } from "react";
-import { MultiInputDateRangeField } from "@mui/x-date-pickers-pro";
-import { TextFieldProps } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
+import { forwardRef, useState } from "react";
+import { MultiInputDateRangeField } from "@mui/x-date-pickers-pro";
 import DateRangePicker from "components/@extended/DateRangePicker";
+import { UseFormRegister } from "react-hook-form";
 
-interface IDateRangeFieldProps {
-  onChange?: (val: [Dayjs | null, Dayjs | null] | any) => void;
-  onBlur?: () => void;
-  textFieldProps?: Omit<TextFieldProps, "onChange" | "onBlur">;
-  label?: string;
-  error?: boolean | string;
-  helperText?: string;
-  defaultValue?: [any, any] | null;
+// ============================================================
+// TYPE
+// ============================================================
+
+/**
+ * Props của DateRangeField — tuân thủ cùng pattern với DateField:
+ * - Extend từ ReturnType<UseFormRegister<any>> (bỏ 'ref') để có thể
+ *   dùng trực tiếp với {...register('fieldName')} của React Hook Form.
+ * - `onChange` sẽ nhận sự kiện dạng { target: { name, value } }
+ *   để tương thích với cơ chế đăng ký của RHF.
+ */
+type IDateRangeFieldProps = Omit<ReturnType<UseFormRegister<any>>, 'ref'> & {
+  onBlur?: any;
   value?: [any, any] | null;
+  error?: boolean;
+  label?: string;
   required?: boolean;
+  helperText?: string;
   name?: string;
-}
+  ref?: any;
+};
 
-const DateRangeField = forwardRef<HTMLInputElement, IDateRangeFieldProps>(function DateRangeField(props, ref) {
-  const { label, defaultValue, value: controlledValue, onChange, onBlur, error, helperText, required, name, ...rest } = props;
+// ============================================================
+// COMPONENT
+// ============================================================
 
-
-
+/**
+ * DateRangeField — Input chọn khoảng ngày tháng tích hợp với React Hook Form.
+ *
+ * Cách dùng:
+ * ```tsx
+ * <DateRangeField label="Date range" {...register('dateRange')} />
+ * ```
+ *
+ * Hoặc với Controller nếu cần kiểm soát chi tiết hơn:
+ * ```tsx
+ * <Controller name="dateRange" control={control}
+ *   render={({ field }) => <DateRangeField {...field} />}
+ * />
+ * ```
+ *
+ * Cơ chế hoạt động:
+ * - Khi người dùng chọn ngày, `handleChange` emit sự kiện dạng
+ *   `{ target: { name, value: [Dayjs, Dayjs] } }` – tương thích
+ *   với cách RHF lắng nghe thay đổi qua `register`.
+ * - State nội bộ `[date, setDate]` dùng để hiển thị giá trị trên
+ *   picker, đồng bộ với `value` prop đến từ Redux/RHF.
+ */
+const DateRangeField = forwardRef<HTMLInputElement, IDateRangeFieldProps>(function DateRangeField(
+  {
+    value,
+    onChange,
+    onBlur: _onBlur,
+    error,
+    label,
+    required,
+    helperText,
+    name,
+  }: IDateRangeFieldProps,
+  _ref
+) {
+  /** Chuyển đổi giá trị bất kỳ (string, Date, Dayjs, null) về [Dayjs | null, Dayjs | null] */
   const parseValue = (val: any): [Dayjs | null, Dayjs | null] => {
     if (!val || !Array.isArray(val)) return [null, null];
     return [
@@ -30,16 +74,20 @@ const DateRangeField = forwardRef<HTMLInputElement, IDateRangeFieldProps>(functi
     ];
   };
 
-  const [localValue, setLocalValue] = useState<[Dayjs | null, Dayjs | null]>(() => parseValue(defaultValue));
+  /** State nội bộ hiển thị giá trị trên picker — được khởi tạo từ value prop */
+  const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>(
+    () => parseValue(value)
+  );
 
-  const activeValue = useMemo(() => {
-    const rawValue = controlledValue !== undefined ? controlledValue : localValue;
-    return parseValue(rawValue);
-  }, [controlledValue, localValue]);
-
+  /**
+   * Xử lý khi người dùng chọn ngày mới.
+   * Emit theo định dạng { target: { name, value } } để React Hook Form
+   * nhận và cập nhật vào store thông qua register.
+   */
   const handleChange = (newValue: [Dayjs | null, Dayjs | null]) => {
     const safeValue = newValue || [null, null];
-    setLocalValue(safeValue);
+    setDateRange(safeValue);
+
     if (onChange) {
       if (name) {
         onChange({
@@ -49,33 +97,18 @@ const DateRangeField = forwardRef<HTMLInputElement, IDateRangeFieldProps>(functi
           },
         });
       } else {
-        onChange(safeValue);
+        onChange(safeValue as any);
       }
     }
   };
 
-  const handleBlur = () => {
-    onBlur?.();
-  };
-
-  useEffect(() => {
-    setLocalValue(parseValue(defaultValue));
-  }, [defaultValue]);
-
   return (
     <DateRangePicker
-      {...rest}
       label={label}
       required={required}
-      inputRef={ref}
-      value={activeValue as any}
-      onChange={handleChange as any}
+      value={dateRange}
+      onChange={handleChange}
       slots={{ field: MultiInputDateRangeField }}
-      slotProps={{
-        textField: {
-          onBlur: handleBlur,
-        },
-      }}
       error={Boolean(error)}
       helperText={helperText}
     />

@@ -17,7 +17,8 @@ export type HomeFormFields = {
   product?: string | null;
   products?: string[] | null;
   date?: PickerValue | null;
-  dateRange?: [Date | null, Date | null] | null;
+  fromDate?: Date | null;
+  toDate?: Date | null;
 };
 
 /**
@@ -78,7 +79,8 @@ export const initialHomeFormFields: HomeFormFields = {
   product: null,
   products: null,
   date: null,
-  dateRange: null,
+  fromDate: null,
+  toDate: null,
 };
 
 /** State khởi tạo của form, bao gồm cả dirtyFields và formMode */

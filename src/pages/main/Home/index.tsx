@@ -1,11 +1,12 @@
 import { Button, ContainerWrapper, MainCard, TextField } from 'components';
 import React, { useCallback } from 'react';
 import { useHome, useReduxFormSync } from 'hooks';
-import { Controller, useForm, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import DateField from 'components/DateField/DateField';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { HomeFormFields, initialHomeFormFields } from 'store/home/reducer';
+import { DateRangeField } from 'components/DateField';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
@@ -26,7 +27,7 @@ export default function Home() {
   const {
     register,
     handleSubmit,
-    setValue,
+    setValues,
     formState: {
       dirtyFields,
     },
@@ -77,24 +78,25 @@ export default function Home() {
             text='Submit'
           />
           <TextField label={'test'} {...register('note')} />
-          <Controller
-            name='date'
-            control={methods.control}
-            render={({ field }) => (
-              <DateField
-                label="Chose month"
-                name={field.name}
-                onBlur={field.onBlur}
-                onChange={field.onChange as any}
-                value={field.value as any}
-                setValue={(val) => {
-                  field.onChange(val);
-                  setValue('date', val, {
-                    shouldDirty: true,
-                  });
-                }}
-              />
-            )}
+          <DateField
+            label="Chose month"
+            value={formState?.data?.date}
+            {...register('date')}
+          />
+          <DateRangeField
+            label="Chose month"
+            value={[formState?.data?.fromDate, formState?.data?.toDate]}
+            {...register('fromDate', {
+              onChange: (event) => {
+                const value = event.target.value;
+                console.log(value)
+                setValues({
+                  ...formState?.data,
+                  fromDate: value[0],
+                  toDate: value[1],
+                })
+              }
+            })}
           />
         </MainCard>
       </ContainerWrapper>
