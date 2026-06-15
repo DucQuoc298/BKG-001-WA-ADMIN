@@ -1,4 +1,4 @@
-import { Button, Chip, ContainerWrapper, MainCard, NumberField, TextField } from 'components';
+import { Button, Chip, ContainerWrapper, DropDownList, MainCard, NumberField, TextField } from 'components';
 import React, { useCallback } from 'react';
 import { useHome, useReduxFormSync } from 'hooks';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -17,6 +17,7 @@ export default function Home() {
   const validationSchema = Yup.object().shape({
     // date: Yup.mixed<Dayjs>().required('Expired Date is required'),
     number: Yup.number().required('Number is required'),
+    // role: Yup.string().required('Role is required'),
   });
 
   const methods = useForm<HomeFormFields>({
@@ -106,6 +107,18 @@ export default function Home() {
                 setValue('toDate', to, { shouldDirty: true });
               }
             })}
+          />
+
+          <DropDownList 
+            label='Role'
+            // forceSelect
+            {...register('role')}
+            value={formState?.data?.role}
+            data={[
+              { text: 'Admin', id: 'admin' },
+              { text: 'User', id: 'user' },
+              { text: 'Guest', id: 'guest' },
+            ]}
           />
         </MainCard>
 

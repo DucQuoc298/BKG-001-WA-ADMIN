@@ -48,6 +48,20 @@ export default () => {
         lineHeight: "22px",
         p: "8px",
       },
+    },
+    clearButton: {
+      padding: "0px !important",
+      marginRight: "4px",
+      borderRadius: "8px",
+      "& .clear-range-btn": {
+        opacity: 0,
+        pointerEvents: "none",
+        transition: "opacity 0.15s ease",
+      },
+      "&:hover .clear-range-btn, & .Mui-focused .clear-range-btn": {
+        opacity: 1,
+        pointerEvents: "auto",
+      },
     }
   };
 };
