@@ -8,6 +8,10 @@ export type PluginSdk = {
     getLicenceInfo: (callback?: (data: unknown) => void) => Promise<unknown>;
   };
   components: PluginUi;
+  broadcast?: {
+    postMessage: <T = any>(type: string, payload?: T) => void;
+    subscribe: (callback: (message: any) => void) => () => void;
+  };
 };
 
 export type PluginUi = {

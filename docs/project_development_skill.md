@@ -1,13 +1,8 @@
----
-name: project-development
-description: Hướng dẫn từng bước cho AI Agents và lập trình viên khi thực hiện tác vụ phát triển, sửa đổi hoặc debug trong dự án Mantis Admin Dashboard + Runtime Plugins. Bao gồm: tạo Redux Module, DataTable, Dynamic Plugin, BroadcastChannel, Styling, và quy trình pre-commit.
----
-
 # Kỹ năng Phát triển Dự án (Project Development Skill)
 
 Tài liệu này cung cấp chỉ dẫn từng bước cho các tác nhân AI (Agents) và lập trình viên khi thực hiện các tác vụ phát triển, sửa đổi hoặc sửa lỗi (debugging) trong dự án Mantis Admin Dashboard & Runtime Plugins.
 
-> **Lưu ý cho AI Agent:** Đọc toàn bộ tài liệu này trước khi viết bất kỳ dòng code nào. Mọi quy ước trong tài liệu này đều bắt buộc. Xem thêm [PROJECT_RULES.md](file:///Volumes/KINGSTON/Code/react-template/PROJECT_RULES.md) và [AGENTS.md](file:///Volumes/KINGSTON/Code/react-template/AGENTS.md) để biết toàn cảnh dự án.
+> **Lưu ý cho AI Agent:** Đọc toàn bộ tài liệu này trước khi viết bất kỳ dòng code nào. Mọi quy ước trong tài liệu này đều bắt buộc. Xem thêm [project_rules.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_rules.md) và [agents.md](file:///Volumes/KINGSTON/Code/react-template/docs/agents.md) để biết toàn cảnh dự án.
 
 ---
 

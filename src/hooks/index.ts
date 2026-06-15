@@ -10,4 +10,5 @@ export * from './useInvoice';
 export * from './useAutocomplete';
 export * from './useDataTable';
 export * from './useEmail';
+export * from './useBroadcastChannel';
 

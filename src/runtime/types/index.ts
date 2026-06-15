@@ -26,7 +26,14 @@ export interface RuntimeSharedComponents {
   components: object & { [key: string]: ComponentType<any> };
 }
 
-export interface RuntimeBaseRule extends RuntimeHttpClient, RuntimeSharedComponents {}
+export interface RuntimeBroadcast {
+  broadcast: {
+    postMessage: <T = any>(type: string, payload?: T) => void;
+    subscribe: (callback: (message: any) => void) => () => void;
+  };
+}
+
+export interface RuntimeBaseRule extends RuntimeHttpClient, RuntimeSharedComponents, RuntimeBroadcast {}
 
 export type AppRuntime<TExtra extends object = object> = RuntimeBaseRule & TExtra;
 

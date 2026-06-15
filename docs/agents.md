@@ -134,6 +134,14 @@ Khi tạo một plugin mới, hãy đảm bảo tuân thủ các bước:
 3. **Build & Publish local:** Chạy các lệnh đóng gói để kiểm tra.
 4. **Khai báo Manifest:** Thêm đầy đủ thông tin định tuyến vào `public/plugins/manifest.json`.
 
+### 5.3 Giao tiếp chéo tab bằng BroadcastChannel
+Hệ thống tích hợp API `BroadcastChannel` cho phép trao đổi dữ liệu chéo tab (ví dụ: tự động đăng xuất các tab khi một tab chọn đăng xuất, đồng bộ theme, v.v.).
+1. **Sử dụng Hook `useBroadcastChannel`:**
+   - Nếu vừa lắng nghe vừa gửi message: `const { postMessage } = useBroadcastChannel((msg) => { ... })`.
+   - Nếu **chỉ gửi message**, không truyền callback: `const { postMessage } = useBroadcastChannel()`. Việc này tránh kích hoạt Event Listener ẩn trên tab hiện tại.
+2. **Khai báo Event Types:** Mọi loại sự kiện phải nằm trong `BroadcastEventTypes` thuộc `src/services/broadcast.ts`.
+3. **Gọi từ dynamic plugins:** Sử dụng qua SDK thông qua `sdk.broadcast` (`postMessage` và `subscribe`).
+
 ---
 
 ## 6. Các câu lệnh thông dụng
@@ -196,6 +204,6 @@ Khi tạo một plugin mới, hãy đảm bảo tuân thủ các bước:
 Để duy trì chất lượng mã nguồn và tự động hóa các tác vụ phát triển, hệ thống đã trang bị bộ quy tắc và kỹ năng (skills) chuyên biệt:
 
 1. **Bộ Quy tắc Dự án**:
-   - Vui lòng xem [PROJECT_RULES.md](file:///Volumes/KINGSTON/Code/react-template/PROJECT_RULES.md) để biết các quy ước cụ thể về lập trình Redux, DataTable, chỉnh sửa ô lưới và phát triển Runtime Plugins.
+   - Vui lòng xem [project_rules.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_rules.md) để biết các quy ước cụ thể về lập trình Redux, DataTable, chỉnh sửa ô lưới và phát triển Runtime Plugins.
 2. **Kỹ năng Phát triển Dự án (Project Development Skill)**:
-   - Một bộ skill hướng dẫn từng bước đã được lưu trữ tại [SKILL.md](file:///Volumes/KINGSTON/Code/react-template/skills/project-development/SKILL.md). Các tác nhân AI khi hoạt động trong workspace này nên tham khảo skill này trước khi thực thi viết mã để đảm bảo tuân thủ đúng quy trình.
+   - Một bộ skill hướng dẫn từng bước đã được lưu trữ tại [project_development_skill.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_development_skill.md). Các tác nhân AI khi hoạt động trong workspace này nên tham khảo skill này trước khi thực thi viết mã để đảm bảo tuân thủ đúng quy trình.

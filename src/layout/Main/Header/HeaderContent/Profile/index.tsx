@@ -27,11 +27,12 @@ import styles from './styles';
 import { ArrowForwardIosOutlined, CameraAltOutlined, CheckOutlined, DarkModeOutlined, LightModeOutlined, TranslateOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { AuthNameRoutes, ILanguage, IThemeMode } from 'types';
-import { useMain } from 'hooks';
+import { useMain, useAuth, useBroadcastChannel } from 'hooks';
 import { FLAG_ICONS } from 'assets/images/icons/flags';
 import { languages } from 'utils';
 import { useNavigate } from 'react-router-dom';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { BroadcastEventTypes } from 'services';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -50,7 +51,9 @@ export default function Profile() {
   const [anchorRef, setAnchorRef] = useState<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const { t, i18n } = useTranslation();
-  const { state: mainState, setField } = useMain()
+  const { state: mainState, setField } = useMain();
+  const { resetState: resetAuthState } = useAuth();
+  const { postMessage } = useBroadcastChannel();
   const navigate = useNavigate();
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -107,11 +110,9 @@ export default function Profile() {
     setUIState({ ...uiState, expandTheme: null });
   }
   const handleLogout = () => {
-    // logout(() => {
-    //   setState({ ...state, token: '', refreshToken: '', loginStatus: false, user: null });
-    //   setAuthToken('', '');
+    resetAuthState();
+    postMessage(BroadcastEventTypes.AUTH_LOGOUT);
     navigate(AuthNameRoutes.LOGIN);
-    // });
   }
   return (
     <Box sx={{ flexShrink: 0 }}>

@@ -6,6 +6,18 @@ Tài liệu này cung cấp chi tiết về kiến trúc hệ thống, yêu cầ
 
 ---
 
+## Bản đồ Tài liệu Dự án (Project Documentation Map)
+
+Dưới đây là danh sách các tài liệu hướng dẫn phát triển và quy tắc kỹ thuật có trong dự án:
+
+* **[README.md](file:///Volumes/KINGSTON/Code/react-template/README.md)** (Tài liệu này): Tổng quan về kiến trúc dự án, yêu cầu xử lý dữ liệu, luồng nghiệp vụ tĩnh & động và hướng dẫn chi tiết cách triển khai Redux slices/hooks.
+* **[docs/project_rules.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_rules.md)**: Quy tắc lập trình bắt buộc đối với Redux, UI Components & Styling, DataTable (MUI DataGridPro), cơ chế tự động Reset Form và quy tắc giao tiếp chéo tab bằng BroadcastChannel.
+* **[docs/agents.md](file:///Volumes/KINGSTON/Code/react-template/docs/agents.md)**: Hướng dẫn dành cho AI Agents & Nhà phát triển mới, giải thích cấu trúc thư mục chi tiết, cơ chế hoạt động của Runtime Plugin, xử lý form reset và các câu lệnh thông dụng.
+* **[docs/email_system.md](file:///Volumes/KINGSTON/Code/react-template/docs/email_system.md)**: Hướng dẫn kỹ thuật cho hệ thống soạn thảo email nổi (Gmail-style Multi-composer), cơ chế tối ưu hiệu năng tránh render lại DOM bằng Global Map Cache ngoài Redux.
+* **[docs/project_development_skill.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_development_skill.md)**: Hướng dẫn quy trình phát triển chi tiết, cách đồng bộ hóa React Hook Form với Redux sử dụng `useReduxFormSync`, và cách hoạt động của DataTable.
+
+---
+
 ## 1. Kiến trúc dự án (Project Architecture)
 
 Hệ thống được chia làm hai khu vực làm việc (workspaces) độc lập:
@@ -251,9 +263,49 @@ const BillFormContainer = () => {
 };
 ```
 
+## 5. Đồng bộ hóa chéo tab với BroadcastChannel
+
+Hệ thống tích hợp API `BroadcastChannel` cho phép trao đổi dữ liệu chéo tab (ví dụ: tự động đăng xuất các tab khi một tab chọn đăng xuất, đồng bộ theme, v.v.).
+
+### 5.1 Cấu trúc Broadcast Service
+Service `src/services/broadcast.ts` quản lý kênh kết nối `app_global_channel` và cung cấp các hàm helper an toàn:
+- `createSafeBroadcastChannel()`: Khởi tạo BroadcastChannel an toàn.
+- `postBroadcastMessage(type, payload)`: Gửi tin nhắn đi.
+- `BroadcastEventTypes`: Danh sách sự kiện được chuẩn hóa (`AUTH_LOGOUT`, `THEME_CHANGE`, v.v.).
+
+### 5.2 Cách sử dụng Hook `useBroadcastChannel` trong React
+
+1. **Vừa lắng nghe vừa gửi message**:
+   ```tsx
+   import { useBroadcastChannel } from 'hooks';
+   import { BroadcastEventTypes } from 'services';
+
+   useBroadcastChannel((message) => {
+     if (message.type === BroadcastEventTypes.AUTH_LOGOUT) {
+       // Xử lý tự động logout ở tab hiện tại
+     }
+   });
+   ```
+2. **Chỉ gửi message (không cần lắng nghe)**: Gọi hook không truyền callback để tránh kích hoạt Event Listener ẩn trên tab hiện tại.
+   ```tsx
+   import { useBroadcastChannel } from 'hooks';
+   import { BroadcastEventTypes } from 'services';
+
+   const { postMessage } = useBroadcastChannel();
+   
+   const handleLogout = () => {
+     postMessage(BroadcastEventTypes.AUTH_LOGOUT);
+   };
+   ```
+
+### 5.3 Gọi từ dynamic plugins (qua SDK)
+Các plugin tải động sử dụng qua SDK thông qua `sdk.broadcast` để giao tiếp với Host App và các tab khác:
+- `sdk.broadcast.postMessage(type, payload)`
+- `sdk.broadcast.subscribe((message) => { ... })` (Trả về hàm `unsubscribe`)
+
 ---
 
-## 5. Các yêu cầu kỹ thuật và Quy trình kiểm tra khác
+## 6. Các yêu cầu kỹ thuật và Quy trình kiểm tra khác
 
 - **HTTPS cục bộ**: Khi khởi động server ở môi trường local (`yarn start`), ứng dụng sẽ tự động chạy dưới giao thức bảo mật HTTPS nếu phát hiện có khóa SSL tự ký nằm ở thư mục `./.cert/` (`key.pem` và `cert.pem`).
 - **Quy trình kiểm tra trước khi Merge**:

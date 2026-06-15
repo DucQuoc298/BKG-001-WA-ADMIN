@@ -85,7 +85,7 @@ export interface IHomeState {
 
 ---
 
-## 2. Quy tắc sử dụng UI Components & Styling
+## 3. Quy tắc sử dụng UI Components & Styling
 
 1. **Ưu tiên Reusable Components**: 
    - Không được tự viết lại các trường nhập liệu cơ bản. Hãy import các thành phần đã được tùy biến sẵn từ `src/components/` (Ví dụ: `TextField`, `SearchField`, `DatePicker`, `DataTable`, `Dialog`, `Snackbar`, v.v.).
@@ -96,7 +96,7 @@ export interface IHomeState {
 
 ---
 
-## 3. Quy tắc phát triển với DataTable (MUI DataGridPro)
+## 4. Quy tắc phát triển với DataTable (MUI DataGridPro)
 
 Hệ thống DataTable được chia thành `DataTableView` (dành cho danh sách chỉ xem) và `DataTableForm` (dành cho form chỉnh sửa trực tiếp dạng lưới).
 
@@ -114,7 +114,7 @@ Hệ thống DataTable được chia thành `DataTableView` (dành cho danh sác
 
 ---
 
-## 4. Quy tắc phát triển Runtime Plugins
+## 5. Quy tắc phát triển Runtime Plugins
 
 Hệ thống cho phép cắm nóng các dynamic form thông qua file `.mjs`. Khi xây dựng plugin mới:
 
@@ -131,7 +131,31 @@ Hệ thống cho phép cắm nóng các dynamic form thông qua file `.mjs`. Khi
 
 ---
 
-## 5. Quy trình Kiểm tra & Đóng gói trước khi Commit / Merge
+## 6. Quy tắc Giao tiếp Chéo Tab (BroadcastChannel)
+
+Dự án hỗ trợ truyền tin và đồng bộ hóa trạng thái ứng dụng giữa các tab trình duyệt khác nhau thông qua API `BroadcastChannel` (được bọc trong `src/services/broadcast.ts` và hook `useBroadcastChannel`).
+
+1. **Khởi tạo và Sử dụng Hook `useBroadcastChannel`**:
+   - Khi component vừa muốn lắng nghe vừa muốn gửi thông điệp:
+     ```typescript
+     const { postMessage } = useBroadcastChannel((message) => {
+       if (message.type === BroadcastEventTypes.AUTH_LOGOUT) {
+         // Xử lý sự kiện nhận được từ tab khác
+       }
+     });
+     ```
+   - **Tối ưu hóa (Chỉ gửi thông điệp)**: Nếu component chỉ cần gửi tin đi mà không cần lắng nghe, **bắt buộc** gọi hook không có tham số để tránh sinh Event Listener không cần thiết:
+     ```typescript
+     const { postMessage } = useBroadcastChannel();
+     ```
+2. **Quy định về Event Types**:
+   - Mọi sự kiện trao đổi chéo tab phải được khai báo trong đối tượng `BroadcastEventTypes` thuộc `src/services/broadcast.ts` (ví dụ: `AUTH_LOGOUT`, `THEME_CHANGE`, v.v.). Không sử dụng các chuỗi string thô (magic strings).
+3. **Tích hợp SDK dành cho Dynamic Plugins**:
+   - Các dynamic plugins chạy runtime có thể sử dụng cơ chế này qua đối tượng `sdk.broadcast` (gồm `postMessage` và `subscribe`) đã được inject sẵn trong SDK.
+
+---
+
+## 7. Quy trình Kiểm tra & Đóng gói trước khi Commit / Merge
 
 1. **Biên dịch thử nghiệm tất cả Plugins**:
    - Vào thư mục builder và chạy lệnh build toàn bộ:

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
@@ -12,12 +12,25 @@ import ScrollTop from 'components/ScrollTop';
 
 import { handlerDrawerOpen, useGetMenuMaster } from 'hooks/useMenu';
 import { DRAWER_WIDTH, HEADER_HEIGHT, TOOLBAR_HEIGHT } from 'themes/config';
+import { useAuth, useBroadcastChannel } from 'hooks';
+import { BroadcastEventTypes } from 'services';
+import { AuthNameRoutes } from 'types';
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
 export default function DashboardLayout() {
   const { menuMasterLoading } = useGetMenuMaster();
   const downXL = useMediaQuery((theme) => theme.breakpoints.down('xl'));
+  const navigate = useNavigate();
+  const { resetState: resetAuthState } = useAuth();
+
+  useBroadcastChannel((message) => {
+    if (message.type === BroadcastEventTypes.AUTH_LOGOUT) {
+      resetAuthState();
+      navigate(AuthNameRoutes.LOGIN);
+    }
+  });
+
   // set media wise responsive drawer
   useEffect(() => {
     handlerDrawerOpen(!downXL);

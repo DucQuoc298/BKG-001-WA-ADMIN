@@ -15,6 +15,7 @@ export interface InvoiceFormAppRuntime extends RuntimeSharedComponents {
 
 const runtime = defineAppRuntime<InvoiceFormAppRuntime>({
   http: demoFormRuntime.runtime.http,
+  broadcast: demoFormRuntime.runtime.broadcast,
   components: {
     Box: Box,
     ContainerWrapper: demoFormRuntime.runtime.components.ContainerWrapper,

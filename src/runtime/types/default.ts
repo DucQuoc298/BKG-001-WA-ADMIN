@@ -2,6 +2,7 @@
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import { Button, Dialog, MainCard, ContainerWrapper } from 'components';
 import { defineAppRuntime, defineFormRuntime } from '.';
+import { createSafeBroadcastChannel, postBroadcastMessage } from 'services/broadcast';
 
 const runtime = defineAppRuntime({
   http: {
@@ -31,6 +32,28 @@ const runtime = defineAppRuntime({
     Typography,
     ContainerWrapper,
   },
+  broadcast: {
+    postMessage: (type: string, payload?: any) => {
+      postBroadcastMessage(type, payload);
+    },
+    subscribe: (callback: (message: any) => void) => {
+      const channel = createSafeBroadcastChannel();
+      if (!channel) return () => { };
+
+      const handleMsg = (event: MessageEvent) => {
+        callback(event.data);
+      };
+      channel.addEventListener('message', handleMsg);
+      return () => {
+        channel.removeEventListener('message', handleMsg);
+        try {
+          channel.close();
+        } catch {
+          // ignore close errors
+        }
+      };
+    }
+  }
 });
 
 export default defineFormRuntime('demo-form', runtime);
