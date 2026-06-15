@@ -51,6 +51,31 @@ export default {
     invalid_date: "Ngày không hợp lệ",
     at_least_one_value: "{{0}} phải có ít nhất một giá trị",
   },
+  maintenance: {
+    404: {
+      title: "Không tìm thấy",
+      message: "Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.",
+    },
+    500: {
+      title: "Lỗi máy chủ nội bộ",
+      message: "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.",
+    },
+    401: {
+      title: "Không được phép",
+      message: "Bạn không được phép truy cập trang này.",
+    },
+    403: {
+      title: "Bị cấm",
+      message: "Bạn không có quyền truy cập trang này.",
+    },
+    503: {
+      title: "Dịch vụ không khả dụng",
+      message: "Dịch vụ tạm thời không khả dụng. Vui lòng thử lại sau.",
+    },
+    button: {
+      back_to_home: "Quay lại trang chủ"
+    }
+  },
   languages: {
     EN: "English (US)",
     VN: "Tiếng Việt",
