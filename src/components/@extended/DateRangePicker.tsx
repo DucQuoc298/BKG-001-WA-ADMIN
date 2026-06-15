@@ -65,10 +65,8 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
                             onChange([value?.[0] ?? null, null]);
                           }
                         }}
-                        className="clear-range-btn"
                         sx={{
-                          padding: "0px !important",
-                          marginRight: "4px",
+                          ...iStyles.clearButton,
                         }}
                       >
                         <Icons name={IconName.CLEAR} size={20} />
@@ -98,15 +96,6 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
               },
               "& .MuiPickersSectionList-root": {
                 padding: '10px 0px !important',
-              },
-              "& .clear-range-btn": {
-                opacity: 0,
-                pointerEvents: "none",
-                transition: "opacity 0.15s ease",
-              },
-              "&:hover .clear-range-btn, & .Mui-focused .clear-range-btn": {
-                opacity: 1,
-                pointerEvents: "auto",
               },
             },
           }),
