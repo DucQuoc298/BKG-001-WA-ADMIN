@@ -20,7 +20,7 @@ export type HomeFormFields = {
   fromDate?: Date | null;
   toDate?: Date | null;
   number?: number | null;
-  role?: string;
+  role?: string[] | null;
 };
 
 /**
@@ -84,7 +84,7 @@ export const initialHomeFormFields: HomeFormFields = {
   fromDate: null,
   toDate: null,
   number: null,
-  role: "admin",
+  role: null,
 };
 
 /** State khởi tạo của form, bao gồm cả dirtyFields và formMode */

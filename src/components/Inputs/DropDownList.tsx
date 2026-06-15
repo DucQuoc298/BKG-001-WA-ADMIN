@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, MenuItem, Select, SelectProps, IconButton, InputAdornment, FormHelperText, Typography } from "@mui/material";
+import { FormControl, FormLabel, MenuItem, Select, SelectProps, IconButton, InputAdornment, Typography, Box, Chip } from "@mui/material";
 import inputStyles from "./styles";
 import { UseFormRegister } from "react-hook-form";
 import { forwardRef, useEffect, useState } from "react";
@@ -9,7 +9,7 @@ type IValue = {
   text: string;
 }
 
-type IDropDownListProps = Omit<SelectProps<string>, "variant"> &
+type IDropDownListProps = Omit<SelectProps<string | string[]>, "variant"> &
   ReturnType<UseFormRegister<any>> & {
     label?: string;
     data: IValue[];
@@ -25,14 +25,19 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
   onChange,
   onBlur,
   ...props
-  }, ref) {
+}, ref) {
   const iStyles = inputStyles();
-  const [selectedValue, setSelectedValue] = useState(value);
+  const [selectedValue, setSelectedValue] = useState(() => {
+    if (props.multiple) {
+      return Array.isArray(value) ? value : (value ? [value] : []);
+    }
+    return value ?? "";
+  });
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    setSelectedValue(value)
-  }, [value]);
+    setSelectedValue(props.multiple ? (Array.isArray(value) ? value : (value ? [value] : [])) : (value ?? ""));
+  }, [value, props.multiple]);
 
   const handleToggleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -43,15 +48,16 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
   const handleClear = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
-    setSelectedValue("");
+    const emptyValue = props.multiple ? [] : "";
+    setSelectedValue(emptyValue);
     setOpen(false);
-    onChange?.({ target: { name: props.name, value: "" }, type: "change" } as any);
+    onChange?.({ target: { name: props.name, value: emptyValue }, type: "change" } as any);
   };
 
   return (
     <>
       <FormControl variant="outlined" fullWidth>
-        <FormLabel sx={{...iStyles.labelDefault}}>
+        <FormLabel sx={{ ...iStyles.labelDefault }}>
           {label}
           {forceSelect && <Typography sx={{ color: "error.main", height: '100%' }}>*</Typography>}
         </FormLabel>
@@ -72,12 +78,27 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
             ...iStyles.textfield,
             padding: '0px !important',
           }}
+          multiple={props.multiple}
+          renderValue={(selected) => {
+            if (Array.isArray(selected)) {
+              return (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {selected.map((value) => {
+                    const item = data.find((d) => d.id === value);
+                    return <Chip key={value} label={item ? item.text : value} />;
+                  })}
+                </Box>
+              );
+            }
+            const item = data.find((d) => d.id === selected);
+            return item ? item.text : selected;
+          }}
           onBlur={onBlur}
           endAdornment={
             <InputAdornment position="end">
               {!forceSelect && !!selectedValue ? (
                 <IconButton
-                  sx={{...iStyles.clearButton, marginRight: "4px"}}
+                  sx={{ ...iStyles.clearButton, marginRight: "4px" }}
                   onMouseDown={(event) => {
                     event.preventDefault();
                   }}
@@ -87,7 +108,7 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
                 </IconButton>
               ) : null}
               <IconButton
-                sx={{...iStyles.clearButton}}
+                sx={{ ...iStyles.clearButton }}
                 onMouseDown={(event) => {
                   event.preventDefault();
                 }}

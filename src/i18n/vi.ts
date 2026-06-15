@@ -87,13 +87,28 @@ export default {
     HOME: "Trang chủ",
     INVOICE: "Hóa đơn",
     BILL: "Hóa đơn nhập",
-    COMPONENTS: "Components"
+    COMPONENTS: "Components",
+    EMAIL: "Soạn thư",
   },
   alert: {
     update_avatar_successfully: "Cập nhật ảnh đại diện thành công",
     update_password_successfully: "Cập nhật mật khẩu thành công",
     update_company_successfully: "Cập nhật công ty thành công",
     register_success: "Đăng ký thành công",
+  },
+  email: {
+    recipient: "Người nhận",
+    cc: "Cc",
+    bcc: "Bcc",
+    subject: "Tiêu đề",
+    content: "Nội dung",
+    attachments: "Tệp đính kèm",
+    send: "Gửi",
+    discard: "Hủy",
+    errors: {
+      required: "Vui lòng nhập địa chỉ email {{0}}",
+      invalid_email: "Email {{0}} không hợp lệ",
+    }
   },
   button: {
     new: "Thêm mới",

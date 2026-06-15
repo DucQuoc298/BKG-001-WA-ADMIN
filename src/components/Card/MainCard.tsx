@@ -77,7 +77,7 @@ export default function MainCard({
       {/* card header and action */}
       {!darkTitle && title && (
         <CardHeader
-          sx={{ p: 2.5, pb: 0 }} s
+          sx={{ p: 2.5, pb: 0 }}
           slotProps={{
             title: { variant: darkTitle ? 'h4' : 'subtitle1' },
             action: { sx: { m: '0px auto', alignSelf: 'center' } }
