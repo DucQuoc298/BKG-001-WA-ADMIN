@@ -10,7 +10,7 @@ import {
   LuFilter,
 } from "react-icons/lu";
 import { MdMoreVert, MdClear } from "react-icons/md";
-import { IoMdCalendar } from "react-icons/io";
+import { IoMdCalendar, IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 
 interface IconProps {
   name: IconName | string;
@@ -30,6 +30,8 @@ export enum IconName {
   CALENDAR = "calendar",
   CLEAR = "clear",
   FILTER = "filter",
+  DROPDOWN = "dropdown",
+  DROPUP = "dropup",
 }
 const Icons = ({ name, size, color, onClick }: IconProps) => {
   switch (name) {
@@ -43,6 +45,8 @@ const Icons = ({ name, size, color, onClick }: IconProps) => {
     case IconName.CALENDAR: return <IoMdCalendar size={size} color={color} onClick={onClick} />;
     case IconName.CLEAR: return <MdClear size={size} color={color} onClick={onClick} />;
     case IconName.FILTER: return <LuFilter size={size} color={color} onClick={onClick} />;
+    case IconName.DROPDOWN: return <IoMdArrowDropdown size={size} color={color} onClick={onClick} />;
+    case IconName.DROPUP: return <IoMdArrowDropup size={size} color={color} onClick={onClick} />;
     default: return null;
   }
 }
