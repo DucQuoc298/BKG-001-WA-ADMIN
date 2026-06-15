@@ -3,7 +3,6 @@ import snackbar from "./snackbar/reducer";
 import home from "./home/reducer";
 import invoice from "./invoice/reducer";
 import bill from "./bill/reducer";
-import email from "./email/reducer";
 
 
 export const RESET_APP = "RESET_APP";
@@ -13,7 +12,6 @@ const appReducer = combineReducers({
   invoice,
   home,
   bill,
-  email,
 });
 const rootReducer = (state: any, action: any) => {
   if (action.type === RESET_APP) {

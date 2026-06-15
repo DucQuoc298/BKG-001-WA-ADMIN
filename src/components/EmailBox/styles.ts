@@ -1,21 +1,23 @@
 export default (theme: any) => {
   return {
-    container: {
-      position: 'fixed',
-      bottom: 0,
-      right: 24,
-      width: { xs: 'calc(100% - 96px)', sm: '720px' },
-      zIndex: 1300,
+    container: (variant: 'floating' | 'inline') => ({
+      position: variant === 'floating' ? ('fixed' as const) : ('relative' as const),
+      bottom: variant === 'floating' ? 0 : undefined,
+      right: variant === 'floating' ? 24 : undefined,
+      width: variant === 'floating' ? { xs: 'calc(100% - 96px)', sm: '720px' } : '100%',
+      zIndex: variant === 'floating' ? 1300 : undefined,
       backgroundColor: theme.palette.background.paper,
-      borderRadius: '12px 12px 0 0',
+      borderRadius: variant === 'floating' ? '12px 12px 0 0' : '12px',
       border: '1px solid',
       borderColor: 'divider',
-      boxShadow: theme.palette.mode === 'dark' ? '0px 8px 32px rgba(0, 0, 0, 0.5)' : '0px 8px 32px rgba(0, 0, 0, 0.15)',
-      display: 'flex',
-      flexDirection: 'column',
+      boxShadow: variant === 'floating'
+        ? (theme.palette.mode === 'dark' ? '0px 8px 32px rgba(0, 0, 0, 0.5)' : '0px 8px 32px rgba(0, 0, 0, 0.15)')
+        : 'none',
+      display: 'flex' as const,
+      flexDirection: 'column' as const,
       overflow: 'hidden',
       transition: 'height 0.2s ease-in-out',
-    },
+    }),
     header: {
       container: {
         display: 'flex',

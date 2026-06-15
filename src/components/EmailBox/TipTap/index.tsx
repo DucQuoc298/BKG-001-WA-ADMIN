@@ -12,8 +12,7 @@ import {
   useTheme,
   Button as MuiButton,
   Menu,
-  MenuItem,
-  ButtonGroup
+  MenuItem
 } from '@mui/material';
 import {
   Undo as UndoIcon,
@@ -28,20 +27,10 @@ import {
   FormatAlignJustify as AlignJustifyIcon,
   FormatListBulleted as BulletListIcon,
   FormatListNumbered as OrderedListIcon,
-  FormatIndentDecrease as OutdentIcon,
-  FormatIndentIncrease as IndentIcon,
   FormatQuote as QuoteIcon,
-  Code as CodeIcon,
   Terminal as CodeBlockIcon,
   FormatClear as ClearIcon,
   AttachFile as AttachIcon,
-  InsertLink as LinkIcon,
-  EmojiEmotions as EmojiIcon,
-  CloudQueue as DriveIcon,
-  InsertPhoto as PhotoIcon,
-  LockClock as ConfidentialIcon,
-  BorderColor as SignatureIcon,
-  MoreVert as MoreIcon,
   Delete as TrashIcon,
   ArrowDropDown as DropDownIcon,
   Send

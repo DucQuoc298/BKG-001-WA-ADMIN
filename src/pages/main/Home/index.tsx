@@ -1,18 +1,26 @@
-import { Button, Chip, ContainerWrapper, MainCard, NumberField, TextField } from 'components';
-import React, { useCallback } from 'react';
-import { useHome, useReduxFormSync } from 'hooks';
+import { Button, Chip, ContainerWrapper, MainCard, NumberField, TextField, EmailBox } from 'components';
+import React, { useCallback, useEffect } from 'react';
+import { useHome, useReduxFormSync, useEmail, useSnackbar, EmailFormFields } from 'hooks';
 import { useForm, FormProvider } from 'react-hook-form';
 import DateField from 'components/DateField/DateField';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { HomeFormFields, initialHomeFormFields } from 'store/home/reducer';
 import { DateRangeField } from 'components/DateField';
+import { Box } from '@mui/material';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
 
 export default function Home() {
+  const { success } = useSnackbar();
   // Lấy state form hiện tại từ Redux và hàm cập nhật
   const { formState, updateForm } = useHome();
+  const { addComposer, removeComposer } = useEmail();
+
+  // Đảm bảo khởi tạo composer cho hộp thư riêng của trang chủ (home-mailbox)
+  useEffect(() => {
+    addComposer('home-mailbox');
+  }, [addComposer]);
 
   const validationSchema = Yup.object().shape({
     // date: Yup.mixed<Dayjs>().required('Expired Date is required'),
@@ -37,23 +45,13 @@ export default function Home() {
 
   /**
    * useReduxFormSync đồng bộ hóa dữ liệu React Hook Form ↔ Redux.
-   * - values: truyền `formState` (chứa data + dirtyFields + formMode)
-   *   và hook sẽ tự lấy `values.data` để nạp vào các field của form.
-   * - onSave: khi component unmount, snapshot toàn bộ form state
-   *   (bao gồm dirtyFields) được lưu vào Redux thông qua `updateForm`.
-   *
-   * Lưu ý: useReduxFormSync nhận `values` với cấu trúc { data, dirtyFields, formMode }
-   * và chỉ set những key không phải `dirtyFields` vào form,
-   * còn dirtyFields dùng để khôi phục trạng thái dirty của từng field.
    */
   useReduxFormSync<HomeFormFields>({
     methods,
-    // Truyền `data` của formState làm snapshot để sync
     values: {
       ...(formState?.data ?? {}),
       dirtyFields: formState?.dirtyFields,
     },
-    // Khi unmount: lưu data + dirtyFields mới nhất vào Redux
     onSave: (snapshot) => {
       const { dirtyFields: savedDirtyFields, ...data } = snapshot;
       updateForm({
@@ -67,6 +65,26 @@ export default function Home() {
     console.log('homeForm', _data, dirtyFields);
   }, [dirtyFields]);
 
+  const handleSend = (id: string, data: EmailFormFields) => {
+    let successMessage = `Đã gửi email thành công từ Trang chủ tới ${data.recipient}!`;
+    if (data.showCc && data.cc) successMessage += ` (Cc: ${data.cc})`;
+    if (data.attachments && data.attachments.length > 0) {
+      successMessage += ` (Đính kèm ${data.attachments.length} tệp)`;
+    }
+    success(successMessage);
+    // Đối với trang chủ, chúng ta chỉ reset chứ không xóa composer để giữ nguyên khung giao diện
+    if (id !== 'home-mailbox') {
+      removeComposer(id);
+    }
+  };
+
+  const handleDiscard = (id: string) => {
+    if (id !== 'home-mailbox') {
+      removeComposer(id);
+    }
+    success('Đã hủy bản nháp email');
+  };
+
   return (
     <FormProvider {...methods}>
       <ContainerWrapper
@@ -75,10 +93,12 @@ export default function Home() {
         }}
       >
         <MainCard>
-          <Button
-            onClick={handleSubmit(onSubmit)}
-            text='Submit'
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <Button
+              onClick={handleSubmit(onSubmit)}
+              text='Submit'
+            />
+          </Box>
           <TextField label={'test'} {...register('note')} />
           <NumberField
             label='Số'
@@ -99,13 +119,21 @@ export default function Home() {
             {...register('fromDate', {
               onChange: (event) => {
                 // DateRangeField emit [startDate, endDate] qua event.target.value
-                // Vì fromDate và toDate là 2 field riêng biệt trong RHF,
-                // ta phải set từng field một thay vì dùng setValues
                 const [from, to] = event.target.value ?? [null, null];
                 setValue('fromDate', from, { shouldDirty: true });
                 setValue('toDate', to, { shouldDirty: true });
               }
             })}
+          />
+        </MainCard>
+
+        {/* Hộp thư Soạn thảo riêng của trang chủ */}
+        <MainCard title="Soạn Email (Hộp thư riêng biệt)" border sx={{ mt: 3 }}>
+          <EmailBox
+            id="home-mailbox"
+            variant="inline"
+            onSend={handleSend}
+            onDiscard={handleDiscard}
           />
         </MainCard>
 
