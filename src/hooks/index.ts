@@ -9,3 +9,5 @@ export * from './useHome';
 export * from './useInvoice';
 export * from './useAutocomplete';
 export * from './useDataTable';
+export * from './useEmail';
+

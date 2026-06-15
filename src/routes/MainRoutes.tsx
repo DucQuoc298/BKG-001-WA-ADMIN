@@ -12,6 +12,8 @@ const PluginRuntime = Loadable(lazy(() => import('runtime/LoadFormRuntime')));
 const Invoice = Loadable(lazy(() => import('pages/main/Invoice')));
 const Bill = Loadable(lazy(() => import('pages/main/Bill')));
 const Components = Loadable(lazy(() => import('pages/main/Components')));
+const Email = Loadable(lazy(() => import('pages/main/Email')));
+
 
 
 const MainRoutes = {
@@ -55,6 +57,15 @@ const MainRoutes = {
         {
           index: true,
           element: <Components />
+        }
+      ]
+    },
+    {
+      path: MainNameRoutes.EMAIL,
+      children: [
+        {
+          index: true,
+          element: <Email />
         }
       ]
     },

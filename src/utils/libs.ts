@@ -15,6 +15,12 @@ function toCamelCase(key, value) {
   }
   return value;
 }
+export const validateEmail = (email: string) => {
+  if (!/\S+@\S+\.\S+/.test(email)) {
+    return false;
+  }
+  return true;
+}
 export const findItemInArray = (array, value, key = "key") => {
   return array.find((item) =>
     typeof item === "object" ? item[key] === value : item === value

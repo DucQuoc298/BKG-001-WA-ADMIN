@@ -14,3 +14,6 @@ export { default as ContainerWrapper } from "./ContainerWrapper";
 export { default as DataTable } from "./DataTable";
 export { default as Autocomplete } from "./Autocomplete";
 export { default as ActionBar } from "./ActionBar";
+export { default as TipTap } from "./EmailBox/TipTap";
+export { default as EmailBox } from "./EmailBox";
+

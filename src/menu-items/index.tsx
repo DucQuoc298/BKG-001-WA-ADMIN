@@ -51,6 +51,14 @@ const menuItems : ISideBarMenuItem = {
       icon: icons.Components,
       breadcrumbs: false
     },
+    {
+      id: 'EMAIL',
+      title: 'EMAIL',
+      type: 'item',
+      url: MainNameRoutes.EMAIL,
+      icon: icons.Email,
+      breadcrumbs: false
+    },
   ]
 };
 

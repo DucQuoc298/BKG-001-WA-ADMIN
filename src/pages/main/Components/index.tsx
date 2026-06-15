@@ -10,6 +10,7 @@ import {
   Chip,
   Tabs,
   Autocomplete,
+  TipTap,
 } from 'components';
 import Section from 'components/SideIndex/Section';
 import { DateField } from 'components/DateField';
@@ -30,6 +31,7 @@ const SECTIONS = [
   { id: 'section-daterangefield', label: 'DateRangeField' },
   { id: 'section-autocomplete', label: 'Autocomplete' },
   { id: 'section-actionbar', label: 'ActionBar' },
+  { id: 'section-tiptap', label: 'TipTap Editor' },
   { id: 'section-scrolllayout', label: 'ScrollIndexLayout' },
 ];
 
@@ -105,6 +107,9 @@ const PropTable = ({ rows }: { rows: [string, string, string, string][] }) => (
 
 export default function Components() {
   const [tabDemo, setTabDemo] = useState('tab1');
+  const [tiptapContent, setTiptapContent] = useState(
+    '<h3>Chào mừng bạn đến với TipTap Rich Text Editor!</h3><p>Đây là một đoạn văn mẫu. Bạn có thể sử dụng các công cụ định dạng ở toolbar phía trên để định dạng văn bản này.</p><ul><li>Định dạng chữ đậm, nghiêng, gạch ngang</li><li>Tạo danh sách có thứ tự hoặc không có thứ tự</li><li>Chèn code block hoặc blockquote</li></ul>'
+  );
 
   return (
     <ContainerWrapper toolbarLocalProps={{ title: 'Component Library' }}>
@@ -407,6 +412,50 @@ const [tab, setTab] = useState('list');
   <Button text="Hủy" variant="outlined" />
   <Button text="Lưu" variant="contained" />
 </ActionBar>`} />
+          </Section>
+
+          {/* ── TIPTAP RICH TEXT EDITOR ───────── */}
+          <Section id="section-tiptap" label="TipTap Editor">
+            <Typography color="text.secondary" sx={{ mb: 2 }}>
+              Component trình soạn thảo văn bản phong phú (Rich Text Editor) được xây dựng trên nền tảng TipTap và Material UI. Tự động hỗ trợ đồng bộ dữ liệu hai chiều và giao diện tối/sáng.
+            </Typography>
+
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>Demo</Typography>
+            <Stack spacing={2}>
+              <TipTap value={tiptapContent} onChange={setTiptapContent} />
+              
+              <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: 1 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>HTML Output Preview:</Typography>
+                <Box
+                  component="pre"
+                  sx={{
+                    p: 1.5,
+                    bgcolor: 'background.paper',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 1,
+                    fontSize: 12,
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-all',
+                    fontFamily: 'Consolas, Monaco, monospace'
+                  }}
+                >
+                  {tiptapContent}
+                </Box>
+              </Box>
+            </Stack>
+
+            <PropTable rows={[
+              ['value', 'string', '""', 'Dữ liệu HTML đầu vào của editor'],
+              ['onChange', '(val: string) => void', '—', 'Callback khi nội dung trong editor thay đổi'],
+              ['editable', 'boolean', 'true', 'Cho phép chỉnh sửa hoặc hiển thị chế độ read-only'],
+            ]} />
+
+            <CodeBlock code={`import { TipTap } from 'components';
+
+const [content, setContent] = useState('<p>Hello World!</p>');
+
+<TipTap value={content} onChange={setContent} />`} />
           </Section>
 
           {/* ── SCROLLINDEXLAYOUT ─────────────── */}
