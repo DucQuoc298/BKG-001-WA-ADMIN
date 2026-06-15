@@ -8,17 +8,28 @@ interface ITextFieldProps {
   errors?: string
 }
 
-const TextField: React.FC<ITextFieldProps & TextFieldProps> = ({label, value, onChange, errors, required, ...props}) => {
+const TextField: React.FC<ITextFieldProps & TextFieldProps> = ({label, value, onChange, errors, required, multiline, ...props}) => {
   const iStyles = inputStyles();
   return (
     <FormControl fullWidth >
       <FormLabel sx={{...iStyles.labelDefault}}>{label}{required && '*'}</FormLabel>
       <MuiTextField 
         label={undefined}
-        sx={{...iStyles.textfield}}
+        sx={{
+          ...iStyles.textfield,
+          ...(multiline && 
+            {
+              '& .MuiInputBase-input':{
+                overflowY: 'auto !important',
+                minHeight: '40px !important',
+                padding: "0px"
+            }}
+          )
+        }}
         value={value}
         placeholder={label}
         onChange={onChange}
+        multiline={multiline}
         {...props}
       />
       {errors && (

@@ -80,7 +80,7 @@ export default function Home() {
             onClick={handleSubmit(onSubmit)}
             text='Submit'
           />
-          <TextField label={'test'} {...register('note')} />
+          <TextField label={'test'} {...register('note')} multiline />
           <NumberField
             label='Số'
             required
