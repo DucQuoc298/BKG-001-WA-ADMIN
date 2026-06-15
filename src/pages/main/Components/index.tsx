@@ -6,6 +6,7 @@ import {
   ScrollIndexLayout,
   Button,
   TextField,
+  NumberField,
   Chip,
   Tabs,
   Autocomplete,
@@ -21,6 +22,7 @@ import { DateRangeField } from 'components/DateField';
 const SECTIONS = [
   { id: 'section-button', label: 'Button' },
   { id: 'section-textfield', label: 'TextField' },
+  { id: 'section-numberfield', label: 'NumberField' },
   { id: 'section-chip', label: 'Chip' },
   { id: 'section-maincard', label: 'MainCard' },
   { id: 'section-tabs', label: 'Tabs' },
@@ -149,7 +151,7 @@ export default function Components() {
             <Typography variant="subtitle2" sx={{ mb: 1 }}>Demo</Typography>
             <Stack spacing={2} sx={{ maxWidth: 400 }}>
               <TextField label="Tên sản phẩm" placeholder="Nhập tên..." />
-              <TextField label="Số lượng" type="number" />
+              <NumberField label="Số lượng" />
               <TextField label="Ghi chú (lỗi)" error helperText="Trường bắt buộc" />
               <TextField label="Đã tắt" disabled value="Không thể chỉnh sửa" />
             </Stack>
@@ -163,6 +165,33 @@ export default function Components() {
 
 <TextField label="Tên" {...register('name')} />
 <TextField label="Email" type="email" required />`} />
+          </Section>
+
+          {/* ── NUMBERFIELD ────────────────────── */}
+          <Section id="section-numberfield" label="NumberField">
+            <Typography color="text.secondary" sx={{ mb: 2 }}>
+              Component nhập số liệu chuyên nghiệp hỗ trợ tự động định dạng dấu phẩy phân tách hàng nghìn, số thập phân và chặn ký tự chữ cái. Tương thích hoàn toàn với React Hook Form.
+            </Typography>
+
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>Demo</Typography>
+            <Stack spacing={2} sx={{ maxWidth: 400 }}>
+              <NumberField label="Số lượng sản phẩm" placeholder="Nhập số lượng..." />
+              <NumberField label="Đơn giá" defaultValue={1000} />
+              <NumberField label="Số lượng (lỗi)" error helperText="Số lượng phải lớn hơn 0" />
+            </Stack>
+
+            <PropTable rows={[
+              ['label', 'string', '—', 'Nhãn hiển thị phía trên input'],
+              ['value', 'number | string', '—', 'Giá trị số hiện tại'],
+              ['thousandSeparator', 'string | boolean', '","', 'Ký tự phân tách hàng nghìn'],
+              ['decimalSeparator', 'string', '"."', 'Ký tự phân tách phần thập phân'],
+              ['decimalScale', 'number', '2', 'Số chữ số phần thập phân tối đa'],
+              ['isAbs', 'boolean', 'false', 'Chỉ cho phép số dương (không cho phép dấu âm)'],
+            ]} />
+
+            <CodeBlock code={`import { NumberField } from 'components';
+
+<NumberField label="Số lượng" {...register('quantity')} />`} />
           </Section>
 
           {/* ── CHIP ───────────────────────────── */}

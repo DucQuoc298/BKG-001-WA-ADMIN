@@ -1,4 +1,4 @@
-import { Button, Chip, ContainerWrapper, MainCard, TextField } from 'components';
+import { Button, Chip, ContainerWrapper, MainCard, NumberField, TextField } from 'components';
 import React, { useCallback } from 'react';
 import { useHome, useReduxFormSync } from 'hooks';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -16,6 +16,7 @@ export default function Home() {
 
   const validationSchema = Yup.object().shape({
     // date: Yup.mixed<Dayjs>().required('Expired Date is required'),
+    number: Yup.number().required('Number is required'),
   });
 
   const methods = useForm<HomeFormFields>({
@@ -30,6 +31,7 @@ export default function Home() {
     setValue,
     formState: {
       dirtyFields,
+      errors
     },
   } = methods;
 
@@ -78,6 +80,14 @@ export default function Home() {
             text='Submit'
           />
           <TextField label={'test'} {...register('note')} />
+          <NumberField
+            label='Số'
+            required
+            {...register('number')}
+            value={formState?.data?.number}
+            error={!!errors.number}
+            helperText={errors.number?.message}
+          />
           <DateField
             label="Chose month"
             value={formState?.data?.date}

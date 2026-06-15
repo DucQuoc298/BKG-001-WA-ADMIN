@@ -82,7 +82,7 @@ export const initialHomeFormFields: HomeFormFields = {
   date: null,
   fromDate: null,
   toDate: null,
-  number: 0,
+  number: null,
 };
 
 /** State khởi tạo của form, bao gồm cả dirtyFields và formMode */

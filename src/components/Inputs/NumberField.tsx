@@ -5,7 +5,7 @@ import { NumericFormat, NumericFormatProps } from "react-number-format";
 import inputStyles from "./styles";
 import TextField from "./TextField";
 
-type INumberFieldProps = Omit<NumericFormatProps, "onChange"> & ReturnType<UseFormRegister<any>> & {
+type INumberFieldProps = Omit<NumericFormatProps, "onChange"> & Partial<ReturnType<UseFormRegister<any>>> & {
   label?: string;
   handleChange?: (e: any) => void;
   sx?: SxProps;
@@ -30,7 +30,7 @@ const NumberField = forwardRef<HTMLInputElement, INumberFieldProps>(function Num
   onBlur,
   autoFocus,
   inputRef,
-  isAbs = true,
+  isAbs = false,
   error,
   onFocus,
   helperText,
@@ -40,13 +40,15 @@ const NumberField = forwardRef<HTMLInputElement, INumberFieldProps>(function Num
 }, ref) {
   const iStyles = inputStyles();
 
+  const NumericFormatComponent = NumericFormat as any;
+
   return (
-    <NumericFormat
-      customInput={TextField}
+    <NumericFormatComponent
       {...props}
+      customInput={TextField as any}
       sx={{
         ...iStyles.textfield,
-        ...sx, 
+        ...sx,
       }}
       label={label}
       placeholder={label}
