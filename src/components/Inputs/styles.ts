@@ -16,11 +16,23 @@ export default () => {
         color: "red",
       },
       "& .MuiInputBase-input": {
-        padding: "6px 10px",
-        height: '24px !important',
+        padding: "0px 10px !important",
+        height: '38px !important',
+        boxSizing: 'border-box',
       },
       "& .MuiOutlinedInput-root": {
         borderRadius: '8px',
+        height: '38px !important',
+        boxSizing: 'border-box',
+        padding: '0px !important',
+      },
+      "& .MuiSelect-select": {
+        padding: "0px 10px !important",
+        height: '38px !important',
+        lineHeight: '38px',
+        display: 'flex',
+        alignItems: 'center',
+        boxSizing: 'border-box',
       },
     },
     labelDefault: {
