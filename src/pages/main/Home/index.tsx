@@ -1,9 +1,6 @@
-import { Button, Chip, ContainerWrapper, MainCard, NumberField, TextField, EmailBox } from 'components';
+import { Button, Chip, ContainerWrapper, MainCard, NumberField, TextField, EmailBox, DropDownList } from 'components';
 import React, { useCallback, useEffect } from 'react';
 import { useHome, useReduxFormSync, useEmail, useSnackbar, EmailFormFields } from 'hooks';
-import { Button, Chip, ContainerWrapper, DropDownList, MainCard, NumberField, TextField } from 'components';
-import React, { useCallback } from 'react';
-import { useHome, useReduxFormSync } from 'hooks';
 import { useForm, FormProvider } from 'react-hook-form';
 import DateField from 'components/DateField/DateField';
 import * as Yup from 'yup';
@@ -32,7 +29,10 @@ export default function Home() {
   });
 
   const methods = useForm<HomeFormFields>({
-    defaultValues: initialHomeFormFields,
+    defaultValues: {
+      ...initialHomeFormFields,
+      role: ['guest']
+    },
     resolver: yupResolver(validationSchema) as any,
     mode: 'onBlur'
   });
@@ -41,12 +41,14 @@ export default function Home() {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: {
       dirtyFields,
       errors
     },
   } = methods;
-
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const role = watch('role')
   /**
    * useReduxFormSync đồng bộ hóa dữ liệu React Hook Form ↔ Redux.
    */
@@ -54,6 +56,7 @@ export default function Home() {
     methods,
     values: {
       ...(formState?.data ?? {}),
+      role,
       dirtyFields: formState?.dirtyFields,
     },
     onSave: (snapshot) => {
@@ -132,9 +135,10 @@ export default function Home() {
 
           <DropDownList
             label='Role'
+            multiple
             // forceSelect
             {...register('role')}
-            value={formState?.data?.role}
+            value={role ?? undefined}
             data={[
               { text: 'Admin', id: 'admin' },
               { text: 'User', id: 'user' },

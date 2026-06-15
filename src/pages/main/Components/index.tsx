@@ -11,6 +11,7 @@ import {
   Tabs,
   Autocomplete,
   TipTap,
+  DropDownList,
 } from 'components';
 import Section from 'components/SideIndex/Section';
 import { DateField } from 'components/DateField';
@@ -30,6 +31,7 @@ const SECTIONS = [
   { id: 'section-datefield', label: 'DateField' },
   { id: 'section-daterangefield', label: 'DateRangeField' },
   { id: 'section-autocomplete', label: 'Autocomplete' },
+  { id: 'section-dropdownlist', label: 'DropDownList' },
   { id: 'section-actionbar', label: 'ActionBar' },
   { id: 'section-tiptap', label: 'TipTap Editor' },
   { id: 'section-scrolllayout', label: 'ScrollIndexLayout' },
@@ -376,20 +378,118 @@ const [tab, setTab] = useState('list');
             </Typography>
 
             <Typography variant="subtitle2" sx={{ mb: 1 }}>Demo</Typography>
-            <Stack spacing={2} sx={{ maxWidth: 400 }}>
+            <Stack spacing={3} sx={{ maxWidth: 400 }}>
               <Autocomplete
                 store={{ data: ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'], mode: 'local' }}
-                label="Chọn trái cây"
+                label="Chọn trái cây (Single)"
+              />
+
+              <Autocomplete
+                multiple
+                store={{
+                  data: [
+                    { id: 'apple', text: 'Apple' },
+                    { id: 'banana', text: 'Banana' },
+                    { id: 'cherry', text: 'Cherry' },
+                    { id: 'date', text: 'Date' },
+                    { id: 'elderberry', text: 'Elderberry' },
+                  ],
+                  mode: 'local'
+                }}
+                label="Chọn trái cây (Multiple)"
               />
             </Stack>
 
             <CodeBlock code={`import { Autocomplete } from 'components';
 
+// Single Select
 <Autocomplete
-  store={{ data: options, mode: 'local' }}
+  store={{ data: ['Apple', 'Banana', 'Cherry'], mode: 'local' }}
   label="Chọn trái cây"
   value={selected}
   onChange={(_, val) => setSelected(val)}
+/>
+
+// Multiple Select
+<Autocomplete
+  multiple
+  store={{
+    data: [
+      { id: 'apple', text: 'Apple' },
+      { id: 'banana', text: 'Banana' }
+    ],
+    mode: 'local'
+  }}
+  label="Chọn nhiều trái cây"
+  value={selectedList}
+  onChange={(_, val) => setSelectedList(val)}
+/>`} />
+          </Section>
+
+          {/* ── DROPDOWNLIST ──────────────────── */}
+          <Section id="section-dropdownlist" label="DropDownList">
+            <Typography color="text.secondary" sx={{ mb: 2 }}>
+              Bộ chọn dropdown đơn giản kế thừa Select từ Material UI. Hỗ trợ chọn một hoặc chọn nhiều (multiple).
+            </Typography>
+
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>Demo</Typography>
+            <Stack spacing={3} sx={{ maxWidth: 400 }}>
+              <DropDownList
+                label="Chọn giới tính (Single)"
+                name="demo-gender"
+                data={[
+                  { id: 'male', text: 'Nam' },
+                  { id: 'female', text: 'Nữ' },
+                  { id: 'other', text: 'Khác' },
+                ]}
+                onChange={() => Promise.resolve()}
+                onBlur={() => Promise.resolve()}
+              />
+
+              <DropDownList
+                label="Chọn vai trò (Multiple)"
+                name="demo-role"
+                multiple
+                data={[
+                  { id: 'admin', text: 'Admin' },
+                  { id: 'user', text: 'User' },
+                  { id: 'guest', text: 'Guest' },
+                ]}
+                onChange={() => Promise.resolve()}
+                onBlur={() => Promise.resolve()}
+              />
+            </Stack>
+
+            <PropTable rows={[
+              ['label', 'string', '—', 'Nhãn hiển thị phía trên dropdown'],
+              ['data', 'IValue[]', '—', 'Mảng dữ liệu chọn gồm { id, text }'],
+              ['multiple', 'boolean', 'false', 'Cho phép chọn nhiều giá trị cùng lúc'],
+              ['forceSelect', 'boolean', 'false', 'Bắt buộc chọn, hiển thị dấu * màu đỏ'],
+            ]} />
+
+            <CodeBlock code={`import { DropDownList } from 'components';
+
+// Single Select
+<DropDownList
+  label="Vai trò"
+  value={role}
+  onChange={(e) => setRole(e.target.value)}
+  data={[
+    { id: 'admin', text: 'Admin' },
+    { id: 'user', text: 'User' }
+  ]}
+/>
+
+// Multiple Select
+<DropDownList
+  label="Vai trò"
+  multiple
+  value={roles}
+  onChange={(e) => setRoles(e.target.value)}
+  data={[
+    { id: 'admin', text: 'Admin' },
+    { id: 'user', text: 'User' }
+  ]}
 />`} />
           </Section>
 
