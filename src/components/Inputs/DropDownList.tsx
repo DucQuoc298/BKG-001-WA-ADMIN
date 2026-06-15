@@ -77,6 +77,17 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
           sx={{
             ...iStyles.textfield,
             padding: '0px !important',
+            ...(props.multiple && {
+              "& .MuiOutlinedInput-root": {
+                height: 'auto !important',
+                minHeight: '38px !important',
+              },
+              "& .MuiSelect-select": {
+                height: 'auto !important',
+                minHeight: '38px !important',
+                padding: '4px 10px !important',
+              }
+            })
           }}
           multiple={props.multiple}
           renderValue={(selected) => {
