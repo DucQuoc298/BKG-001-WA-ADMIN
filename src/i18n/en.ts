@@ -54,6 +54,31 @@ export default {
     invalid_date: "Invalid date",
     at_least_one_value: "{{0}} must have at least one value",
   },
+  maintenance: {
+    404: {
+      title: "Page Not Found",
+      message: "The page you are looking for does not exist or has been moved.",
+    },
+    500: {
+      title: "Internal Server Error",
+      message: "An unexpected error has occurred. Please try again later.",
+    },
+    401: {
+      title: "Unauthorized",
+      message: "You are not authorized to access this page.",
+    },
+    403: {
+      title: "Forbidden",
+      message: "You do not have permission to view this page.",
+    },
+    503: {
+      title: "Service Unavailable",
+      message: "The service is temporarily unavailable. Please try again later.",
+    },
+    button: {
+      back_to_home: "Back to Home"
+    }
+  },
   languages: {
     EN: "English (US)",
     VN: "Tiếng Việt",
