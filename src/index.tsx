@@ -23,10 +23,14 @@ import i18n from './i18n';
 import { Provider } from 'react-redux';
 import { store } from 'store/createStore';
 import { Snackbar } from 'components';
-
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
+// import { LicenseInfo } from "@mui/x-license-pro";
 
 const siteKey = import.meta.env.VITE_CAPTCHA_SITE_KEY || '';
+
+// const licenseKey = import.meta.env.VITE_MUI_TABLE_LICENSE;
+// LicenseInfo.setLicenseKey(licenseKey as string);
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
