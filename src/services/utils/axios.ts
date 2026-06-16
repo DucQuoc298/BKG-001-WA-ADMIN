@@ -2,6 +2,7 @@
 
 import axios, { AxiosResponse, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { KEY_CONTEXT } from 'themes/config';
+import { redirectToLogin } from './navigation';
 
 interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -118,7 +119,7 @@ const errorInterceptor = async (error: AxiosError) => {
   } catch (refreshError) {
     processQueue(refreshError, null);
     clearAuthStorage();
-    window.location.href = '/login';
+    redirectToLogin();
     return Promise.reject(refreshError);
   } finally {
     isRefreshing = false;

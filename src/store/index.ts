@@ -3,12 +3,15 @@ import snackbar from "./snackbar/reducer";
 import home from "./home/reducer";
 import invoice from "./invoice/reducer";
 import bill from "./bill/reducer";
-
+import authentication from "./authentication/reducer"
 
 export const RESET_APP = "RESET_APP";
 
 const appReducer = combineReducers({
   snackbar,
+  authentication,
+
+
   invoice,
   home,
   bill,

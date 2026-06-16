@@ -15,6 +15,8 @@ Dưới đây là danh sách các tài liệu hướng dẫn phát triển và q
 * **[docs/agents.md](file:///Volumes/KINGSTON/Code/react-template/docs/agents.md)**: Hướng dẫn dành cho AI Agents & Nhà phát triển mới, giải thích cấu trúc thư mục chi tiết, cơ chế hoạt động của Runtime Plugin, xử lý form reset và các câu lệnh thông dụng.
 * **[docs/email_system.md](file:///Volumes/KINGSTON/Code/react-template/docs/email_system.md)**: Hướng dẫn kỹ thuật cho hệ thống soạn thảo email nổi (Gmail-style Multi-composer), cơ chế tối ưu hiệu năng tránh render lại DOM bằng Global Map Cache ngoài Redux.
 * **[docs/project_development_skill.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_development_skill.md)**: Hướng dẫn quy trình phát triển chi tiết, cách đồng bộ hóa React Hook Form với Redux sử dụng `useReduxFormSync`, và cách hoạt động của DataTable.
+* **[docs/recaptcha_v3.md](file:///Volumes/KINGSTON/TAVICO/erp-res/docs/recaptcha_v3.md)**: Hướng dẫn kỹ thuật và cơ chế hoạt động của Google reCAPTCHA v3 tích hợp trong Frontend và cách xác thực chéo phía Backend API Server.
+
 
 ---
 

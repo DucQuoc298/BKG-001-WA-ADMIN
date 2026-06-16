@@ -14,7 +14,7 @@ import AuthConfirmForgotPassword from 'sections/auth/AuthConfirmForgotPassword';
 import AuthResetPassword from 'sections/auth/AuthResetPassword';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { forgotPassword, confirmForgotPassword, resetPassword } from 'services';
-import { AuthNameRoutes } from 'types';
+import { AuthNameRoutes, CAPTCHA_ACTION } from 'types';
 
 // ================================|| JWT - FORGOT PASSWORD ||================================ //
 enum FormType {
@@ -33,7 +33,7 @@ export default function ForgotPassword() {
     let captchaToken = '';
     if (executeRecaptcha) {
       try {
-        captchaToken = await executeRecaptcha('forgot_password');
+        captchaToken = await executeRecaptcha(CAPTCHA_ACTION.FORGOT_PASSWORD);
       } catch (error) {
         console.error('reCAPTCHA execution failed:', error);
       }
@@ -66,7 +66,7 @@ export default function ForgotPassword() {
     let captchaToken = '';
     if (executeRecaptcha) {
       try {
-        captchaToken = await executeRecaptcha('reset_password');
+        captchaToken = await executeRecaptcha(CAPTCHA_ACTION.RESET_PASSWORD);
       } catch (error) {
         console.error('reCAPTCHA execution failed:', error);
       }

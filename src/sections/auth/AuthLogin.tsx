@@ -24,7 +24,7 @@ import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 import { useTranslation } from 'react-i18next';
 import { Button, TextField } from 'components';
 import { useAuth } from 'hooks/useConfig';
-import { MainNameRoutes } from 'types';
+import { MainNameRoutes, CAPTCHA_ACTION } from 'types';
 import { login } from 'services';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
@@ -50,7 +50,7 @@ export default function AuthLogin() {
           let captchaToken = '';
           if (executeRecaptcha) {
             try {
-              captchaToken = await executeRecaptcha('login');
+              captchaToken = await executeRecaptcha(CAPTCHA_ACTION.LOGIN);
             } catch (error) {
               console.error('reCAPTCHA execution failed:', error);
             }
@@ -77,8 +77,8 @@ export default function AuthLogin() {
           }
         }}
         initialValues={{
-          username: state.rememberMe !== null ? state.rememberMe : '',
-          password: '',
+          username: state.rememberMe !== null ? state.rememberMe : 'TDQ',
+          password: 'quoc1234',
           submit: null
         }}
         validationSchema={Yup.object().shape({

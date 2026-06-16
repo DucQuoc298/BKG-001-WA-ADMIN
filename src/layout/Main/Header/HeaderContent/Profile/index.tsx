@@ -26,11 +26,11 @@ import ListItemButton from '@mui/material/ListItemButton';
 import styles from './styles';
 import { ArrowForwardIosOutlined, CameraAltOutlined, CheckOutlined, DarkModeOutlined, LightModeOutlined, TranslateOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { AuthNameRoutes, ILanguage, IThemeMode } from 'types';
+import { ILanguage, IThemeMode } from 'types';
 import { useMain, useAuth, useBroadcastChannel } from 'hooks';
 import { FLAG_ICONS } from 'assets/images/icons/flags';
 import { languages } from 'utils';
-import { useNavigate } from 'react-router-dom';
+import { redirectToLogin } from 'services/utils/navigation';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { BroadcastEventTypes } from 'services';
 
@@ -54,7 +54,7 @@ export default function Profile() {
   const { state: mainState, setField } = useMain();
   const { resetState: resetAuthState } = useAuth();
   const { postMessage } = useBroadcastChannel();
-  const navigate = useNavigate();
+
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -112,7 +112,7 @@ export default function Profile() {
   const handleLogout = () => {
     resetAuthState();
     postMessage(BroadcastEventTypes.AUTH_LOGOUT);
-    navigate(AuthNameRoutes.LOGIN);
+    redirectToLogin();
   }
   return (
     <Box sx={{ flexShrink: 0 }}>
