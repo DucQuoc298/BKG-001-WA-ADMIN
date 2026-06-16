@@ -1,0 +1,129 @@
+// import { ClaimTypes, ClaimValues } from "types";
+
+export default {
+  theme_mode: {
+    light: "Light",
+    dark: "Dark",
+  },
+  page: {
+    LOGIN: "Log In",
+    REGISTER: "Register",
+    FORGOT_PASSWORD: "Forgot Password",
+    CONFIRM_FORGOT_PASSWORD: "Confirm Forgot Password",
+    RESET_PASSWORD: "Reset Password",
+  },
+  grid: {
+    row_per_page: "Rows per page",
+    of: "of",
+    no_row_label: "No rows"
+  },
+  AUTH: {
+    username: "Username",
+    email: "Email",
+    password: "Password",
+    rememberme: "Remember Me",
+    login_button: "Log In",
+    register_button: "Register",
+    forgot_password: "Forgot Password?",
+    signup_prompt: "Don't have an account? ",
+    signup_link: "Register",
+    ms_login_button: "Sign in with Microsoft",
+    server_license: "Server License",
+    user_license: "User License",
+    company: "Company",
+    license: "License",
+    license_file: "License File",
+    expired_date: "Expired Date",
+    get_license_info: "Get License Info",
+    revise: "Revise",
+    back_to_login: "Back to Login",
+    next: "Next",
+    back: "Back",
+    continue: "Continue",
+    current_password: "Current Password",
+    new_password: "New Password",
+    confirm_password: "Confirm New Password",
+  },
+  errors: {
+    required: "{{0}} is required",
+    no_leading_trailing_whitespace: "{{0}} cannot start or end with spaces",
+    max_length: "{{0}} must be less than {{1}} characters",
+    confirm_password_must_match_new_password: "Confirm password must match new password",
+    invalid_email: "Invalid email address",
+    min_date: "Date cannot be before 01/01/1911",
+    invalid_date: "Invalid date",
+    at_least_one_value: "{{0}} must have at least one value",
+  },
+  maintenance: {
+    404: {
+      title: "Page Not Found",
+      message: "The page you are looking for does not exist or has been moved.",
+    },
+    500: {
+      title: "Internal Server Error",
+      message: "An unexpected error has occurred. Please try again later.",
+    },
+    401: {
+      title: "Unauthorized",
+      message: "You are not authorized to access this page.",
+    },
+    403: {
+      title: "Forbidden",
+      message: "You do not have permission to view this page.",
+    },
+    503: {
+      title: "Service Unavailable",
+      message: "The service is temporarily unavailable. Please try again later.",
+    },
+    button: {
+      back_to_home: "Back to Home"
+    }
+  },
+  languages: {
+    EN: "English (US)",
+    VN: "Tiếng Việt",
+  },
+  text: {
+    language: "Language",
+    help: "Help",
+    logout: "Logout",
+    theme_mode: "Theme",
+    about: "About",
+    reset_layout: "Reset All Layout",
+    change_password: "Change Password",
+    save_as_default_module: "Save as default module",
+    recently_visited: "Recently",
+    version: "Version",
+    license_info: "License Information",
+    company_name: "Company Name",
+    concurrent_user: "Concurrent User",
+    expired_date: "Expired Date",
+    change_license_key: "Change License Key",
+    terms_of_service: "Terms of Service",
+    cancel: "Cancel",
+    save: "Save",
+    view_more: "View More",
+    notification: "Notification",
+    no_notification: "No notification",
+    change_company: "Change Company",
+    no_options: "No options",
+  },
+  form: {
+    HOME: "Home",
+    INVOICE: "Invoice",
+    BILL: "Bill",
+    COMPONENTS: "Components",
+    EMAIL: "Email"
+  },
+  alert: {
+    update_avatar_successfully: "Update avatar successfully",
+    update_password_successfully: "Update password successfully",
+    update_company_successfully: "Update company successfully",
+    register_success: "Register success",
+  },
+  button: {
+    new: "New",
+    edit: "Edit",
+    delete: "Delete",
+  }
+};

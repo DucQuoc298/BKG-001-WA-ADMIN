@@ -1,0 +1,22 @@
+{
+  "plugins": [
+    {
+      "id": "demo-form",
+      "name": "Demo Form Plugin",
+      "routePath": "/user-forms/demo-form",
+      "moduleUrl": "./demo-form.mjs",
+      "enabled": true,
+      "icon": "form",
+      "sidebar": false
+    },
+    {
+      "id": "invoice",
+      "name": "Invoice Plugin",
+      "routePath": "/user-forms/invoice",
+      "moduleUrl": "./invoice.mjs",
+      "enabled": true,
+      "icon": "invoice",
+      "sidebar": true
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+
+export default {
+  company_name: "Tavico Digital JSC",
+  theme_mode: {
+    light: "Sáng",
+    dark: "Tối",
+  },
+  page: {
+    LOGIN: "Đăng nhập",
+    REGISTER: "Đăng ký",
+    FORGOT_PASSWORD: "Quên mật khẩu",
+    CONFIRM_FORGOT_PASSWORD: "Xác nhận quên mật khẩu",
+    RESET_PASSWORD: "Đặt lại mật khẩu",
+  },
+  AUTH: {
+    username: "Tên đăng nhập",
+    email: "Email",
+    password: "Mật khẩu",
+    rememberme: "Ghi nhớ đăng nhập",
+    login_button: "Đăng nhập",
+    register_button: "Đăng ký",
+    forgot_password: "Quên mật khẩu?",
+    signup_prompt: "Bạn chưa có hệ thống sử dụng? ",
+    signup_link: "Đăng ký",
+    ms_login_button: "Đăng nhập với Microsoft",
+    server_license: "Giấy phép máy chủ",
+    user_license: "Giấy phép người dùng",
+    company: "Công ty",
+    license: "Giấy phép",
+    license_file: "Tệp giấy phép",
+    expired_date: "Ngày hết hạn",
+    get_license_info: "Lấy thông tin giấy phép",
+    revise: "Xem lại",
+    back_to_login: "Quay lại đăng nhập",
+    next: "Tiếp",
+    back: "Quay lại",
+    continue: "Tiếp tục",
+    current_password: "Mật khẩu hiện tại",
+    new_password: "Mật khẩu mới",
+    confirm_password: "Xác nhận mật khẩu mới",
+    code_verify: "Mã xác nhận",
+    forgot_password_desc: "Vui lòng nhập mã xác nhận đã được gửi đến email của bạn",
+  },
+  errors: {
+    required: "{{0}} là trường bắt buộc",
+    no_leading_trailing_whitespace: "{{0}} không được bắt đầu hoặc kết thúc bằng khoảng trắng",
+    max_length: "{{0}} phải ít hơn {{1}} ký tự",
+    confirm_password_must_match_new_password: "Xác nhận mật khẩu phải khớp với mật khẩu mới",
+    invalid_email: "Email không hợp lệ",
+    min_date: "Ngày không được trước 01/01/1911",
+    invalid_date: "Ngày không hợp lệ",
+    at_least_one_value: "{{0}} phải có ít nhất một giá trị",
+  },
+  maintenance: {
+    404: {
+      title: "Không tìm thấy",
+      message: "Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.",
+    },
+    500: {
+      title: "Lỗi máy chủ nội bộ",
+      message: "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.",
+    },
+    401: {
+      title: "Không được phép",
+      message: "Bạn không được phép truy cập trang này.",
+    },
+    403: {
+      title: "Bị cấm",
+      message: "Bạn không có quyền truy cập trang này.",
+    },
+    503: {
+      title: "Dịch vụ không khả dụng",
+      message: "Dịch vụ tạm thời không khả dụng. Vui lòng thử lại sau.",
+    },
+    button: {
+      back_to_home: "Quay lại trang chủ"
+    }
+  },
+  languages: {
+    EN: "English (US)",
+    VN: "Tiếng Việt",
+  },
+  grid: {
+    row_per_page: "Hiển thị",
+    of: "của",
+    no_row_label: "Không có dữ liệu"
+  },
+  text: {
+    language: "Ngôn ngữ",
+    help: "Trợ giúp",
+    logout: "Đăng xuất",
+    theme_mode: "Giao diện",
+    about: "Thông tin",
+    reset_layout: "Đặt lại bố cục",
+    change_password: "Đổi mật khẩu",
+    save_as_default_module: "Lưu làm module mặc định",
+    recently_visited: "Truy cập gần đây",
+    version: "Phiên bản",
+    license_info: "Thông tin giấy phép",
+    company_name: "Công ty",
+    concurrent_user: "Người dùng đồng thời",
+    expired_date: "Ngày hết hạn",
+    cancel: "Hủy",
+    save: "Lưu",
+    view_more: "Xem thêm",
+    notification: "Thông báo",
+    no_notification: "Không có thông báo ",
+    change_company: "Đổi công ty",
+    no_options: "Không có lựa chọn nào",
+  },
+  form: {
+    HOME: "Trang chủ",
+    INVOICE: "Hóa đơn",
+    BILL: "Hóa đơn nhập",
+    COMPONENTS: "Components",
+    EMAIL: "Soạn thư",
+  },
+  alert: {
+    update_avatar_successfully: "Cập nhật ảnh đại diện thành công",
+    update_password_successfully: "Cập nhật mật khẩu thành công",
+    update_company_successfully: "Cập nhật công ty thành công",
+    register_success: "Đăng ký thành công",
+  },
+  email: {
+    recipient: "Người nhận",
+    cc: "Cc",
+    bcc: "Bcc",
+    subject: "Tiêu đề",
+    content: "Nội dung",
+    attachments: "Tệp đính kèm",
+    send: "Gửi",
+    discard: "Hủy",
+    errors: {
+      required: "Vui lòng nhập địa chỉ email {{0}}",
+      invalid_email: "Email {{0}} không hợp lệ",
+    }
+  },
+  button: {
+    new: "Thêm mới",
+    edit: "Chỉnh sửa",
+    delete: "Xóa",
+  }
+};
