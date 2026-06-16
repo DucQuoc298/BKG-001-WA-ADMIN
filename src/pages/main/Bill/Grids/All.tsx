@@ -3,7 +3,7 @@ import { IconName } from "assets/Icon";
 import { DataTable } from "components";
 import ActionBar from "components/ActionBar";
 import { useSnackbar } from "hooks";
-import { useBill } from "hooks/useBill";
+import { useBill } from "hooks/features/useBill";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { DataTableMode, DataTableVariant, EGridColTypes, IAction, IActionAndSub, IGridColDef, IToolbarButton, actionButtons } from "types";
