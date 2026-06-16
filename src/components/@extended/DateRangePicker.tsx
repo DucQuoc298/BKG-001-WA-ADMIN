@@ -49,40 +49,48 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
         minDate={minDate}
         slotProps={{
           ...slotProps,
+          field: {
+            ...((slotProps as any)?.field),
+            sx: {
+              alignItems: "center",
+              "& .MuiMultiInputDateRangeField-separator": {
+                alignSelf: "center",
+              },
+              ...((slotProps as any)?.field?.sx),
+            },
+          } as any,
           textField: ({ position }: any) => ({
             ...slotProps?.textField,
             inputRef: position === 'start' ? inputRef : undefined,
-            slotProps: {
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {(value?.[0] || value?.[1]) && (
-                      <IconButton
-                        onClick={() => {
-                          if (position === "start") {
-                            onChange([null, value?.[1] ?? null]);
-                          } else {
-                            onChange([value?.[0] ?? null, null]);
-                          }
-                        }}
-                        sx={{
-                          ...iStyles.clearButton,
-                        }}
-                      >
-                        <Icons name={IconName.CLEAR} size={20} />
-                      </IconButton>
-                    )}
+            InputProps: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  {(value?.[0] || value?.[1]) && (
                     <IconButton
-                      onClick={() => setOpen(true)}
+                      onClick={() => {
+                        if (position === "start") {
+                          onChange([null, value?.[1] ?? null]);
+                        } else {
+                          onChange([value?.[0] ?? null, null]);
+                        }
+                      }}
                       sx={{
-                        padding: '0px !important',
+                        ...iStyles.clearButton,
                       }}
                     >
-                      <Icons name={IconName.CALENDAR} size={26} />
+                      <Icons name={IconName.CLEAR} size={20} />
                     </IconButton>
-                  </InputAdornment>
-                ),
-              },
+                  )}
+                  <IconButton
+                    onClick={() => setOpen(true)}
+                    sx={{
+                      padding: '0px !important',
+                    }}
+                  >
+                    <Icons name={IconName.CALENDAR} size={26} />
+                  </IconButton>
+                </InputAdornment>
+              ),
             },
             label: "",
             variant: "outlined",
