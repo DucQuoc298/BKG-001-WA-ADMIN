@@ -133,7 +133,7 @@ Hệ thống cho phép cắm nóng các dynamic form thông qua file `.mjs`. Khi
 
 ## 6. Quy tắc Giao tiếp Chéo Tab (BroadcastChannel)
 
-Dự án hỗ trợ truyền tin và đồng bộ hóa trạng thái ứng dụng giữa các tab trình duyệt khác nhau thông qua API `BroadcastChannel` (được bọc trong `src/services/broadcast.ts` và hook `useBroadcastChannel`).
+Dự án hỗ trợ truyền tin và đồng bộ hóa trạng thái ứng dụng giữa các tab trình duyệt khác nhau thông qua API `BroadcastChannel` (được bọc trong `src/services/utils/broadcast.ts` và hook `useBroadcastChannel`).
 
 1. **Khởi tạo và Sử dụng Hook `useBroadcastChannel`**:
    - Khi component vừa muốn lắng nghe vừa muốn gửi thông điệp:
@@ -149,7 +149,7 @@ Dự án hỗ trợ truyền tin và đồng bộ hóa trạng thái ứng dụn
      const { postMessage } = useBroadcastChannel();
      ```
 2. **Quy định về Event Types**:
-   - Mọi sự kiện trao đổi chéo tab phải được khai báo trong đối tượng `BroadcastEventTypes` thuộc `src/services/broadcast.ts` (ví dụ: `AUTH_LOGOUT`, `THEME_CHANGE`, v.v.). Không sử dụng các chuỗi string thô (magic strings).
+   - Mọi sự kiện trao đổi chéo tab phải được khai báo trong đối tượng `BroadcastEventTypes` thuộc `src/services/utils/broadcast.ts` (ví dụ: `AUTH_LOGOUT`, `THEME_CHANGE`, v.v.). Không sử dụng các chuỗi string thô (magic strings).
 3. **Tích hợp SDK dành cho Dynamic Plugins**:
    - Các dynamic plugins chạy runtime có thể sử dụng cơ chế này qua đối tượng `sdk.broadcast` (gồm `postMessage` và `subscribe`) đã được inject sẵn trong SDK.
 
