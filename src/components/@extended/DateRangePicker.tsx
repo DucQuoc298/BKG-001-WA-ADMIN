@@ -50,59 +50,63 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
         slotProps={{
           ...slotProps,
           field: {
-            ...slotProps?.field,
-            slotProps: {
-              ...(slotProps?.field as any)?.slotProps,
-              textField: ({ position }: any) => ({
-                ...(slotProps?.field as any)?.slotProps?.textField,
-                inputRef: position === 'start' ? inputRef : undefined,
-                InputProps: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {(value?.[0] || value?.[1]) && (
-                        <IconButton
-                          onClick={() => {
-                            if (position === "start") {
-                              onChange([null, value?.[1] ?? null]);
-                            } else {
-                              onChange([value?.[0] ?? null, null]);
-                            }
-                          }}
-                          sx={{
-                            ...iStyles.clearButton,
-                          }}
-                        >
-                          <Icons name={IconName.CLEAR} size={20} />
-                        </IconButton>
-                      )}
-                      <IconButton
-                        onClick={() => setOpen(true)}
-                        sx={{
-                          padding: '0px !important',
-                        }}
-                      >
-                        <Icons name={IconName.CALENDAR} size={26} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                },
-                label: "",
-                variant: "outlined",
-                fullWidth: true,
-                error: getFieldError(position),
-                helperText: getHelperText(position),
-                sx: {
-                  "& .MuiPickersOutlinedInput-root": {
-                    ...iStyles.textfield,
-                    padding: '0px 10px',
-                  },
-                  "& .MuiPickersSectionList-root": {
-                    padding: '10px 0px !important',
-                  },
-                },
-              }),
+            ...((slotProps as any)?.field),
+            sx: {
+              alignItems: "center",
+              "& .MuiMultiInputDateRangeField-separator": {
+                alignSelf: "center",
+              },
+              ...((slotProps as any)?.field?.sx),
             },
           } as any,
+          textField: ({ position }: any) => ({
+            ...slotProps?.textField,
+            inputRef: position === 'start' ? inputRef : undefined,
+            InputProps: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  {(value?.[0] || value?.[1]) && (
+                    <IconButton
+                      onClick={() => {
+                        if (position === "start") {
+                          onChange([null, value?.[1] ?? null]);
+                        } else {
+                          onChange([value?.[0] ?? null, null]);
+                        }
+                      }}
+                      sx={{
+                        ...iStyles.clearButton,
+                      }}
+                    >
+                      <Icons name={IconName.CLEAR} size={20} />
+                    </IconButton>
+                  )}
+                  <IconButton
+                    onClick={() => setOpen(true)}
+                    sx={{
+                      padding: '0px !important',
+                    }}
+                  >
+                    <Icons name={IconName.CALENDAR} size={26} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+            label: "",
+            variant: "outlined",
+            fullWidth: true,
+            error: getFieldError(position),
+            helperText: getHelperText(position),
+            sx: {
+              "& .MuiPickersOutlinedInput-root": {
+                ...iStyles.textfield,
+                padding: '0px 10px',
+              },
+              "& .MuiPickersSectionList-root": {
+                padding: '10px 0px !important',
+              },
+            },
+          }),
         }}
         value={value}
         open={open}
