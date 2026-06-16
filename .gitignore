@@ -116,3 +116,4 @@ yarn.lock
 .idea
 .vscode/
 .cursor/
+.env
