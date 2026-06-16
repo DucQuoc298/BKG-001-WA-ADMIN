@@ -96,7 +96,6 @@ const DateField = forwardRef<HTMLInputElement, IDateFieldProps>(function DateFie
             ...slotProps?.openPickerButton,
           },
           textField: {
-            variant: "outlined",
             fullWidth: true,
             sx: {
               "& .MuiPickersOutlinedInput-root": {

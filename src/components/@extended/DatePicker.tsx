@@ -58,7 +58,6 @@ const DateTimePicker = ({ onChange, value, error, label, slotProps, required, he
             ...slotProps?.openPickerButton,
           },
           textField: {
-            variant: "outlined",
             fullWidth: true,
             sx: {
               "& .MuiPickersOutlinedInput-root": {
