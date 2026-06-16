@@ -13,7 +13,7 @@ import ScrollTop from 'components/ScrollTop';
 import { handlerDrawerOpen, useGetMenuMaster } from 'hooks/useMenu';
 import { DRAWER_WIDTH, HEADER_HEIGHT, TOOLBAR_HEIGHT } from 'themes/config';
 import { useAuth, useBroadcastChannel } from 'hooks';
-import { BroadcastEventTypes } from 'services';
+import { BroadcastEventTypes, redirectToLogin } from 'services';
 import { AuthNameRoutes } from 'types';
 
 // ==============================|| MAIN LAYOUT ||============================== //
@@ -27,7 +27,7 @@ export default function DashboardLayout() {
   useBroadcastChannel((message) => {
     if (message.type === BroadcastEventTypes.AUTH_LOGOUT) {
       resetAuthState();
-      navigate(AuthNameRoutes.LOGIN);
+      redirectToLogin(false);
     }
   });
 

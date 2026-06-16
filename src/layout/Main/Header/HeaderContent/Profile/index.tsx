@@ -112,7 +112,7 @@ export default function Profile() {
   const handleLogout = () => {
     resetAuthState();
     postMessage(BroadcastEventTypes.AUTH_LOGOUT);
-    redirectToLogin();
+    redirectToLogin(false);
   }
   return (
     <Box sx={{ flexShrink: 0 }}>

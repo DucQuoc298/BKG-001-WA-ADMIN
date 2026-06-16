@@ -13,7 +13,7 @@ import AuthForgotPassword from 'sections/auth/AuthForgotPassword';
 import AuthConfirmForgotPassword from 'sections/auth/AuthConfirmForgotPassword';
 import AuthResetPassword from 'sections/auth/AuthResetPassword';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { forgotPassword, confirmForgotPassword, resetPassword } from 'services';
+import { forgotPassword, confirmForgotPassword, resetPassword, redirectToLogin } from 'services';
 import { AuthNameRoutes, CAPTCHA_ACTION } from 'types';
 
 // ================================|| JWT - FORGOT PASSWORD ||================================ //
@@ -50,7 +50,7 @@ export default function ForgotPassword() {
     }
   };
 
-  const handleConfirmForgotPassword  = async (values: { confirmCode: string; verificationCode: string }) => {
+  const handleConfirmForgotPassword = async (values: { confirmCode: string; verificationCode: string }) => {
     try {
       const confirmCode = authData.confirmCode || values.confirmCode;
       await confirmForgotPassword({ confirmCode, verificationCode: values.verificationCode }, (res) => {
@@ -81,7 +81,7 @@ export default function ForgotPassword() {
       }, (res) => {
         console.log("Password reset successful:", res);
         setForm(FormType.forgotPassword);
-        navigate(AuthNameRoutes.LOGIN);
+        redirectToLogin(false);
       });
     } catch (error) {
       console.error('Reset password failed:', error);
@@ -92,23 +92,23 @@ export default function ForgotPassword() {
       <Grid container sx={{ maxWidth: 400 }}>
         <Grid container spacing={3} size={12}>
           <Grid size={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <img src={Logo} alt="Logo" style={{ width: '70px', height: 'auto', }} />
-              </Box>
-              <Typography variant="h3" sx={{textAlign: 'center'}}>{t(`page.${form.toUpperCase()}`)}</Typography>
-              {form === FormType.confirmForgotPassword && (
-                <Typography variant="body2" sx={{ mt: 1.5, textAlign: 'center' }}>
-                  {t("AUTH.forgot_password_desc")}
-                </Typography>
-              )}
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <img src={Logo} alt="Logo" style={{ width: '70px', height: 'auto', }} />
+            </Box>
+            <Typography variant="h3" sx={{ textAlign: 'center' }}>{t(`page.${form.toUpperCase()}`)}</Typography>
+            {form === FormType.confirmForgotPassword && (
+              <Typography variant="body2" sx={{ mt: 1.5, textAlign: 'center' }}>
+                {t("AUTH.forgot_password_desc")}
+              </Typography>
+            )}
           </Grid>
           <Grid size={12}>
             {form === FormType.forgotPassword && <AuthForgotPassword handleForgotPassword={handleForgotPassword} />}
             {form === FormType.confirmForgotPassword && <AuthConfirmForgotPassword handleConfirmForgotPassword={handleConfirmForgotPassword} />}
-            {form === FormType.resetPassword && <AuthResetPassword handleResetPassword={handleResetPassword}/>}
+            {form === FormType.resetPassword && <AuthResetPassword handleResetPassword={handleResetPassword} />}
           </Grid>
         </Grid>
-        </Grid>
+      </Grid>
     </AuthWrapper>
   );
 }
