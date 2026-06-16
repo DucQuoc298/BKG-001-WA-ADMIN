@@ -1,8 +1,7 @@
-
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import { Button, Dialog, MainCard, ContainerWrapper } from 'components';
 import { defineAppRuntime, defineFormRuntime } from '.';
-import { createSafeBroadcastChannel, postBroadcastMessage } from 'services/broadcast';
+import { createSafeBroadcastChannel, postBroadcastMessage } from 'services';
 
 const runtime = defineAppRuntime({
   http: {

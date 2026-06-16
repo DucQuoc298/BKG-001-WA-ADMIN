@@ -1,5 +1,5 @@
 import { IconName } from "assets/Icon";
-import { IAction } from "./commom";
+import { IAction } from "../commom";
 
 export interface IToolbarButton {
   key: IAction;
