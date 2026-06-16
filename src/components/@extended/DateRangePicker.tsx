@@ -44,7 +44,7 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
 
   return (
     <LocalizationProvider adapterLocale={currentLocale} dateAdapter={AdapterDayjs}>
-      <FormLabel sx={{ ...iStyles.labelDefault }}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
+      <FormLabel sx={{ ...iStyles.labelDefault }} focused={false}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
       <DateRangePicker
         minDate={minDate}
         slotProps={{

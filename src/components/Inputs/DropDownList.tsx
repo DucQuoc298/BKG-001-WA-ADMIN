@@ -3,6 +3,7 @@ import inputStyles from "./styles";
 import { UseFormRegister } from "react-hook-form";
 import { forwardRef, useEffect, useState } from "react";
 import Icons, { IconName } from "assets/Icon";
+import Label from "./Label";
 
 type IValue = {
   id: string;
@@ -39,6 +40,10 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
     setSelectedValue(props.multiple ? (Array.isArray(value) ? value : (value ? [value] : [])) : (value ?? ""));
   }, [value, props.multiple]);
 
+  const hasValue = props.multiple
+    ? Array.isArray(selectedValue) && selectedValue.length > 0
+    : !!selectedValue;
+
   const handleToggleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
@@ -57,10 +62,7 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
   return (
     <>
       <FormControl variant="outlined" fullWidth>
-        <FormLabel sx={{ ...iStyles.labelDefault }}>
-          {label}
-          {forceSelect && <Typography sx={{ color: "error.main", height: '100%' }}>*</Typography>}
-        </FormLabel>
+        <Label required={props.required} label={label} />
         <Select
           ref={ref}
           {...props}
@@ -122,7 +124,7 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
           onBlur={onBlur}
           endAdornment={
             <InputAdornment position="end">
-              {!forceSelect && !!selectedValue ? (
+              {hasValue ? (
                 <IconButton
                   sx={{ ...iStyles.clearButton, marginRight: "4px" }}
                   onMouseDown={(event) => {

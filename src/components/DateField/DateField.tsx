@@ -81,7 +81,7 @@ const DateField = forwardRef<HTMLInputElement, IDateFieldProps>(function DateFie
 
   return (
     <LocalizationProvider adapterLocale={i18n.language === 'vi' ? 'vi' : 'en-gb'} dateAdapter={AdapterDayjs}>
-      <FormLabel sx={{ ...iStyles.labelDefault }}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
+      <FormLabel sx={{ ...iStyles.labelDefault }} focused={false}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
       <DatePicker
         minDate={minDate}
         open={open}
