@@ -25,11 +25,14 @@ import { useTranslation } from 'react-i18next';
 import { Button, TextField } from 'components';
 import { useAuth } from 'hooks/useConfig';
 import { MainNameRoutes } from 'types';
+import { login } from 'services';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 // ============================|| JWT - LOGIN ||============================ //
 
 export default function AuthLogin() {
-  const {state} = useAuth();
+  const { state, setState } = useAuth();
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [rememberMe, setRememberMe] = React.useState(state.rememberMe !== null ? true : false);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -43,13 +46,35 @@ export default function AuthLogin() {
   return (
     <>
       <Formik
-        onSubmit={(values)=>{
-          // login({username: values.username, password: values.password}, (data)=>{
-          //   const {token, refreshToken, ...safeData } = data
-          //   setState((prevState) => ({ ...prevState, user: JSON.stringify(safeData), loginStatus: true, token: token, refreshToken: refreshToken, rememberMe: rememberMe ? values.username : null }));
-            console.log("Login successful with values:", values);
-            navigate(MainNameRoutes.HOME);
-          // })
+        onSubmit={async (values, { setSubmitting }) => {
+          let captchaToken = '';
+          if (executeRecaptcha) {
+            try {
+              captchaToken = await executeRecaptcha('login');
+            } catch (error) {
+              console.error('reCAPTCHA execution failed:', error);
+            }
+          }
+
+          try {
+            await login({ username: values.username, password: values.password, captcha: captchaToken }, (data) => {
+              const { token, refreshToken, ...safeData } = data;
+              setState((prevState) => ({
+                ...prevState,
+                user: JSON.stringify(safeData),
+                loginStatus: true,
+                token: token,
+                refreshToken: refreshToken,
+                rememberMe: rememberMe ? values.username : null
+              }));
+              console.log("Login successful with values:", values);
+              navigate(MainNameRoutes.HOME);
+            });
+          } catch (error) {
+            console.error('Login failed:', error);
+          } finally {
+            setSubmitting(false);
+          }
         }}
         initialValues={{
           username: state.rememberMe !== null ? state.rememberMe : '',

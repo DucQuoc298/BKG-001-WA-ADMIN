@@ -5,7 +5,7 @@ import {
 } from "../utils/utils";
 
 
-const login = (data: {username: string, password: string}, callback?: (data: any) => void) => {
+const login = (data: {username: string, password: string, captcha?: string}, callback?: (data: any) => void) => {
   return handlePost("", {
     "action": "ConnectDB",
     "method": "getConfig",
@@ -15,7 +15,7 @@ const login = (data: {username: string, password: string}, callback?: (data: any
       id: 1,
       username: data.username,
       password: data.password,
-      captcha: import.meta.env.VITE_CAPTCHA_SITE_KEY,
+      captcha: data.captcha || import.meta.env.VITE_CAPTCHA_SITE_KEY,
     }]
   }, callback);
 }
@@ -36,14 +36,14 @@ const refreshToken = async (refreshToken: string) => {
     throw new Error('There was something wrong');
   }
 };
-const getConfig = async (accessToken: string, callback?: (data: any) => void) => {
+const getConfig = async (accessToken: string, callback?: (data: any) => void, captcha?: string) => {
   return handlePost('', {
     "action": "ConnectDB",
     "method": "getConfig",
     "data": [
       {
         id: 0,
-        captcha: import.meta.env.VITE_CAPTCHA_SITE_KEY,
+        captcha: captcha || import.meta.env.VITE_CAPTCHA_SITE_KEY,
         accessToken: accessToken
       },
     ] ,
@@ -96,7 +96,7 @@ const checkSession = async (callback?: (data: any) => void) => {
   }, callback);
 };
 
-const forgotPassword = async (data: {userid: string, email: string}, callback?: (data: any) => void) => {
+const forgotPassword = async (data: {userid: string, email: string, captcha?: string}, callback?: (data: any) => void) => {
   return handlePost('', {
     "action": "ConnectDB",
     "method": "forgotPwd",
@@ -104,7 +104,7 @@ const forgotPassword = async (data: {userid: string, email: string}, callback?: 
       {
         userid: data.userid,
         email: data.email,
-        captcha: import.meta.env.VITE_CAPTCHA_SITE_KEY,
+        captcha: data.captcha || import.meta.env.VITE_CAPTCHA_SITE_KEY,
       },
     ] ,
     type: 'rpc',
@@ -125,13 +125,13 @@ const confirmForgotPassword = async (data: {confirmCode: string, verificationCod
     tid: 4,
   }, callback);
 };
-const resetPassword = async (data: {confirmCode: string, newPassword: string, verifyCode: string}, callback?: (data: any) => void) => {
+const resetPassword = async (data: {confirmCode: string, newPassword: string, verifyCode: string, captcha?: string}, callback?: (data: any) => void) => {
   return handlePost('', {
     "action": "ConnectDB",
     "method": "changePwd",
     "data": [
       {
-        captcha: import.meta.env.VITE_CAPTCHA_SITE_KEY,
+        captcha: data.captcha || import.meta.env.VITE_CAPTCHA_SITE_KEY,
         confirmCode: data.confirmCode,
         newPwd: data.newPassword,
         verifyCode: data.verifyCode,

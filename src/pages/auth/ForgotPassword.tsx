@@ -12,8 +12,9 @@ import { Box } from '@mui/material';
 import AuthForgotPassword from 'sections/auth/AuthForgotPassword';
 import AuthConfirmForgotPassword from 'sections/auth/AuthConfirmForgotPassword';
 import AuthResetPassword from 'sections/auth/AuthResetPassword';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { forgotPassword, confirmForgotPassword, resetPassword } from 'services';
 import { AuthNameRoutes } from 'types';
-// import { useUser } from 'hooks';
 
 // ================================|| JWT - FORGOT PASSWORD ||================================ //
 enum FormType {
@@ -22,22 +23,69 @@ enum FormType {
   resetPassword = 'reset_password'
 }
 export default function ForgotPassword() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const [form, setForm] = useState<FormType>(FormType.forgotPassword);
+  const [authData, setAuthData] = useState<{ userid?: string; email?: string; confirmCode?: string; verifyCode?: string }>({});
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const navigate = useNavigate();
 
-  const handleForgotPassword = (values: { userid: string; email: string }) => {
-    console.log("Forgot password with values:", values);
-    setForm(FormType.confirmForgotPassword);
+  const handleForgotPassword = async (values: { userid: string; email: string }) => {
+    let captchaToken = '';
+    if (executeRecaptcha) {
+      try {
+        captchaToken = await executeRecaptcha('forgot_password');
+      } catch (error) {
+        console.error('reCAPTCHA execution failed:', error);
+      }
+    }
+
+    try {
+      await forgotPassword({ userid: values.userid, email: values.email, captcha: captchaToken }, (res) => {
+        const confirmCode = res?.confirmCode || res?.data?.confirmCode || '';
+        setAuthData({ userid: values.userid, email: values.email, confirmCode });
+        setForm(FormType.confirmForgotPassword);
+      });
+    } catch (error) {
+      console.error('Forgot password request failed:', error);
+    }
   };
-  const handleConfirmForgotPassword  = (values: { confirmCode: string; verificationCode: string }) => {
-    console.log("Confirm forgot password with values:", values);
-    setForm(FormType.resetPassword);
+
+  const handleConfirmForgotPassword  = async (values: { confirmCode: string; verificationCode: string }) => {
+    try {
+      const confirmCode = authData.confirmCode || values.confirmCode;
+      await confirmForgotPassword({ confirmCode, verificationCode: values.verificationCode }, (res) => {
+        setAuthData(prev => ({ ...prev, verifyCode: values.verificationCode, confirmCode }));
+        setForm(FormType.resetPassword);
+      });
+    } catch (error) {
+      console.error('Confirm forgot password failed:', error);
+    }
   };
-  const handleResetPassword = (values: { newPassword: string }) => {
-    console.log("Reset password with values:", values);
-    setForm(FormType.forgotPassword);
-    navigate(AuthNameRoutes.LOGIN);
+
+  const handleResetPassword = async (values: { newPassword: string }) => {
+    let captchaToken = '';
+    if (executeRecaptcha) {
+      try {
+        captchaToken = await executeRecaptcha('reset_password');
+      } catch (error) {
+        console.error('reCAPTCHA execution failed:', error);
+      }
+    }
+
+    try {
+      await resetPassword({
+        confirmCode: authData.confirmCode || '',
+        newPassword: values.newPassword,
+        verifyCode: authData.verifyCode || '',
+        captcha: captchaToken
+      }, (res) => {
+        console.log("Password reset successful:", res);
+        setForm(FormType.forgotPassword);
+        navigate(AuthNameRoutes.LOGIN);
+      });
+    } catch (error) {
+      console.error('Reset password failed:', error);
+    }
   };
   return (
     <AuthWrapper>

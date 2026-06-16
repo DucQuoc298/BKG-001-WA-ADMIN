@@ -24,6 +24,9 @@ import { Provider } from 'react-redux';
 import { store } from 'store/createStore';
 import { Snackbar } from 'components';
 
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
+
+const siteKey = import.meta.env.VITE_CAPTCHA_SITE_KEY || '';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -33,23 +36,25 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <AuthProvider
-        storageKey={KEY_CONTEXT.AUTH}
-        initialState={authConfig}
-      >
-        <MainProvider
-          storageKey={KEY_CONTEXT.MAIN}
-          initialState={mainConfig}
+      <GoogleReCaptchaProvider reCaptchaKey={siteKey}>
+        <AuthProvider
+          storageKey={KEY_CONTEXT.AUTH}
+          initialState={authConfig}
         >
-          <ThemeCustomization>
-            <I18nextProvider i18n={i18n}>
-              <CssBaseline />
-              <App />
-              <Snackbar />
-            </I18nextProvider>
-          </ThemeCustomization>
-        </MainProvider>
-      </AuthProvider>
+          <MainProvider
+            storageKey={KEY_CONTEXT.MAIN}
+            initialState={mainConfig}
+          >
+            <ThemeCustomization>
+              <I18nextProvider i18n={i18n}>
+                <CssBaseline />
+                <App />
+                <Snackbar />
+              </I18nextProvider>
+            </ThemeCustomization>
+          </MainProvider>
+        </AuthProvider>
+      </GoogleReCaptchaProvider>
     </Provider>
   </React.StrictMode>
 );
