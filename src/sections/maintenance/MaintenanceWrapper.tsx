@@ -4,7 +4,7 @@ import React from "react";
 // ==============================|| MAINTENANCE WRAPPER ||============================== //
 
 
-export default function MaintenanceWrapper({ children }) {
+export default function MaintenanceWrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <Stack
