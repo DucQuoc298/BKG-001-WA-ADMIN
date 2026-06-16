@@ -40,7 +40,7 @@ export default function Home() {
   const {
     register,
     handleSubmit,
-    // setValue,
+    setValue,
     watch,
     formState: {
       dirtyFields,
@@ -120,7 +120,7 @@ export default function Home() {
             value={formState?.data?.date}
             {...register('date')}
           /> */}
-          {/* <DateRangeField
+          <DateRangeField
             label="Chose month range"
             value={[formState?.data?.fromDate, formState?.data?.toDate]}
             {...register('fromDate', {
@@ -131,7 +131,7 @@ export default function Home() {
                 setValue('toDate', to, { shouldDirty: true });
               }
             })}
-          /> */}
+          />
 
           <DropDownList
             label='Role'

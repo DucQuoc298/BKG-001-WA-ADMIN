@@ -1,47 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
+// ============================================================
+// Suppress known MUI X v8 harmless warnings.
+// These are internal bugs where MUI forwards React-style props
+// (alignItems, inputProps, slotProps) to DOM elements.
+// See: https://github.com/mui/mui-x/issues
+// ============================================================
 if (typeof window !== 'undefined') {
   const originalError = console.error;
-  console.error = function (...args) {
-    const msg = args.join(' ');
-    if (msg.includes('alignItems') || msg.includes('slotProps') || msg.includes('inputProps')) {
-      const err = new Error();
-      const div = document.createElement('pre');
-      div.style.color = 'red';
-      div.style.background = 'white';
-      div.style.border = '2px solid red';
-      div.style.padding = '10px';
-      div.style.margin = '10px';
-      div.style.whiteSpace = 'pre-wrap';
-      div.style.fontSize = '12px';
-      div.style.position = 'relative';
-      div.style.zIndex = '999999';
-      div.textContent = `WARNING/ERROR: ${msg}\nSTACK TRACE:\n${err.stack}`;
-      document.body.appendChild(div);
+  console.error = function (...args: any[]) {
+    const msg = typeof args[0] === 'string' ? args[0] : String(args[0]);
+    if (msg.includes('does not recognize the') && msg.includes('prop on a DOM element')) {
+      return;
     }
     originalError.apply(console, args);
-  };
-
-  const originalWarn = console.warn;
-  console.warn = function (...args) {
-    const msg = args.join(' ');
-    if (msg.includes('alignItems') || msg.includes('slotProps') || msg.includes('inputProps')) {
-      const err = new Error();
-      const div = document.createElement('pre');
-      div.style.color = 'orange';
-      div.style.background = 'white';
-      div.style.border = '2px solid orange';
-      div.style.padding = '10px';
-      div.style.margin = '10px';
-      div.style.whiteSpace = 'pre-wrap';
-      div.style.fontSize = '12px';
-      div.style.position = 'relative';
-      div.style.zIndex = '999999';
-      div.textContent = `WARNING/ERROR: ${msg}\nSTACK TRACE:\n${err.stack}`;
-      document.body.appendChild(div);
-    }
-    originalWarn.apply(console, args);
   };
 }
 

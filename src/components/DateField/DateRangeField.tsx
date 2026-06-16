@@ -1,8 +1,27 @@
 import dayjs, { Dayjs } from "dayjs";
-import { forwardRef, useState } from "react";
+import React, { forwardRef, useState } from "react";
 import { MultiInputDateRangeField } from "@mui/x-date-pickers-pro";
 import DateRangePicker from "components/@extended/DateRangePicker";
 import { UseFormRegister } from "react-hook-form";
+import Stack from "@mui/material/Stack";
+import { styled } from "@mui/material/styles";
+
+// ============================================================
+// FIX: MUI X bug — MultiInputDateRangeField nội bộ dùng
+// <Stack alignItems="baseline" {...props}> nhưng Stack
+// forward `alignItems` xuống DOM → React warning.
+// Override root slot bằng styled Stack có shouldForwardProp.
+// ============================================================
+
+const SafeFieldRoot = styled(
+  React.forwardRef<HTMLDivElement, any>(function SafeFieldRoot(props, ref) {
+    const { alignItems, ...rest } = props;
+    return <Stack ref={ref} sx={{ gap: 2, direction: "row", alignItems: "center" }} {...rest} />;
+  }),
+  {
+    shouldForwardProp: (prop) => prop !== 'alignItems',
+  }
+)({});
 
 // ============================================================
 // TYPE
@@ -108,7 +127,16 @@ const DateRangeField = forwardRef<HTMLInputElement, IDateRangeFieldProps>(functi
       required={required}
       value={dateRange}
       onChange={handleChange}
-      slots={{ field: MultiInputDateRangeField }}
+      slots={{
+        field: MultiInputDateRangeField,
+      }}
+      slotProps={{
+        field: {
+          slots: {
+            root: SafeFieldRoot,
+          },
+        } as any,
+      }}
       error={Boolean(error)}
       helperText={helperText}
     />

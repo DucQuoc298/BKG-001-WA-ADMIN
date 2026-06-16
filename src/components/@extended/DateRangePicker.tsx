@@ -52,10 +52,8 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
           field: {
             ...((slotProps as any)?.field),
             sx: {
+              gap: '10px !important',
               alignItems: "center",
-              "& .MuiMultiInputDateRangeField-separator": {
-                alignSelf: "center",
-              },
               ...((slotProps as any)?.field?.sx),
             },
           } as any,
