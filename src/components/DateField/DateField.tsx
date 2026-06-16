@@ -1,7 +1,7 @@
 import { FormHelperText, FormLabel } from "@mui/material";
 import { DatePicker, DatePickerProps, DateValidationError, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import inputStyles from "components/Inputs/styles";
 import { useTranslation } from "react-i18next";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -45,6 +45,10 @@ const DateField = forwardRef<HTMLInputElement, IDateFieldProps>(function DateFie
   const [validationError, setValidationError] = useState<DateValidationError | null>(null);
 
   const [date, setDate] = useState<Dayjs | null>(value ? dayjs(value) : null);
+
+  useEffect(() => {
+    setDate(value ? dayjs(value) : null);
+  }, [value]);
 
   const getValidationMessage = (reason: DateValidationError | null) => {
     switch (reason) {

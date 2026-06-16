@@ -96,7 +96,22 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {selected.map((value) => {
                     const item = data.find((d) => d.id === value);
-                    return <Chip key={value} label={item ? item.text : value} />;
+                    return (
+                      <Chip
+                        key={value}
+                        label={item ? item.text : value}
+                        onDelete={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          const newValue = selected.filter((v) => v !== value);
+                          setSelectedValue(newValue);
+                          onChange?.({ target: { name: props.name, value: newValue }, type: "change" } as any);
+                        }}
+                        onMouseDown={(event) => {
+                          event.stopPropagation();
+                        }}
+                      />
+                    );
                   })}
                 </Box>
               );

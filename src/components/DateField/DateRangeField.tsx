@@ -98,6 +98,10 @@ const DateRangeField = forwardRef<HTMLInputElement, IDateRangeFieldProps>(functi
     () => parseValue(value)
   );
 
+  React.useEffect(() => {
+    setDateRange(parseValue(value));
+  }, [value]);
+
   /**
    * Xử lý khi người dùng chọn ngày mới.
    * Emit theo định dạng { target: { name, value } } để React Hook Form

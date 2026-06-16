@@ -47,8 +47,7 @@ export default function Home() {
       errors
     },
   } = methods;
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const role = watch('role')
+  const formValues = watch();
   /**
    * useReduxFormSync đồng bộ hóa dữ liệu React Hook Form ↔ Redux.
    */
@@ -56,7 +55,7 @@ export default function Home() {
     methods,
     values: {
       ...(formState?.data ?? {}),
-      role,
+      role: formState?.data?.role ?? formValues.role,
       dirtyFields: formState?.dirtyFields,
     },
     onSave: (snapshot) => {
@@ -111,18 +110,18 @@ export default function Home() {
             label='Số'
             required
             {...register('number')}
-            value={formState?.data?.number}
+            value={formValues.number}
             error={!!errors.number}
             helperText={errors.number?.message}
           />
           {/* <DateField
             label="Chose month"
-            value={formState?.data?.date}
+            value={formValues.date}
             {...register('date')}
           /> */}
           <DateRangeField
             label="Chose month range"
-            value={[formState?.data?.fromDate, formState?.data?.toDate]}
+            value={[formValues.fromDate, formValues.toDate]}
             {...register('fromDate', {
               onChange: (event) => {
                 // DateRangeField emit [startDate, endDate] qua event.target.value
@@ -138,7 +137,7 @@ export default function Home() {
             multiple
             // forceSelect
             {...register('role')}
-            value={role ?? undefined}
+            value={formValues.role ?? undefined}
             data={[
               { text: 'Admin', id: 'admin' },
               { text: 'User', id: 'user' },
