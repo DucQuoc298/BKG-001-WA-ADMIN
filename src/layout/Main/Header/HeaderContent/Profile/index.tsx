@@ -19,21 +19,25 @@ import Transitions from 'components/@extended/Transitions';
 
 // assets
 import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
-import avatar1 from 'assets/images/users/avatar-1.png';
-import { Divider, Grid, ListItem, Menu, MenuItem } from '@mui/material';
+import { Button, Divider, Grid, IconButton, InputAdornment, ListItem, Menu, MenuItem, Popover } from '@mui/material';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import styles from './styles';
-import { ArrowForwardIosOutlined, CameraAltOutlined, CheckOutlined, DarkModeOutlined, LightModeOutlined, TranslateOutlined } from '@mui/icons-material';
+import { ArrowForwardIosOutlined, CameraAltOutlined, CheckOutlined, ChangeCircleOutlined, DarkModeOutlined, LightModeOutlined, TranslateOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { ILanguage, IThemeMode } from 'types';
 import { useMain, useAuth, useBroadcastChannel, useLocalStorage, useDocument, useUser, useSnackbar } from 'hooks';
 import { FLAG_ICONS } from 'assets/images/icons/flags';
-import { languages } from 'utils';
+import { languages, setAuthToken } from 'utils';
 import { redirectToLogin } from 'services/utils/navigation';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { EyeInvisibleOutlined, EyeOutlined, KeyOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { BroadcastEventTypes } from 'services';
-
+import { useDispatch } from 'react-redux';
+import { RESET_APP } from 'store';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Dialog, TextField } from 'components';
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -42,7 +46,11 @@ function TabPanel({ children, value, index, ...other }) {
     </div>
   );
 }
-
+interface IChangePasswordForm {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 export default function Profile() {
@@ -51,13 +59,17 @@ export default function Profile() {
   const [anchorRef, setAnchorRef] = useState<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const { t, i18n } = useTranslation();
+  const dispatch = useDispatch();
   const { state: mainState, setField } = useMain();
-  const { resetState: resetAuthState, state } = useAuth();
+  const { resetState: resetAuthState, state, setState } = useAuth();
   const { state: authToken } = useLocalStorage('authToken', state.token);
   const { postMessage } = useBroadcastChannel();
   const { attachFile, addLink } = useDocument();
   const { user, logout, updatePassword, getCompanyList, changeCompany, listCompany } = useUser();
   const { success } = useSnackbar();
+
+  const [openChangePassword, setOpenChangePassword] = useState(false);
+  const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -79,6 +91,20 @@ export default function Profile() {
     }
     setOpen(false);
   };
+
+  const validationSchema = Yup.object().shape({
+    currentPassword: Yup.string()
+      .required(t('errors.required', { 0: t('AUTH.current_password') }))
+      .test('no-leading-trailing-whitespace', t('errors.no_leading_trailing_whitespace', { 0: t('AUTH.current_password') }), (value) => value === value?.trim())
+      .max(20, t('errors.max_length', { 0: t('AUTH.current_password'), 1: 20 })),
+    newPassword: Yup.string().required(t('errors.required', { 0: t('AUTH.new_password') }))
+      .test('no-leading-trailing-whitespace', t('errors.no_leading_trailing_whitespace', { 0: t('AUTH.new_password') }), (value) => value === value?.trim())
+      .max(20, t('errors.max_length', { 0: t('AUTH.new_password'), 1: 20 })),
+    confirmNewPassword: Yup.string().required(t('errors.required', { 0: t('AUTH.confirm_password') }))
+      .oneOf([Yup.ref('newPassword')], t('errors.confirm_password_must_match_new_password'))
+      .test('no-leading-trailing-whitespace', t('errors.no_leading_trailing_whitespace', { 0: t('AUTH.confirm_password') }), (value) => value === value?.trim())
+      .max(20, t('errors.max_length', { 0: t('AUTH.confirm_password'), 1: 20 })),
+  });
 
 
   const handleAvatarFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,6 +166,31 @@ export default function Profile() {
     postMessage(BroadcastEventTypes.AUTH_LOGOUT);
     redirectToLogin(false);
   }
+  const handleChangeCompanyOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setUIState({ ...uiState, expandChangeCompany: event.currentTarget });
+  }
+  const handleChangeCompanyClose = () => {
+    setUIState({ ...uiState, expandChangeCompany: null });
+  }
+
+  const { handleSubmit, reset, formState: { errors }, register } = useForm<IChangePasswordForm>({
+    resolver: yupResolver(validationSchema),
+    defaultValues: { currentPassword: '', newPassword: '', confirmNewPassword: '' },
+  });
+  const handleChangePasswordOpen = () => {
+    reset();
+    setOpenChangePassword(true);
+  };
+  const handleChangePasswordClose = () => {
+    reset();
+    setOpenChangePassword(false);
+  };
+  const onSubmitChangePassword = (data: IChangePasswordForm) => {
+    updatePassword({ oldPassword: data.currentPassword, newPassword: data.newPassword }, () => {
+      handleChangePasswordClose();
+      success(t('alert.update_password_successfully'));
+    });
+  };
   return (
     <Box sx={{ flexShrink: 0 }}>
       <Tooltip title="Profile" disableInteractive>
@@ -238,6 +289,177 @@ export default function Profile() {
                         </Stack>
                       </Grid>
                     </Grid>
+                    <Grid>
+                      <Divider sx={{ my: 1.5 }} />
+                    </Grid>
+                    <List disablePadding>
+                      {listCompany !== undefined && listCompany.length > 1 && (
+                        <ListItem disablePadding>
+                          <ListItemButton
+                            aria-describedby={'company-popover'}
+                            onClick={handleChangeCompanyOpen}
+                          >
+                            <ChangeCircleOutlined sx={{ ...styles.icon }} />
+                            <Typography variant="body1" sx={styles.label}>
+                              {t('text.change_company')}
+                            </Typography>
+                            <ArrowForwardIosOutlined sx={{ fontSize: '14px', ml: 'auto' }} />
+                          </ListItemButton>
+                          <Popover
+                            id={'company-popover'}
+                            open={Boolean(uiState.expandChangeCompany)}
+                            anchorEl={uiState.expandChangeCompany}
+                            onClose={handleChangeCompanyClose}
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'left',
+                            }}
+                            transformOrigin={{
+                              vertical: 'top',
+                              horizontal: 'right',
+                            }}
+                          >
+                            {(listCompany || []).map((company, key) => (
+                              <MenuItem
+                                key={key}
+                                onClick={() => {
+                                  handleChangeCompanyClose();
+                                  user?.company !== company.tvcdb && changeCompany({ cpnId: company.tvcdb }, (data) => {
+                                    setState({ ...state, user: JSON.stringify(data), refreshToken: data.refreshToken, token: data.token });
+                                    setAuthToken(data.token, data.refreshToken);
+                                    handleChangeCompanyClose();
+                                    dispatch({ type: RESET_APP });
+                                  });
+                                }}
+                                sx={styles.menu_item}>
+                                <Typography variant='body1'>{company.tvcdbname}</Typography>
+                                {user?.company === company.tvcdb ? <CheckOutlined sx={{ ml: 1 }} fontSize='small' /> : null}
+                              </MenuItem>
+                            ))}
+                          </Popover>
+                        </ListItem>)}
+                      <ListItem disablePadding>
+                        <ListItemButton onClick={handleChangePasswordOpen}>
+                          <KeyOutlined style={{ ...styles.icon }} />
+                          <Typography variant="body1" sx={{ ...styles.label }}>
+                            {t('text.change_password')}
+                          </Typography>
+                        </ListItemButton>
+                        <Dialog
+                          open={openChangePassword}
+                          onClose={handleChangePasswordClose}
+                          title={t('text.change_password')}
+                          maxWidth={'xs'}
+                          action={
+                            <>
+                              <Button
+                                variant="text"
+                                onClick={handleChangePasswordClose}>
+                                {t('text.cancel')}
+                              </Button>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleSubmit(onSubmitChangePassword)}>
+                                {t('text.save')}
+                              </Button>
+                            </>
+                          }
+                        >
+                          <form onSubmit={handleSubmit(onSubmitChangePassword)}>
+                            <Grid container spacing={3}>
+                              <Grid size={12}>
+                                <TextField
+                                  id="current-password"
+                                  type={showPasswords.current ? 'text' : 'password'}
+                                  required
+                                  label={t("AUTH.current_password")}
+                                  fullWidth
+                                  error={Boolean(errors.currentPassword)}
+                                  errors={errors.currentPassword?.message}
+                                  {...register("currentPassword", { required: true })}
+                                  slotProps={{
+                                    input: {
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
+                                            onMouseDown={(e) => e.preventDefault()}
+                                            edge="end"
+                                            color="secondary"
+                                          >
+                                            {showPasswords.current ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                                          </IconButton>
+                                        </InputAdornment>)
+                                    }
+                                  }}
+                                />
+
+                              </Grid>
+                              <Grid size={12}>
+                                <TextField
+                                  id="new-password"
+                                  type={showPasswords.new ? 'text' : 'password'}
+                                  required
+                                  label={t("AUTH.new_password")}
+                                  fullWidth
+                                  error={Boolean(errors.newPassword)}
+                                  errors={errors.newPassword?.message}
+                                  {...register("newPassword", { required: true })}
+                                  slotProps={{
+                                    input: {
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                                            onMouseDown={(e) => e.preventDefault()}
+                                            edge="end"
+                                            color="secondary"
+                                          >
+                                            {showPasswords.new ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                                          </IconButton>
+                                        </InputAdornment>)
+                                    }
+                                  }}
+                                />
+
+                              </Grid>
+                              <Grid size={12}>
+                                <TextField
+                                  id="confirm-password"
+                                  type={showPasswords.confirm ? 'text' : 'password'}
+                                  required
+                                  label={t("AUTH.confirm_password")}
+                                  fullWidth
+                                  error={Boolean(errors.confirmNewPassword)}
+                                  errors={errors.confirmNewPassword?.message}
+                                  {...register("confirmNewPassword", { required: true })}
+                                  slotProps={{
+                                    input: {
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                                            onMouseDown={(e) => e.preventDefault()}
+                                            edge="end"
+                                            color="secondary"
+                                          >
+                                            {showPasswords.confirm ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                                          </IconButton>
+                                        </InputAdornment>)
+                                    }
+                                  }}
+                                />
+
+                              </Grid>
+                            </Grid>
+                          </form>
+                        </Dialog>
+                      </ListItem>
+                    </List>
                     <Grid>
                       <Divider sx={{ my: 1.5 }} />
                     </Grid>
