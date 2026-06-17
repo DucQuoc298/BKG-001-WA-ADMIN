@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -61,7 +61,7 @@ export default function Profile() {
   const dispatch = useDispatch();
   const { state: mainState, setField } = useMain();
   const { resetState: resetAuthState, state, setState } = useAuth();
-  useLocalStorage('authToken', state.token);
+  const { state: authToken } = useLocalStorage('authToken', state.token);
   const { postMessage } = useBroadcastChannel();
   const { attachFile, addLink } = useDocument();
   const { user, updatePassword, changeCompany, listCompany } = useUser();
@@ -105,7 +105,21 @@ export default function Profile() {
       .max(20, t('errors.max_length', { 0: t('AUTH.confirm_password'), 1: 20 })),
   });
 
-
+  useEffect(() => {
+    if (!state?.token) return;
+    let objectUrl: string;
+    fetch(`${import.meta.env.VITE_BASE_URI || ''}/frmcsoperator/getavatar?access_token=${authToken}`)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const imageBlob = new Blob([blob], { type: 'image/jpeg' });
+        objectUrl = URL.createObjectURL(imageBlob);
+        setAvatarUrl(objectUrl);
+      })
+      .catch(() => setAvatarUrl(undefined));
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
   const handleAvatarFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
