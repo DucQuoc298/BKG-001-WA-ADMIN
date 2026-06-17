@@ -29,6 +29,7 @@ import { useMain, useAuth, useBroadcastChannel, useLocalStorage, useDocument, us
 import { FLAG_ICONS } from 'assets/images/icons/flags';
 import { languages, setAuthToken } from 'utils';
 import { redirectToLogin } from 'services/utils/navigation';
+import { refreshToken } from 'services/api/authorization';
 import { EyeInvisibleOutlined, EyeOutlined, KeyOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { BroadcastEventTypes } from 'services';
 import { useDispatch } from 'react-redux';
@@ -108,14 +109,54 @@ export default function Profile() {
   useEffect(() => {
     if (!state?.token) return;
     let objectUrl: string;
-    fetch(`${import.meta.env.VITE_BASE_URI || ''}/frmcsoperator/getavatar?access_token=${authToken}`)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const imageBlob = new Blob([blob], { type: 'image/jpeg' });
-        objectUrl = URL.createObjectURL(imageBlob);
-        setAvatarUrl(objectUrl);
-      })
-      .catch(() => setAvatarUrl(undefined));
+
+    const fetchAvatar = (token: string) => {
+      fetch(`${import.meta.env.VITE_BASE_URI || ''}/frmcsoperator/getavatar?access_token=${token}`)
+        .then((res) => {
+          if (res.status === 401) {
+            throw new Error('401');
+          }
+          if (!res.ok) {
+            throw new Error('FAILED');
+          }
+          return res.blob();
+        })
+        .then((blob) => {
+          const imageBlob = new Blob([blob], { type: 'image/jpeg' });
+          objectUrl = URL.createObjectURL(imageBlob);
+          setAvatarUrl(objectUrl);
+        })
+        .catch((err) => {
+          if (err.message === '401' && state.refreshToken) {
+            refreshToken(state.refreshToken)
+              .then((res: any) => {
+                const result = res.data?.result?.data ?? res.data?.data ?? res.data;
+                const newToken = result?.token ?? result?.accessToken ?? result;
+                const newRefreshToken = result?.refreshToken;
+
+                if (newToken) {
+                  setState((prevState) => ({
+                    ...prevState,
+                    token: newToken,
+                    ...(newRefreshToken ? { refreshToken: newRefreshToken } : {}),
+                  }));
+                  setAuthToken(newToken, newRefreshToken);
+                  fetchAvatar(newToken);
+                } else {
+                  setAvatarUrl(undefined);
+                }
+              })
+              .catch(() => {
+                setAvatarUrl(undefined);
+              });
+          } else {
+            setAvatarUrl(undefined);
+          }
+        });
+    };
+
+    fetchAvatar(authToken);
+
     return () => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
