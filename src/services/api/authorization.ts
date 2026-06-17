@@ -167,7 +167,7 @@ const registerLicense = async (data: { code: string, company: string, expiryDate
   }, callback);
 };
 const addLink = async (data: {
-  autonumber: string,
+  autonum: string,
   category: string,
   comments: string,
   documentcode: string,

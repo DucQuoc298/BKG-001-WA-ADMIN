@@ -207,6 +207,6 @@ Hệ thống tích hợp API `BroadcastChannel` cho phép trao đổi dữ liệ
 Để duy trì chất lượng mã nguồn và tự động hóa các tác vụ phát triển, hệ thống đã trang bị bộ quy tắc và kỹ năng (skills) chuyên biệt:
 
 1. **Bộ Quy tắc Dự án**:
-   - Vui lòng xem [project_rules.md](file:///Volumes/KINGSTON/TAVICO/erp-res/docs/project_rules.md) để biết các quy ước cụ thể về lập trình Redux, DataTable, chỉnh sửa ô lưới và phát triển Runtime Plugins.
+   - Vui lòng xem [project_rules.md](/docs/project_rules.md) để biết các quy ước cụ thể về lập trình Redux, DataTable, chỉnh sửa ô lưới và phát triển Runtime Plugins.
 2. **Kỹ năng Phát triển Dự án (Project Development Skill)**:
-   - Một bộ skill hướng dẫn từng bước đã được lưu trữ tại [project_development_skill.md](file:///Volumes/KINGSTON/TAVICO/erp-res/docs/project_development_skill.md). Các tác nhân AI khi hoạt động trong workspace này nên tham khảo skill này trước khi thực thi viết mã để đảm bảo tuân thủ đúng quy trình.
+   - Một bộ skill hướng dẫn từng bước đã được lưu trữ tại [project_development_skill.md](/docs/project_development_skill.md). Các tác nhân AI khi hoạt động trong workspace này nên tham khảo skill này trước khi thực thi viết mã để đảm bảo tuân thủ đúng quy trình.

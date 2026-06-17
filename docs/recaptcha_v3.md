@@ -43,13 +43,13 @@ sequenceDiagram
 ## 2. Quy trình tích hợp trong dự án
 
 ### 2.1 Cấu hình Environment (.env)
-Thêm Site Key được cung cấp bởi Google reCAPTCHA v3 Admin Console vào file [.env](file:///Volumes/KINGSTON/TAVICO/erp-res/.env):
+Thêm Site Key được cung cấp bởi Google reCAPTCHA v3 Admin Console vào file [.env](/.env):
 ```env
 VITE_CAPTCHA_SITE_KEY=your_recaptcha_v3_site_key_here
 ```
 
 ### 2.2 Đăng ký Provider
-Provider được cài đặt tại [index.tsx](file:///Volumes/KINGSTON/TAVICO/erp-res/src/index.tsx):
+Provider được cài đặt tại [index.tsx](/src/index.tsx):
 ```tsx
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 
@@ -102,7 +102,7 @@ export default function AuthLogin() {
 
 ## 3. Xác thực tại API Layer (Services)
 
-Các hàm API được định nghĩa trong [src/services/api/authorization.ts](file:///Volumes/KINGSTON/TAVICO/erp-res/src/services/api/authorization.ts) đã chấp nhận tham số `captcha` động:
+Các hàm API được định nghĩa trong [src/services/api/authorization.ts](/src/services/api/authorization.ts) đã chấp nhận tham số `captcha` động:
 ```typescript
 const login = (data: {username: string, password: string, captcha?: string}, callback?: (data: any) => void) => {
   return handlePost("", {
