@@ -1,7 +1,8 @@
 import { Box, Typography } from '@mui/material';
 import { ContainerWrapper, MainCard, ScrollIndexLayout, Tabs } from 'components';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Section from 'components/SideIndex/Section';
+import { useInvoice } from 'hooks';
 
 const SECTIONS = [
   { id: "section-1", label: "Tổng quan" },
@@ -12,7 +13,33 @@ const SECTIONS = [
 ];
 
 export default function Invoice() {
-  const [tabValue, setTabValue] = useState('list');
+  const [tabValue, setTabValue] = useState('guide');
+  const { listState, formState, openForm } = useInvoice()
+  const { activeId } = listState
+
+  // Keep track of the activeId via a ref to avoid re-renders on scroll
+  const activeIdRef = useRef(activeId);
+
+  useEffect(() => {
+    activeIdRef.current = activeId;
+  }, [activeId]);
+
+  // Save activeId to Redux when switching tabs
+  useEffect(() => {
+    if (tabValue !== 'guide' && activeIdRef.current) {
+      openForm(formState.mode, activeIdRef.current);
+    }
+  }, [tabValue, formState.mode, openForm]);
+
+  // Save activeId to Redux when Invoice page unmounts
+  useEffect(() => {
+    return () => {
+      if (activeIdRef.current) {
+        openForm(formState.mode, activeIdRef.current);
+      }
+    };
+  }, [formState.mode, openForm]);
+
   return (
     <ContainerWrapper
       toolbarLocalProps={{
@@ -43,6 +70,10 @@ export default function Invoice() {
         <ScrollIndexLayout
           items={SECTIONS}
           stickyTop={114 + 86}
+          defaultActiveId={activeId || 'section-1'}
+          onActiveIdChange={(id) => {
+            openForm(formState.mode, id);
+          }}
         >
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Section id="section-1" label="Tổng quan">

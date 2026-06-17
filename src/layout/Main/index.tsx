@@ -40,7 +40,6 @@ export default function DashboardLayout() {
 
   useEffect(() => {
     if (hasFetchedConfig) return;
-    setLoading(true);
 
     const siteKey = import.meta.env.VITE_CAPTCHA_SITE_KEY;
     const isGoogleSiteKey = typeof siteKey === 'string' && siteKey.startsWith('6') && siteKey.length >= 30;

@@ -9,10 +9,28 @@ interface IScrollIndexLayout {
   items: ISectionTab[];
   stickyTop?: number;
   children: React.ReactNode;
+  activeId?: string;
+  onActiveIdChange?: (id: string) => void;
+  defaultActiveId?: string;
 }
 
-const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLayout) => {
-  const [activeId, setActiveId] = React.useState(items[0].id);
+const ScrollIndexLayout = ({
+  items,
+  stickyTop = 114,
+  children,
+  activeId: controlledActiveId,
+  onActiveIdChange,
+  defaultActiveId
+}: IScrollIndexLayout) => {
+  const [internalActiveId, setInternalActiveId] = React.useState(defaultActiveId || items[0]?.id);
+
+  const activeId = controlledActiveId !== undefined ? controlledActiveId : internalActiveId;
+
+  const setActiveId = useCallback((id: string) => {
+    setInternalActiveId(id);
+    onActiveIdChange?.(id);
+  }, [onActiveIdChange]);
+
   const isScrollingRef = useRef(false);
   const timerRef = useRef<any>(null);
 
@@ -22,7 +40,12 @@ const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLay
 
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      const elementPosition = el.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - stickyTop; // 24px extra margin
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
     }
 
     // Sau khi scroll xong (~600ms) mới để IntersectionObserver tiếp quản
@@ -32,10 +55,12 @@ const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLay
     timerRef.current = setTimeout(() => {
       isScrollingRef.current = false;
     }, 700);
-  }, []);
+  }, [stickyTop, setActiveId]);
 
   // IntersectionObserver: tự động highlight tab khi scroll bằng chuột/tay
   React.useEffect(() => {
+    if (controlledActiveId !== undefined) return;
+
     const observers: IntersectionObserver[] = [];
 
     items.forEach(({ id }) => {
@@ -44,11 +69,14 @@ const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLay
 
       const obs = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting && !isScrollingRef.current) {
+          if (entry.isIntersecting && !isScrollingRef.current && activeId === undefined) {
             setActiveId(id);
           }
         },
-        { threshold: 0.4 }
+        {
+          rootMargin: `-${stickyTop}px 0px -75% 0px`,
+          threshold: 0
+        }
       );
 
       obs.observe(el);
@@ -61,7 +89,7 @@ const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLay
         clearTimeout(timerRef.current);
       }
     };
-  }, [items]);
+  }, [items, stickyTop, setActiveId, controlledActiveId]);
 
   return (
     <Box sx={styles.container}>
