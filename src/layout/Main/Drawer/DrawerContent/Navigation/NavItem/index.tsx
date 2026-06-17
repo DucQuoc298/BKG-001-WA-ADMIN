@@ -10,6 +10,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
 import createStyles from './styles';
 // project imports
 import IconButton from 'components/@extended/IconButton';
@@ -60,43 +61,68 @@ export default function NavItem({ item, level, isChild = false }: NavItemProps) 
   const textColor = 'text.primary';
   const iconSelectedColor = 'primary.main';
 
+  const itemButton = (
+    <ListItemButton
+      component={Link}
+      to={item.url}
+      disabled={item.disabled}
+      selected={isSelected}
+      sx={() => styles.listItemButton({ drawerOpen, level })}
+      onClick={() => itemHandler()}
+    >
+      {itemIcon && (
+        <ListItemIcon
+          sx={() => (styles.listItemIcon({ drawerOpen, isSelected }))}
+        >
+          {itemIcon}
+        </ListItemIcon>
+      )}
+      {(drawerOpen || (!drawerOpen && level !== 1)) && (
+        <ListItemText
+          primary={
+            <Typography variant="h6" sx={{ color: isSelected ? iconSelectedColor : textColor }}>
+              {t(`form.${item.title}`)}
+            </Typography>
+          }
+        />
+      )}
+      {(drawerOpen || (!drawerOpen && level !== 1)) && item.chip && (
+        <Chip
+          color={item.chip.color}
+          variant={item.chip.variant}
+          size={item.chip.size}
+          label={item.chip.label}
+          avatar={item.chip.avatar && <Avatar>{item.chip.avatar}</Avatar>}
+        />
+      )}
+    </ListItemButton>
+  );
+
   return (
     <>
       <Box sx={{ position: 'relative' }}>
-        <ListItemButton
-          component={Link}
-          to={item.url}
-          disabled={item.disabled}
-          selected={isSelected}
-          sx={() => styles.listItemButton({ drawerOpen, level })}
-          onClick={() => itemHandler()}
-        >
-          {itemIcon && (
-            <ListItemIcon
-              sx={() => (styles.listItemIcon({ drawerOpen, isSelected }))}
-            >
-              {itemIcon}
-            </ListItemIcon>
-          )}
-          {(drawerOpen || (!drawerOpen && level !== 1)) && (
-            <ListItemText
-              primary={
-                <Typography variant="h6" sx={{ color: isSelected ? iconSelectedColor : textColor }}>
-                 {t(`form.${item.title}`)}
-                </Typography>
+        {!drawerOpen && level === 1 ? (
+          <Tooltip 
+            title={t(`form.${item.title}`)} 
+            placement="right"
+            slotProps={{
+              tooltip: {
+                sx: {
+                  color: 'text.primary',
+                  bgcolor: 'background.paper',
+                  boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  fontWeight: 500
+                }
               }
-            />
-          )}
-          {(drawerOpen || (!drawerOpen && level !== 1)) && item.chip && (
-            <Chip
-              color={item.chip.color}
-              variant={item.chip.variant}
-              size={item.chip.size}
-              label={item.chip.label}
-              avatar={item.chip.avatar && <Avatar>{item.chip.avatar}</Avatar>}
-            />
-          )}
-        </ListItemButton>
+            }}
+          >
+            {itemButton}
+          </Tooltip>
+        ) : (
+          itemButton
+        )}
         {(drawerOpen || (!drawerOpen && level !== 1)) &&
           item?.actions &&
           item?.actions.map((action, index) => {
