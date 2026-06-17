@@ -29,6 +29,7 @@ export default function DashboardLayout() {
   const { getConfig } = useUser();
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [hasFetchedConfig, setHasFetchedConfig] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useBroadcastChannel((message) => {
     if (message.type === BroadcastEventTypes.AUTH_LOGOUT) {
@@ -39,6 +40,7 @@ export default function DashboardLayout() {
 
   useEffect(() => {
     if (hasFetchedConfig) return;
+    setLoading(true);
 
     const siteKey = import.meta.env.VITE_CAPTCHA_SITE_KEY;
     const isGoogleSiteKey = typeof siteKey === 'string' && siteKey.startsWith('6') && siteKey.length >= 30;
@@ -58,13 +60,17 @@ export default function DashboardLayout() {
       }
       getConfig({ accessToken: authToken, captcha }, (res) => {
         if (!res || !res.login) {
+          resetAuthState();
+          setLoading(false);
           redirectToLogin(true)
+          return;
         }
         if (res && !!res.lastmodule) {
           navigate(`/${res.lastmodule.toLowerCase()}`);
         }
         setState((prevState) => ({ ...prevState, user: JSON.stringify(res), loginStatus: res.login, token: authToken, refreshToken: res.refreshToken }));
         setAuthToken(authToken, res.refreshToken);
+        setLoading(false);
       });
     };
 
@@ -76,7 +82,7 @@ export default function DashboardLayout() {
     handlerDrawerOpen(!downXL);
   }, [downXL]);
 
-  if (menuMasterLoading) return <Loader />;
+  if (menuMasterLoading || loading) return <Loader />;
 
   return (
     <Box sx={{ display: 'flex', width: '100%' }}>
