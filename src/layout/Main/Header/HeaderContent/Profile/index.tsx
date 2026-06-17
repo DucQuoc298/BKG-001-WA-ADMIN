@@ -27,7 +27,7 @@ import styles from './styles';
 import { ArrowForwardIosOutlined, CameraAltOutlined, CheckOutlined, DarkModeOutlined, LightModeOutlined, TranslateOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { ILanguage, IThemeMode } from 'types';
-import { useMain, useAuth, useBroadcastChannel } from 'hooks';
+import { useMain, useAuth, useBroadcastChannel, useLocalStorage, useDocument, useUser, useSnackbar } from 'hooks';
 import { FLAG_ICONS } from 'assets/images/icons/flags';
 import { languages } from 'utils';
 import { redirectToLogin } from 'services/utils/navigation';
@@ -52,8 +52,12 @@ export default function Profile() {
   const [open, setOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const { state: mainState, setField } = useMain();
-  const { resetState: resetAuthState } = useAuth();
+  const { resetState: resetAuthState, state } = useAuth();
+  const { state: authToken } = useLocalStorage('authToken', state.token);
   const { postMessage } = useBroadcastChannel();
+  const { attachFile, addLink } = useDocument();
+  const { user, logout, updatePassword, getCompanyList, changeCompany, listCompany } = useUser();
+  const { success } = useSnackbar();
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -86,10 +90,32 @@ export default function Profile() {
 
     // Đọc base64
     const reader = new FileReader();
-    // reader.onload = () => {
-    //   const base64 = reader.result
-    //   // const result = data[0];
-    // };
+    reader.onload = () => {
+      const base64 = reader.result
+      attachFile({
+        comments: 'AVATAR',
+        linkto: 'OPD',
+        referencekey1: user?.operatorid ?? '',
+        file: {
+          filename: file.name,
+          filetype: file.name.split('.').pop() || '',
+          data: `${base64}`,
+        },
+      }, (data) => {
+        const result = data[0];
+        addLink({
+          autonum: result.autonum,
+          category: result.category,
+          comments: 'AVATAR',
+          documentcode: result.documentcode,
+          filename: result.filename,
+          linkto: 'OPD',
+          referencekey1: user?.operatorid ?? '',
+          subject: result.filename,
+        })
+        success(t('alert.update_avatar_successfully'))
+      });
+    };
     reader.readAsDataURL(file);
 
     event.target.value = '';
@@ -129,8 +155,13 @@ export default function Profile() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <Avatar alt="profile user" type="circular" src={avatar1} size="sm" sx={{ '&:hover': { outline: '1px solid', outlineColor: 'primary.main' } }} >
-            JD
+          <Avatar
+            src={avatarUrl}
+            size="sm"
+            sx={{ '&:hover': { outline: '1px solid', outlineColor: 'primary.main' } }}
+            type="circular"
+          >
+            {!avatarUrl && (user?.operatorname?.charAt(0) ?? 'U')}
           </Avatar>
         </ButtonBase>
       </Tooltip>
@@ -169,7 +200,7 @@ export default function Profile() {
                               type="circular"
                               src={avatarUrl}
                             >
-                              Q
+                              {!avatarUrl && (user?.operatorname?.charAt(0) ?? 'U')}
                             </Avatar>
                             <Box
                               sx={{
@@ -199,9 +230,9 @@ export default function Profile() {
                             />
                           </Box>
                           <Stack>
-                            <Typography variant="h6">Trương Đức Quốc</Typography>
+                            <Typography variant="h6">{user?.operatorname}</Typography>
                             <Typography variant="body2" color="text.secondary">
-                              truongducquoc298@gmail.com
+                              {user?.operatorid}
                             </Typography>
                           </Stack>
                         </Stack>

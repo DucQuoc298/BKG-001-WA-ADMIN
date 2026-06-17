@@ -8,7 +8,10 @@ export const dimension = {
   height: window.innerHeight,
 };
 export const getDefaultGridHeight = () => dimension.height - 280;
-
+export const setAuthToken = (token: string, refreshToken: string) => {
+  localStorage.setItem('authToken', token);
+  localStorage.setItem('refreshToken', refreshToken);
+};
 
 export const formatDateToString = (date: Date | string, locale?: ILanguage) => {
   if (!date) return "";
