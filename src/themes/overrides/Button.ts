@@ -106,6 +106,7 @@ export default function Button(theme) {
           fontWeight: 400,
           textTransform: 'none',
           padding: '7px 14px',
+          height: '36px',
           '&::after': {
             content: '""',
             display: 'block',

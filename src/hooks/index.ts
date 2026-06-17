@@ -10,5 +10,6 @@ export * from './useAutocomplete';
 export * from './useDataTable';
 export * from './useEmail';
 export * from './useBroadcastChannel';
-export * from './useDocument'
+export * from './useDocument';
+export * from './useWindowSize';
 
