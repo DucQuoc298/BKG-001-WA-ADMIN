@@ -210,6 +210,7 @@ export const AutocompleteMultiple = forwardRef<HTMLInputElement, AutocompletePro
         slotProps={mergedSlotProps}
         // Controlled value
         value={safeSelectedOption}
+        disableCloseOnSelect
         multiple
         // Options
         options={options}
@@ -235,7 +236,7 @@ export const AutocompleteMultiple = forwardRef<HTMLInputElement, AutocompletePro
           return currentOption?.[optionIdField] === currentValue?.[optionIdField];
         }
         }
-        clearIcon={<Icons name={IconName.CLOSE} size={14} />}
+        // clearIcon={<Icons name={IconName.CLOSE} size={14} />}
         renderInput={(inputParams) => (
           <TextField
             {...inputParams}
