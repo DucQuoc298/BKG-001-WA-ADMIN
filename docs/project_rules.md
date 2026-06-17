@@ -116,18 +116,28 @@ Hệ thống DataTable được chia thành `DataTableView` (dành cho danh sác
 
 ## 5. Quy tắc phát triển Runtime Plugins
 
-Hệ thống cho phép cắm nóng các dynamic form thông qua file `.mjs`. Khi xây dựng plugin mới:
+Hệ thống cho phép cắm nóng các dynamic form thông qua file `.mjs`. Host app sử dụng **1 generic runtime duy nhất** cho mọi plugin — không cần khai báo runtime riêng cho từng plugin/khách hàng.
+
+> Xem chi tiết kiến trúc và SDK API tại [runtime_plugin_flow.md](/docs/runtime_plugin_flow.md).
 
 1. **Quy định Export**:
    - Một plugin module hợp lệ bắt buộc phải export component theo một trong hai cách:
      - `export default`: Trả về trực tiếp React Component.
-     - `export const createPluginComponent`: Một factory function nhận đối tượng `sdk` làm tham số đầu vào và trả về React Component.
+     - `export const createPluginComponent`: Một factory function nhận đối tượng `{ react, sdk }` làm tham số đầu vào và trả về React Component.
 2. **Hạn chế Import trực tiếp từ thư viện ngoài**:
-   - Để giữ dung lượng bundle của file `.mjs` siêu nhẹ, **không** import trực tiếp các thư viện lớn như `@mui/material`, `react`, `formik` từ `node_modules` bên trong mã nguồn plugin.
-   - Hãy sử dụng các component và API được Host App tiêm vào qua đối tượng `sdk` (Ví dụ: `const { Box, Typography } = sdk.components;`).
-3. **Khai báo SDK Mapping**:
-   - Mọi plugin mới sau khi được khai báo trong `public/plugins/manifest.json` cần phải được ánh xạ (map) từ `plugin.id` sang SDK Runtime tương ứng trong file `src/runtime/AppPlugin.tsx`.
-   - Nếu không ánh xạ, hệ thống sẽ sử dụng SDK mặc định (`demo-form`).
+   - Để giữ dung lượng bundle của file `.mjs` siêu nhẹ, **không** import trực tiếp các thư viện lớn như `@mui/material`, `react`, `react-hook-form`, `react-redux` từ `node_modules` bên trong mã nguồn plugin.
+   - Hãy sử dụng các component và API được Host App tiêm vào qua đối tượng `sdk`:
+     - UI Components: `sdk.components` (Box, Button, TextField, NumberField, DropDownList, DateField, DateRangeField...)
+     - Form API: `sdk.form` (useForm, FormProvider, Controller, useFormContext, useWatch)
+     - Hooks: `sdk.hooks` (useReduxFormSync)
+     - Store: `sdk.store` (getPluginFormState, updatePluginForm, resetPluginForm, useSelector, useDispatch)
+3. **Không cần khai báo SDK Mapping**:
+   - Host app sử dụng generic runtime (`src/runtime/types/genericRuntime.ts`) tự động tạo SDK cho mọi plugin dựa trên `pluginId`.
+   - **Không cần** tạo file runtime declaration riêng hay sửa `AppPlugin.tsx` khi thêm plugin mới.
+   - Chỉ cần thêm entry vào `public/plugins/manifest.json` và deploy file `.mjs`.
+4. **Plugin Store tự động**:
+   - Redux state cho plugin được quản lý tự động qua generic `pluginForms` slice.
+   - Mỗi plugin có scope riêng trong Redux (`pluginForms.forms[pluginId]`), được closure sẵn trong SDK — plugin không cần truyền pluginId.
 
 ---
 

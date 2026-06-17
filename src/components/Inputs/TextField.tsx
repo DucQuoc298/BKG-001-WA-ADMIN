@@ -21,12 +21,16 @@ const TextField: React.FC<ITextFieldProps & TextFieldProps> = ({ label, value, o
           ...(multiline &&
           {
             '& .MuiInputBase-input': {
-              overflowY: 'auto !important',
+              // overflowY: 'auto !important',
               minHeight: '40px !important',
-              padding: "0px"
+              padding: "0px",
+              // height: 'auto !important',
+            },
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '8px',
+              height: 'auto !important',
             }
-          }
-          )
+          })
         }}
         value={value}
         placeholder={label}

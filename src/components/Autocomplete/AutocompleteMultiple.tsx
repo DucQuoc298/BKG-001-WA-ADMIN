@@ -15,7 +15,6 @@ import { AutocompleteProps } from ".";
 import styles from "./styles";
 import { TextField } from "components";
 import { useAutocomplete } from "hooks";
-import Icons, { IconName } from "assets/Icon";
 import { useTranslation } from "react-i18next";
 
 // ---------------------------------------------------------------------------
@@ -34,7 +33,7 @@ export const AutocompleteMultiple = forwardRef<HTMLInputElement, AutocompletePro
       required,
       name,
       value: valueProp,        // controlled value from Redux / react-hook-form
-      defaultValue,            
+      defaultValue,
       onChange,
       onBlur,
       ...rest
@@ -134,7 +133,7 @@ export const AutocompleteMultiple = forwardRef<HTMLInputElement, AutocompletePro
             },
             type: "change",
           } as any, nextValue, reason, details);
-          },
+        },
         [name, onChange],
       );
 

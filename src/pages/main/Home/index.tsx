@@ -105,7 +105,7 @@ export default function Home() {
               text='Submit'
             />
           </Box>
-          <TextField label={'test'} {...register('note')} />
+          <TextField label={'test'} {...register('note')} multiline />
           <NumberField
             label='Số'
             required

@@ -161,7 +161,7 @@ const paletteDarkColor = {
     light: "#70AFEB",
     lighter: "#283e7a",
     dark: "#70AFEB",
-    light1: "#2b2b2c"
+    light1: "#aaaab7ff"
   },
   zone: {
     header: "#191e2e",
