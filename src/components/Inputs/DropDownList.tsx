@@ -16,6 +16,7 @@ type IDropDownListProps = Omit<SelectProps<string | string[]>, "variant"> &
     data: IValue[];
     forceSelect?: boolean;
     helperText?: string;
+    placeholder?: string;
   };
 
 const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function DropDownList({
@@ -25,6 +26,7 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
   value,
   onChange,
   onBlur,
+  placeholder,
   ...props
 }, ref) {
   const iStyles = inputStyles();
@@ -76,6 +78,7 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
             setOpen(false);
             onChange?.(event);
           }}
+          displayEmpty
           sx={{
             ...iStyles.textfield,
             padding: '0px !important',
@@ -93,7 +96,14 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
           }}
           multiple={props.multiple}
           renderValue={(selected) => {
-            if (Array.isArray(selected)) {
+            if (props.multiple) {
+              if (!Array.isArray(selected) || selected.length === 0) {
+                return (
+                  <Box sx={{ color: 'text.secondary', opacity: 0.6, height: '32px', display: 'flex', alignItems: 'center' }}>
+                    {placeholder || label}
+                  </Box>
+                );
+              }
               return (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {selected.map((value) => {
@@ -115,6 +125,13 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
                       />
                     );
                   })}
+                </Box>
+              );
+            }
+            if (selected === "" || selected === undefined || selected === null) {
+              return (
+                <Box sx={{ color: 'text.secondary', opacity: 0.6 }}>
+                  {placeholder || label}
                 </Box>
               );
             }
