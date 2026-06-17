@@ -34,6 +34,37 @@ const ScrollIndexLayout = ({
   const isScrollingRef = useRef(false);
   const timerRef = useRef<any>(null);
 
+  // Scroll to initial active ID on mount if provided
+  const initialActiveRef = useRef(controlledActiveId || defaultActiveId);
+  const stickyTopRef = useRef(stickyTop);
+
+  React.useEffect(() => {
+    const initialActiveId = initialActiveRef.current;
+    if (initialActiveId) {
+      const timer = setTimeout(() => {
+        const el = document.getElementById(initialActiveId);
+        if (el) {
+          isScrollingRef.current = true;
+          const elementPosition = el.getBoundingClientRect().top + window.scrollY;
+          const offsetPosition = elementPosition - stickyTopRef.current;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+
+          if (timerRef.current) {
+            clearTimeout(timerRef.current);
+          }
+          timerRef.current = setTimeout(() => {
+            isScrollingRef.current = false;
+          }, 150);
+        }
+      }, 50);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   const handleSelect = useCallback((id) => {
     isScrollingRef.current = true;
     setActiveId(id);
