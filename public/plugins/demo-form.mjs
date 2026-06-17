@@ -78,8 +78,7 @@ var createPluginComponent = definePlugin(({ react: React, sdk }) => {
       Button,
       {
         text: "Reset",
-        onClick: handleReset,
-        color: "secondary"
+        onClick: handleReset
       }
     )), submitted && /* @__PURE__ */ React.createElement(Typography, { color: "success.main", variant: "body2" }, "\u2713 Form submitted successfully!")))));
   }

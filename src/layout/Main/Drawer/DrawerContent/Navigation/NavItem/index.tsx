@@ -81,7 +81,7 @@ export default function NavItem({ item, level, isChild = false }: NavItemProps) 
         <ListItemText
           primary={
             <Typography variant="h6" sx={{ color: isSelected ? iconSelectedColor : textColor }}>
-              {t(`form.${item.title}`)}
+              {t(`form.${item.title}`, item.title) as string}
             </Typography>
           }
         />
@@ -102,8 +102,8 @@ export default function NavItem({ item, level, isChild = false }: NavItemProps) 
     <>
       <Box sx={{ position: 'relative' }}>
         {!drawerOpen && level === 1 ? (
-          <Tooltip 
-            title={t(`form.${item.title}`)} 
+          <Tooltip
+            title={t(`form.${item.title}`, item.title) as string}
             placement="right"
             slotProps={{
               tooltip: {

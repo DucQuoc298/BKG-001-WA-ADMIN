@@ -114,6 +114,7 @@ export default {
     BILL: "Hóa đơn nhập",
     COMPONENTS: "Components",
     EMAIL: "Soạn thư",
+    "DEMO-FORM": "Demo Form"
   },
   alert: {
     update_avatar_successfully: "Cập nhật ảnh đại diện thành công",

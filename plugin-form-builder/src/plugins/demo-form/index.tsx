@@ -36,9 +36,9 @@ export const createPluginComponent = definePlugin(({ react: React, sdk }) => {
       methods,
       values: pluginState
         ? {
-            ...pluginState.data,
-            dirtyFields: pluginState.dirtyFields,
-          }
+          ...pluginState.data,
+          dirtyFields: pluginState.dirtyFields,
+        }
         : null,
       onSave: (snapshot) => {
         const { dirtyFields, ...data } = snapshot;
@@ -92,7 +92,6 @@ export const createPluginComponent = definePlugin(({ react: React, sdk }) => {
                 <Button
                   text="Reset"
                   onClick={handleReset}
-                  color="secondary"
                 />
               </Stack>
 

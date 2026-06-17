@@ -83,8 +83,8 @@ export default function Button(theme) {
   const primaryShadow = getColorStyle({ variant: 'shadow', color: 'primary', theme });
 
   const disabledStyle = {
-    backgroundColor: theme.palette.grey[600],
-    color: `${theme.palette.grey[300]} !important`,
+    backgroundColor: theme.palette.grey[800],
+    color: `${theme.palette.grey[200]} !important`,
     '&:hover': {
       backgroundColor: theme.palette.grey[600]
     }
