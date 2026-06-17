@@ -4,7 +4,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import 'dayjs/locale/en-gb';
 import 'dayjs/locale/vi';
-import { FormHelperText, FormLabel, IconButton, InputAdornment } from "@mui/material";
+import { FormHelperText, FormLabel, IconButton, InputAdornment, useTheme } from "@mui/material";
 import { DateRangePickerProps, DateRangePicker, DateRangeValidationError, LocalizationProvider } from "@mui/x-date-pickers-pro";
 import Icons, { IconName } from "assets/Icon";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,7 @@ interface IDateRangePickerProps extends Omit<DateRangePickerProps, 'value' | 'on
 }
 
 const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, required, helperText, minDate = dayjs("1911-01-01"), onError, inputRef, ...rest }: IDateRangePickerProps) => {
+  const theme = useTheme();
   const iStyles = inputStyles();
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -99,6 +100,19 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
               "& .MuiPickersOutlinedInput-root": {
                 ...iStyles.textfield,
                 padding: '0px 10px',
+                "&:hover .MuiPickersOutlinedInput-notchedOutline": {
+                  borderColor: theme.palette.primary.light,
+                },
+                "&.Mui-focused .MuiPickersOutlinedInput-notchedOutline": {
+                  border: '1px solid !important',
+                  borderColor: `${theme.palette.primary.light} !important`,
+                },
+                "&.Mui-error .MuiPickersOutlinedInput-notchedOutline": {
+                  borderColor: theme.palette.error.light,
+                },
+                "&.Mui-error.Mui-focused .MuiPickersOutlinedInput-notchedOutline": {
+                  borderColor: `${theme.palette.error.light} !important`,
+                }
               },
               "& .MuiPickersSectionList-root": {
                 padding: '10px 0px !important',

@@ -5,7 +5,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { HomeFormFields, initialHomeFormFields } from 'store/home/reducer';
-import { DateRangeField } from 'components/DateField';
+import { DateRangeField, DateField } from 'components';
 import { Box } from '@mui/material';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
@@ -114,11 +114,11 @@ export default function Home() {
             error={!!errors.number}
             helperText={errors.number?.message}
           />
-          {/* <DateField
+          <DateField
             label="Chose month"
             value={formValues.date}
             {...register('date')}
-          /> */}
+          />
           <DateRangeField
             label="Chose month range"
             value={[formValues.fromDate, formValues.toDate]}
