@@ -10,12 +10,13 @@ Tài liệu này cung cấp chi tiết về kiến trúc hệ thống, yêu cầ
 
 Dưới đây là danh sách các tài liệu hướng dẫn phát triển và quy tắc kỹ thuật có trong dự án:
 
-* **[README.md](file:///Volumes/KINGSTON/Code/react-template/README.md)** (Tài liệu này): Tổng quan về kiến trúc dự án, yêu cầu xử lý dữ liệu, luồng nghiệp vụ tĩnh & động và hướng dẫn chi tiết cách triển khai Redux slices/hooks.
-* **[docs/project_rules.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_rules.md)**: Quy tắc lập trình bắt buộc đối với Redux, UI Components & Styling, DataTable (MUI DataGridPro), cơ chế tự động Reset Form và quy tắc giao tiếp chéo tab bằng BroadcastChannel.
-* **[docs/agents.md](file:///Volumes/KINGSTON/Code/react-template/docs/agents.md)**: Hướng dẫn dành cho AI Agents & Nhà phát triển mới, giải thích cấu trúc thư mục chi tiết, cơ chế hoạt động của Runtime Plugin, xử lý form reset và các câu lệnh thông dụng.
-* **[docs/email_system.md](file:///Volumes/KINGSTON/Code/react-template/docs/email_system.md)**: Hướng dẫn kỹ thuật cho hệ thống soạn thảo email nổi (Gmail-style Multi-composer), cơ chế tối ưu hiệu năng tránh render lại DOM bằng Global Map Cache ngoài Redux.
-* **[docs/project_development_skill.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_development_skill.md)**: Hướng dẫn quy trình phát triển chi tiết, cách đồng bộ hóa React Hook Form với Redux sử dụng `useReduxFormSync`, và cách hoạt động của DataTable.
-* **[docs/recaptcha_v3.md](file:///Volumes/KINGSTON/TAVICO/erp-res/docs/recaptcha_v3.md)**: Hướng dẫn kỹ thuật và cơ chế hoạt động của Google reCAPTCHA v3 tích hợp trong Frontend và cách xác thực chéo phía Backend API Server.
+* **[README.md](/README.md)** (Tài liệu này): Tổng quan về kiến trúc dự án, yêu cầu xử lý dữ liệu, luồng nghiệp vụ tĩnh & động và hướng dẫn chi tiết cách triển khai Redux slices/hooks.
+* **[docs/project_rules.md](/docs/project_rules.md)**: Quy tắc lập trình bắt buộc đối với Redux, UI Components & Styling, DataTable (MUI DataGridPro), cơ chế tự động Reset Form và quy tắc giao tiếp chéo tab bằng BroadcastChannel.
+* **[docs/agents.md](/docs/agents.md)**: Hướng dẫn dành cho AI Agents & Nhà phát triển mới, giải thích cấu trúc thư mục chi tiết, cơ chế hoạt động của Runtime Plugin, xử lý form reset và các câu lệnh thông dụng.
+* **[docs/email_system.md](/docs/email_system.md)**: Hướng dẫn kỹ thuật cho hệ thống soạn thảo email nổi (Gmail-style Multi-composer), cơ chế tối ưu hiệu năng tránh render lại DOM bằng Global Map Cache ngoài Redux.
+* **[docs/project_development_skill.md](/docs/project_development_skill.md)**: Hướng dẫn quy trình phát triển chi tiết, cách đồng bộ hóa React Hook Form với Redux sử dụng `useReduxFormSync`, và cách hoạt động của DataTable.
+* **[docs/recaptcha_v3.md](/docs/recaptcha_v3.md)**: Hướng dẫn kỹ thuật và cơ chế hoạt động của Google reCAPTCHA v3 tích hợp trong Frontend và cách xác thực chéo phía Backend API Server.
+* **[skills/project-development/SKILL.md](/skills/project-development/SKILL.md)**: Hướng dẫn từng bước cho AI Agents và lập trình viên khi thực hiện tác vụ phát triển, sửa đổi hoặc debug trong dự án.
 
 
 ---
@@ -87,6 +88,9 @@ react-template/ (Host App - Thư mục gốc)
 │   │   ├── AppPlugin.tsx      # Điểm đăng ký và map `plugin.id` với SDK Runtime tương ứng
 │   │   ├── services/          # Các service hỗ trợ runtime
 │   │   └── types/             # Định nghĩa SDK và API được cung cấp cho plugin (MUI, utils, components)
+│   ├── services/              # Các service của ứng dụng (API & Client-side Utils)
+│   │   ├── api/               # Các business API services (authorization.ts, ...)
+│   │   └── utils/             # Các utility services (axios.ts, signalr.ts, broadcast.ts, navigation.ts)
 │   ├── store/                 # Cấu hình Redux Store, Middleware, Root Saga
 │   ├── themes/                # Định nghĩa theme tùy chỉnh cho Material UI
 │   ├── types/                 # Các TypeScript interface dùng chung toàn app
@@ -270,7 +274,7 @@ const BillFormContainer = () => {
 Hệ thống tích hợp API `BroadcastChannel` cho phép trao đổi dữ liệu chéo tab (ví dụ: tự động đăng xuất các tab khi một tab chọn đăng xuất, đồng bộ theme, v.v.).
 
 ### 5.1 Cấu trúc Broadcast Service
-Service `src/services/broadcast.ts` quản lý kênh kết nối `app_global_channel` và cung cấp các hàm helper an toàn:
+Service `src/services/utils/broadcast.ts` quản lý kênh kết nối `app_global_channel` và cung cấp các hàm helper an toàn:
 - `createSafeBroadcastChannel()`: Khởi tạo BroadcastChannel an toàn.
 - `postBroadcastMessage(type, payload)`: Gửi tin nhắn đi.
 - `BroadcastEventTypes`: Danh sách sự kiện được chuẩn hóa (`AUTH_LOGOUT`, `THEME_CHANGE`, v.v.).

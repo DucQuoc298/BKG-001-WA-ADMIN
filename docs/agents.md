@@ -63,6 +63,9 @@ react-template/ (Host App)
 │   │   ├── AppPlugin.tsx      # Điểm đăng ký và map `plugin.id` với SDK Runtime tương ứng
 │   │   ├── services/          # Các service hỗ trợ runtime
 │   │   └── types/             # Định nghĩa SDK và API được cung cấp cho plugin (MUI, utils, components)
+│   ├── services/              # Các service của ứng dụng (API & Client-side Utils)
+│   │   ├── api/               # Các business API services (authorization.ts, ...)
+│   │   └── utils/             # Các utility services (axios.ts, signalr.ts, broadcast.ts, navigation.ts)
 │   ├── store/                 # Cấu hình Redux Store, Middleware, Root Saga
 │   ├── themes/                # Định nghĩa theme tùy chỉnh cho Material UI
 │   ├── types/                 # Các TypeScript interface dùng chung toàn app
@@ -139,7 +142,7 @@ Hệ thống tích hợp API `BroadcastChannel` cho phép trao đổi dữ liệ
 1. **Sử dụng Hook `useBroadcastChannel`:**
    - Nếu vừa lắng nghe vừa gửi message: `const { postMessage } = useBroadcastChannel((msg) => { ... })`.
    - Nếu **chỉ gửi message**, không truyền callback: `const { postMessage } = useBroadcastChannel()`. Việc này tránh kích hoạt Event Listener ẩn trên tab hiện tại.
-2. **Khai báo Event Types:** Mọi loại sự kiện phải nằm trong `BroadcastEventTypes` thuộc `src/services/broadcast.ts`.
+2. **Khai báo Event Types:** Mọi loại sự kiện phải nằm trong `BroadcastEventTypes` thuộc `src/services/utils/broadcast.ts`.
 3. **Gọi từ dynamic plugins:** Sử dụng qua SDK thông qua `sdk.broadcast` (`postMessage` và `subscribe`).
 
 ---
@@ -204,6 +207,6 @@ Hệ thống tích hợp API `BroadcastChannel` cho phép trao đổi dữ liệ
 Để duy trì chất lượng mã nguồn và tự động hóa các tác vụ phát triển, hệ thống đã trang bị bộ quy tắc và kỹ năng (skills) chuyên biệt:
 
 1. **Bộ Quy tắc Dự án**:
-   - Vui lòng xem [project_rules.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_rules.md) để biết các quy ước cụ thể về lập trình Redux, DataTable, chỉnh sửa ô lưới và phát triển Runtime Plugins.
+   - Vui lòng xem [project_rules.md](/docs/project_rules.md) để biết các quy ước cụ thể về lập trình Redux, DataTable, chỉnh sửa ô lưới và phát triển Runtime Plugins.
 2. **Kỹ năng Phát triển Dự án (Project Development Skill)**:
-   - Một bộ skill hướng dẫn từng bước đã được lưu trữ tại [project_development_skill.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_development_skill.md). Các tác nhân AI khi hoạt động trong workspace này nên tham khảo skill này trước khi thực thi viết mã để đảm bảo tuân thủ đúng quy trình.
+   - Một bộ skill hướng dẫn từng bước đã được lưu trữ tại [project_development_skill.md](/docs/project_development_skill.md). Các tác nhân AI khi hoạt động trong workspace này nên tham khảo skill này trước khi thực thi viết mã để đảm bảo tuân thủ đúng quy trình.

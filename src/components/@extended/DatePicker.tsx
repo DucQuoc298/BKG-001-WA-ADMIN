@@ -5,7 +5,7 @@ import { DatePicker, LocalizationProvider, DatePickerProps } from "@mui/x-date-p
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import 'dayjs/locale/en-gb';
 import 'dayjs/locale/vi';
-import { FormHelperText, FormLabel } from "@mui/material";
+import { FormHelperText, FormLabel, useTheme } from "@mui/material";
 import { DateValidationError } from "@mui/x-date-pickers/models";
 import { useTranslation } from "react-i18next";
 
@@ -19,6 +19,7 @@ interface IDateTimePickerProps extends Omit<DatePickerProps, 'value' | 'onChange
 }
 
 const DateTimePicker = ({ onChange, value, error, label, slotProps, required, helperText, minDate = dayjs("1911-01-01"), onError, ...rest }: IDateTimePickerProps) => {
+  const theme = useTheme();
   const iStyles = inputStyles();
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -39,7 +40,7 @@ const DateTimePicker = ({ onChange, value, error, label, slotProps, required, he
 
   return (
     <LocalizationProvider adapterLocale={i18n.language === 'vi' ? 'vi' : 'en-gb'} dateAdapter={AdapterDayjs}>
-      <FormLabel sx={{ ...iStyles.labelDefault }}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
+      <FormLabel sx={{ ...iStyles.labelDefault }} focused={false}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
       <DatePicker
         minDate={minDate}
         open={open}
@@ -58,17 +59,28 @@ const DateTimePicker = ({ onChange, value, error, label, slotProps, required, he
             ...slotProps?.openPickerButton,
           },
           textField: {
-            variant: "outlined",
             fullWidth: true,
             sx: {
               "& .MuiPickersOutlinedInput-root": {
                 ...iStyles.textfield,
                 padding: '0px 10px',
+                "&:hover .MuiPickersOutlinedInput-notchedOutline": {
+                  borderColor: theme.palette.primary.light,
+                },
+                "&.Mui-focused .MuiPickersOutlinedInput-notchedOutline": {
+                  border: '1px solid !important',
+                  borderColor: `${theme.palette.primary.light} !important`,
+                },
+                "&.Mui-error .MuiPickersOutlinedInput-notchedOutline": {
+                  borderColor: theme.palette.error.light,
+                },
+                "&.Mui-error.Mui-focused .MuiPickersOutlinedInput-notchedOutline": {
+                  borderColor: `${theme.palette.error.light} !important`,
+                }
               },
               "& .MuiPickersSectionList-root": {
                 padding: '10px 0px !important',
               },
-
             },
             ...slotProps?.textField,
             error: hasError,

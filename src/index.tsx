@@ -1,5 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
+// ============================================================
+// Suppress known MUI X v8 harmless warnings.
+// These are internal bugs where MUI forwards React-style props
+// (alignItems, inputProps, slotProps) to DOM elements.
+// See: https://github.com/mui/mui-x/issues
+// ============================================================
+if (typeof window !== 'undefined') {
+  const originalError = console.error;
+  console.error = function (...args: any[]) {
+    const msg = typeof args[0] === 'string' ? args[0] : String(args[0]);
+    if (msg.includes('does not recognize the') && msg.includes('prop on a DOM element')) {
+      return;
+    }
+    originalError.apply(console, args);
+  };
+}
+
 // scroll bar
 import 'simplebar-react/dist/simplebar.min.css';
 
@@ -23,38 +41,51 @@ import i18n from './i18n';
 import { Provider } from 'react-redux';
 import { store } from 'store/createStore';
 import { Snackbar } from 'components';
-
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
+// import { LicenseInfo } from "@mui/x-license-pro";
 
-const siteKey = import.meta.env.VITE_CAPTCHA_SITE_KEY || '';
+
+const siteKey = import.meta.env.VITE_CAPTCHA_SITE_KEY;
+const isGoogleSiteKey = typeof siteKey === 'string' && siteKey.startsWith('6') && siteKey.length >= 30;
+// const licenseKey = import.meta.env.VITE_MUI_TABLE_LICENSE;
+// LicenseInfo.setLicenseKey(licenseKey as string);
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 // ==============================|| MAIN - REACT DOM RENDER ||============================== //
 
+const renderApp = () => {
+  if (isGoogleSiteKey) {
+    return (
+      <GoogleReCaptchaProvider reCaptchaKey={siteKey}>
+        <App />
+      </GoogleReCaptchaProvider>
+    );
+  }
+  return <App />;
+};
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <GoogleReCaptchaProvider reCaptchaKey={siteKey}>
-        <AuthProvider
-          storageKey={KEY_CONTEXT.AUTH}
-          initialState={authConfig}
+      <AuthProvider
+        storageKey={KEY_CONTEXT.AUTH}
+        initialState={authConfig}
+      >
+        <MainProvider
+          storageKey={KEY_CONTEXT.MAIN}
+          initialState={mainConfig}
         >
-          <MainProvider
-            storageKey={KEY_CONTEXT.MAIN}
-            initialState={mainConfig}
-          >
-            <ThemeCustomization>
-              <I18nextProvider i18n={i18n}>
-                <CssBaseline />
-                <App />
-                <Snackbar />
-              </I18nextProvider>
-            </ThemeCustomization>
-          </MainProvider>
-        </AuthProvider>
-      </GoogleReCaptchaProvider>
+          <ThemeCustomization>
+            <I18nextProvider i18n={i18n}>
+              <CssBaseline />
+              {renderApp()}
+              <Snackbar />
+            </I18nextProvider>
+          </ThemeCustomization>
+        </MainProvider>
+      </AuthProvider>
     </Provider>
   </React.StrictMode>
 );

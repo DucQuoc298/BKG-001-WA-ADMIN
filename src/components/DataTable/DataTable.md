@@ -25,10 +25,10 @@ graph TD
 ```
 
 ### Các thành phần chính:
-1. **`DataTable` (Entry - [index.tsx](file:///Volumes/KINGSTON/Code/react-template/src/components/DataTable/index.tsx))**: Lớp bọc ngoài cùng (Wrapper), sử dụng `forwardRef` và `memo` để tối ưu render, điều hướng render giữa `DataTableView` và `DataTableForm` dựa vào prop `variant`.
-2. **`useDataTable` (Hook - [useDataTable.ts](file:///Volumes/KINGSTON/Code/react-template/src/hooks/useDataTable.ts))**: Engine quản lý dữ liệu và state của bảng. Tích hợp thư viện `useSWR` để fetch dữ liệu từ server (chế độ `remote`) hoặc quản lý dữ liệu client-side (chế độ `local`).
-3. **`DataTableView` (Viewer - [DataTableView/index.tsx](file:///Volumes/KINGSTON/Code/react-template/src/components/DataTable/DataTableView/index.tsx))**: Sử dụng cho giao diện danh sách chỉ xem (Read-only), hỗ trợ checkbox chọn nhiều dòng (Row Selection), phân trang tùy chỉnh (`Pagination`), ghim cột (`pinnedColumns`) và cột thao tác nhanh (`actionBars`).
-4. **`DataTableForm` (Editor - [DataTableForm/index.tsx](file:///Volumes/KINGSTON/Code/react-template/src/components/DataTable/DataTableForm/index.tsx))**: Dành cho giao diện nhập liệu dạng lưới (Inline Grid Form). Hỗ trợ kéo thả sắp xếp lại dòng (Row Reordering), di chuyển nhanh giữa các ô bằng phím Tab/Shift+Tab, tự động thêm dòng mới khi bấm Tab ở ô cuối cùng, và tích hợp các bộ Editor tùy chỉnh cho từng loại dữ liệu.
+1. **`DataTable` (Entry - [index.tsx](/src/components/DataTable/index.tsx))**: Lớp bọc ngoài cùng (Wrapper), sử dụng `forwardRef` và `memo` để tối ưu render, điều hướng render giữa `DataTableView` và `DataTableForm` dựa vào prop `variant`.
+2. **`useDataTable` (Hook - [useDataTable.ts](/src/hooks/useDataTable.ts))**: Engine quản lý dữ liệu và state của bảng. Tích hợp thư viện `useSWR` để fetch dữ liệu từ server (chế độ `remote`) hoặc quản lý dữ liệu client-side (chế độ `local`).
+3. **`DataTableView` (Viewer - [DataTableView/index.tsx](/src/components/DataTable/DataTableView/index.tsx))**: Sử dụng cho giao diện danh sách chỉ xem (Read-only), hỗ trợ checkbox chọn nhiều dòng (Row Selection), phân trang tùy chỉnh (`Pagination`), ghim cột (`pinnedColumns`) và cột thao tác nhanh (`actionBars`).
+4. **`DataTableForm` (Editor - [DataTableForm/index.tsx](/src/components/DataTable/DataTableForm/index.tsx))**: Dành cho giao diện nhập liệu dạng lưới (Inline Grid Form). Hỗ trợ kéo thả sắp xếp lại dòng (Row Reordering), di chuyển nhanh giữa các ô bằng phím Tab/Shift+Tab, tự động thêm dòng mới khi bấm Tab ở ô cuối cùng, và tích hợp các bộ Editor tùy chỉnh cho từng loại dữ liệu.
 
 ---
 

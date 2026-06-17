@@ -79,8 +79,7 @@ const SearchField = forwardRef<SearchElememt, ISearchField>((props, ref) => {
               </>
             ),
           }
-        }
-        }
+        }}
       />
     </Stack>
   );

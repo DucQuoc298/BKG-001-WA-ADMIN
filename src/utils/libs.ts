@@ -1,7 +1,6 @@
 
 import { alpha } from '@mui/material/styles';
-import { GridApiPro } from '@mui/x-data-grid-pro';
-import { GridApiCommunity } from "@mui/x-data-grid/internals";
+import { GridApiPro, GridApi } from '@mui/x-data-grid-pro';
 import dayjs from 'dayjs';
 import { ILanguage } from 'types';
 function toCamelCase(key, value) {
@@ -48,11 +47,11 @@ export const debounce = (func, timeout = 300) => {
   };
 };
 export const updateRow = (
-  api: React.MutableRefObject<GridApiPro> | GridApiCommunity,
+  api: React.MutableRefObject<GridApiPro> | GridApi,
   rowId,
   data
 ) => {
-  const app = api["current"] ? (api as React.MutableRefObject<GridApiPro>).current : api as GridApiCommunity;
+  const app = api["current"] ? (api as React.MutableRefObject<GridApiPro>).current : api as GridApi;
   //
   const newRows = app.getAllRowIds().map((id) => {
     const row = app.getRow(id);

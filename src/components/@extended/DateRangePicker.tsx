@@ -4,7 +4,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import 'dayjs/locale/en-gb';
 import 'dayjs/locale/vi';
-import { FormHelperText, FormLabel, IconButton, InputAdornment } from "@mui/material";
+import { FormHelperText, FormLabel, IconButton, InputAdornment, useTheme } from "@mui/material";
 import { DateRangePickerProps, DateRangePicker, DateRangeValidationError, LocalizationProvider } from "@mui/x-date-pickers-pro";
 import Icons, { IconName } from "assets/Icon";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,7 @@ interface IDateRangePickerProps extends Omit<DateRangePickerProps, 'value' | 'on
 }
 
 const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, required, helperText, minDate = dayjs("1911-01-01"), onError, inputRef, ...rest }: IDateRangePickerProps) => {
+  const theme = useTheme();
   const iStyles = inputStyles();
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -44,45 +45,51 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
 
   return (
     <LocalizationProvider adapterLocale={currentLocale} dateAdapter={AdapterDayjs}>
-      <FormLabel sx={{ ...iStyles.labelDefault }}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
+      <FormLabel sx={{ ...iStyles.labelDefault }} focused={false}>{label}{required && <FormHelperText component="span" sx={{ color: "error.main", paddingLeft: 0.5, height: '100%' }}>*</FormHelperText>}</FormLabel>
       <DateRangePicker
         minDate={minDate}
         slotProps={{
           ...slotProps,
+          field: {
+            ...((slotProps as any)?.field),
+            sx: {
+              gap: '10px !important',
+              alignItems: "center",
+              ...((slotProps as any)?.field?.sx),
+            },
+          } as any,
           textField: ({ position }: any) => ({
             ...slotProps?.textField,
             inputRef: position === 'start' ? inputRef : undefined,
-            slotProps: {
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {(value?.[0] || value?.[1]) && (
-                      <IconButton
-                        onClick={() => {
-                          if (position === "start") {
-                            onChange([null, value?.[1] ?? null]);
-                          } else {
-                            onChange([value?.[0] ?? null, null]);
-                          }
-                        }}
-                        sx={{
-                          ...iStyles.clearButton,
-                        }}
-                      >
-                        <Icons name={IconName.CLEAR} size={20} />
-                      </IconButton>
-                    )}
+            InputProps: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  {(value?.[0] || value?.[1]) && (
                     <IconButton
-                      onClick={() => setOpen(true)}
+                      onClick={() => {
+                        if (position === "start") {
+                          onChange([null, value?.[1] ?? null]);
+                        } else {
+                          onChange([value?.[0] ?? null, null]);
+                        }
+                      }}
                       sx={{
-                        padding: '0px !important',
+                        ...iStyles.clearButton,
                       }}
                     >
-                      <Icons name={IconName.CALENDAR} size={26} />
+                      <Icons name={IconName.CLEAR} size={20} />
                     </IconButton>
-                  </InputAdornment>
-                ),
-              },
+                  )}
+                  <IconButton
+                    onClick={() => setOpen(true)}
+                    sx={{
+                      padding: '0px !important',
+                    }}
+                  >
+                    <Icons name={IconName.CALENDAR} size={26} />
+                  </IconButton>
+                </InputAdornment>
+              ),
             },
             label: "",
             variant: "outlined",
@@ -93,6 +100,19 @@ const DateTimeRangePicker = ({ onChange, value, error, label, slotProps, require
               "& .MuiPickersOutlinedInput-root": {
                 ...iStyles.textfield,
                 padding: '0px 10px',
+                "&:hover .MuiPickersOutlinedInput-notchedOutline": {
+                  borderColor: theme.palette.primary.light,
+                },
+                "&.Mui-focused .MuiPickersOutlinedInput-notchedOutline": {
+                  border: '1px solid !important',
+                  borderColor: `${theme.palette.primary.light} !important`,
+                },
+                "&.Mui-error .MuiPickersOutlinedInput-notchedOutline": {
+                  borderColor: theme.palette.error.light,
+                },
+                "&.Mui-error.Mui-focused .MuiPickersOutlinedInput-notchedOutline": {
+                  borderColor: `${theme.palette.error.light} !important`,
+                }
               },
               "& .MuiPickersSectionList-root": {
                 padding: '10px 0px !important',

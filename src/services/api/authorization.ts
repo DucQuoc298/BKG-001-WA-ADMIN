@@ -5,7 +5,7 @@ import {
 } from "../utils/utils";
 
 
-const login = (data: {username: string, password: string, captcha?: string}, callback?: (data: any) => void) => {
+const login = (data: { username: string, password: string, captcha?: string }, callback?: (data: any) => void) => {
   return handlePost("", {
     "action": "ConnectDB",
     "method": "getConfig",
@@ -25,28 +25,28 @@ const refreshToken = async (refreshToken: string) => {
       "action": "ConnectDB",
       "method": "refreshToken",
       "data": [
-          {
-              "refreshToken": refreshToken
-          }
+        {
+          "refreshToken": refreshToken
+        }
       ]
     });
     return res;
   } catch (error) {
-    // console.log('refreshToken', error);
+    console.error('refreshToken error:', error);
     throw new Error('There was something wrong');
   }
 };
-const getConfig = async (accessToken: string, callback?: (data: any) => void, captcha?: string) => {
+const getConfig = async (params: { accessToken: string, captcha?: string }, callback?: (data: any) => void) => {
   return handlePost('', {
     "action": "ConnectDB",
     "method": "getConfig",
     "data": [
       {
         id: 0,
-        captcha: captcha || import.meta.env.VITE_CAPTCHA_SITE_KEY,
-        accessToken: accessToken
+        captcha: params.captcha || import.meta.env.VITE_CAPTCHA_SITE_KEY,
+        accessToken: params.accessToken
       },
-    ] ,
+    ],
     type: 'rpc',
     tid: 1,
   }, callback);
@@ -55,7 +55,7 @@ const getLicenseInfo = async (accessToken: string, callback?: (data: any) => voi
   return handlePost('', {
     "action": "ConnectDB",
     "method": "getLicenseInfor",
-    "data": [{}] ,
+    "data": [{}],
     type: 'rpc',
     tid: 3,
   }, callback);
@@ -80,7 +80,7 @@ const logout = async (callback?: (data: any) => void) => {
   return handlePost('', {
     "action": "ConnectDB",
     "method": "getConfig",
-    "data": [{id: 2}] ,
+    "data": [{ id: 2 }],
     type: 'rpc',
     tid: 7,
   }, callback);
@@ -90,13 +90,13 @@ const checkSession = async (callback?: (data: any) => void) => {
   return handlePost('', {
     "action": "ConnectDB",
     "method": "checkSession",
-    "data": [{}] ,
+    "data": [{}],
     type: 'rpc',
     tid: 5,
   }, callback);
 };
 
-const forgotPassword = async (data: {userid: string, email: string, captcha?: string}, callback?: (data: any) => void) => {
+const forgotPassword = async (data: { userid: string, email: string, captcha?: string }, callback?: (data: any) => void) => {
   return handlePost('', {
     "action": "ConnectDB",
     "method": "forgotPwd",
@@ -106,12 +106,12 @@ const forgotPassword = async (data: {userid: string, email: string, captcha?: st
         email: data.email,
         captcha: data.captcha || import.meta.env.VITE_CAPTCHA_SITE_KEY,
       },
-    ] ,
+    ],
     type: 'rpc',
     tid: 4,
   }, callback);
 };
-const confirmForgotPassword = async (data: {confirmCode: string, verificationCode: string}, callback?: (data: any) => void) => {
+const confirmForgotPassword = async (data: { confirmCode: string, verificationCode: string }, callback?: (data: any) => void) => {
   return handlePost('', {
     "action": "ConnectDB",
     "method": "confirmForgotPwd",
@@ -120,12 +120,12 @@ const confirmForgotPassword = async (data: {confirmCode: string, verificationCod
         confirmCode: data.confirmCode,
         verifyCode: data.verificationCode,
       },
-    ] ,
+    ],
     type: 'rpc',
     tid: 4,
   }, callback);
 };
-const resetPassword = async (data: {confirmCode: string, newPassword: string, verifyCode: string, captcha?: string}, callback?: (data: any) => void) => {
+const resetPassword = async (data: { confirmCode: string, newPassword: string, verifyCode: string, captcha?: string }, callback?: (data: any) => void) => {
   return handlePost('', {
     "action": "ConnectDB",
     "method": "changePwd",
@@ -136,12 +136,12 @@ const resetPassword = async (data: {confirmCode: string, newPassword: string, ve
         newPwd: data.newPassword,
         verifyCode: data.verifyCode,
       },
-    ] ,
+    ],
     type: 'rpc',
     tid: 4,
   }, callback);
 };
-const updatePassword = async (data: {oldPassword: string, newPassword: string}, callback?: (data: any) => void) => {
+const updatePassword = async (data: { oldPassword: string, newPassword: string }, callback?: (data: any) => void) => {
   return handlePost('', {
     "action": "FrmCsOperator",
     "method": "updPwd",
@@ -150,24 +150,24 @@ const updatePassword = async (data: {oldPassword: string, newPassword: string}, 
         OLD_PASS: data.oldPassword,
         NEW_PASS: data.newPassword,
       },
-    ] ,
+    ],
     type: 'rpc',
     tid: 4,
   }, callback);
 };
-const registerLicense = async (data: {code: string, company: string, expiryDate: string}, callback?: (data: any) => void) => {
+const registerLicense = async (data: { code: string, company: string, expiryDate: string }, callback?: (data: any) => void) => {
   return handlePost('', {
     "action": "ConnectDB",
     "method": "regLicense",
     "data": [
       data
-    ] ,
+    ],
     type: 'rpc',
     tid: 4,
   }, callback);
 };
 const addLink = async (data: {
-  autonumber: string,
+  autonum: string,
   category: string,
   comments: string,
   documentcode: string,
@@ -179,7 +179,7 @@ const addLink = async (data: {
   return handlePost('', {
     "action": "FrmFdDocument",
     "method": "addLink",
-    "data": [data] ,
+    "data": [data],
     type: 'rpc',
     tid: 4,
   }, callback);
@@ -193,7 +193,7 @@ const attachFile = async (data: {
   return handlePost('', {
     "action": "FrmFdDocument",
     "method": "attach",
-    "data": [data] ,
+    "data": [data],
     type: 'rpc',
     tid: 4,
   }, callback);
@@ -202,18 +202,18 @@ const getcompanyList = async (callback?: (data: ICompany[]) => void) => {
   return handlePost('', {
     "action": "FrmCsOperator",
     "method": "getCpnList",
-    "data": [{}] ,
+    "data": [{}],
     type: 'rpc',
     tid: 4,
   }, callback);
 };
-const changeCompany = async (params: {cpnId: string}, callback?: (data: any) => void) => {
+const changeCompany = async (params: { cpnId: string }, callback?: (data: any) => void) => {
   return handlePost('', {
     "action": "ConnectDB",
     "method": "changeCpn",
     "data": [{
-       db: params.cpnId
-    }] ,
+      db: params.cpnId
+    }],
     type: 'rpc',
     tid: 4,
   }, callback);
@@ -226,7 +226,7 @@ export {
   getLicenseInfo,
   getInformationRegister,
   logout,
-  checkSession, 
+  checkSession,
   forgotPassword,
   confirmForgotPassword,
   resetPassword,

@@ -5,9 +5,9 @@ export * from "./ToolBar";
 export * from "./Tabs";
 export * from "./SideIndex";
 export * from "./Card";
+export * from "./DateField";
 
 // 2. Bắt buộc dùng "export { default as ... } from" cho các Default Exports
-export { default as DatePicker } from "./@extended/DatePicker";
 export { default as Dialog } from "./Dialog";
 export { default as Snackbar } from "./Snackbar";
 export { default as ContainerWrapper } from "./ContainerWrapper";
