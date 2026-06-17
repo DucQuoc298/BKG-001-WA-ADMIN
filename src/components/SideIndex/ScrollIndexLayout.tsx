@@ -31,12 +31,12 @@ const ScrollIndexLayout = ({
     onActiveIdChange?.(id);
   }, [onActiveIdChange]);
 
-  const isScrollingRef = useRef(false);
-  const timerRef = useRef<any>(null);
-
   // Scroll to initial active ID on mount if provided
   const initialActiveRef = useRef(controlledActiveId || defaultActiveId);
   const stickyTopRef = useRef(stickyTop);
+
+  const isScrollingRef = useRef(!!(controlledActiveId || defaultActiveId));
+  const timerRef = useRef<any>(null);
 
   React.useEffect(() => {
     const initialActiveId = initialActiveRef.current;
@@ -57,7 +57,9 @@ const ScrollIndexLayout = ({
           }
           timerRef.current = setTimeout(() => {
             isScrollingRef.current = false;
-          }, 150);
+          }, 800);
+        } else {
+          isScrollingRef.current = false;
         }
       }, 50);
 
@@ -90,8 +92,6 @@ const ScrollIndexLayout = ({
 
   // IntersectionObserver: tự động highlight tab khi scroll bằng chuột/tay
   React.useEffect(() => {
-    if (controlledActiveId !== undefined) return;
-
     const observers: IntersectionObserver[] = [];
 
     items.forEach(({ id }) => {
@@ -100,7 +100,7 @@ const ScrollIndexLayout = ({
 
       const obs = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting && !isScrollingRef.current && activeId === undefined) {
+          if (entry.isIntersecting && !isScrollingRef.current) {
             setActiveId(id);
           }
         },
@@ -120,7 +120,7 @@ const ScrollIndexLayout = ({
         clearTimeout(timerRef.current);
       }
     };
-  }, [items, stickyTop, setActiveId, controlledActiveId]);
+  }, [items, stickyTop, setActiveId]);
 
   return (
     <Box sx={styles.container}>
