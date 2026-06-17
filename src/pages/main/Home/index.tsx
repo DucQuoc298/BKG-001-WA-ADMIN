@@ -2,7 +2,6 @@ import { Button, Chip, ContainerWrapper, MainCard, NumberField, TextField, Email
 import React, { useCallback, useEffect } from 'react';
 import { useHome, useReduxFormSync, useEmail, useSnackbar, EmailFormFields } from 'hooks';
 import { useForm, FormProvider } from 'react-hook-form';
-import DateField from 'components/DateField/DateField';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { HomeFormFields, initialHomeFormFields } from 'store/home/reducer';
@@ -47,6 +46,7 @@ export default function Home() {
       errors
     },
   } = methods;
+  // eslint-disable-next-line react-hooks/incompatible-library
   const formValues = watch();
   /**
    * useReduxFormSync đồng bộ hóa dữ liệu React Hook Form ↔ Redux.

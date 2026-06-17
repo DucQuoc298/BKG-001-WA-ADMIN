@@ -18,12 +18,11 @@ import MainCard from 'components/Card/MainCard';
 import Transitions from 'components/@extended/Transitions';
 
 // assets
-import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
 import { Button, Divider, Grid, IconButton, InputAdornment, ListItem, Menu, MenuItem, Popover } from '@mui/material';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import styles from './styles';
-import { ArrowForwardIosOutlined, CameraAltOutlined, CheckOutlined, ChangeCircleOutlined, DarkModeOutlined, LightModeOutlined, TranslateOutlined } from '@mui/icons-material';
+import { ArrowForwardIosOutlined, CameraAltOutlined, CheckOutlined, LogoutOutlined, ChangeCircleOutlined, DarkModeOutlined, LightModeOutlined, TranslateOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { ILanguage, IThemeMode } from 'types';
 import { useMain, useAuth, useBroadcastChannel, useLocalStorage, useDocument, useUser, useSnackbar } from 'hooks';
@@ -62,10 +61,10 @@ export default function Profile() {
   const dispatch = useDispatch();
   const { state: mainState, setField } = useMain();
   const { resetState: resetAuthState, state, setState } = useAuth();
-  const { state: authToken } = useLocalStorage('authToken', state.token);
+  useLocalStorage('authToken', state.token);
   const { postMessage } = useBroadcastChannel();
   const { attachFile, addLink } = useDocument();
-  const { user, logout, updatePassword, getCompanyList, changeCompany, listCompany } = useUser();
+  const { user, updatePassword, changeCompany, listCompany } = useUser();
   const { success } = useSnackbar();
 
   const [openChangePassword, setOpenChangePassword] = useState(false);

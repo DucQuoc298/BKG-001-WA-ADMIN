@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, MenuItem, Select, SelectProps, IconButton, InputAdornment, Typography, Box, Chip } from "@mui/material";
+import { FormControl, MenuItem, Select, SelectProps, IconButton, InputAdornment, Box, Chip } from "@mui/material";
 import inputStyles from "./styles";
 import { UseFormRegister } from "react-hook-form";
 import { forwardRef, useEffect, useState } from "react";
@@ -21,7 +21,7 @@ type IDropDownListProps = Omit<SelectProps<string | string[]>, "variant"> &
 const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function DropDownList({
   label,
   data,
-  forceSelect,
+  forceSelect: _forceSelect,
   value,
   onChange,
   onBlur,

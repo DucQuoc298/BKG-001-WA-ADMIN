@@ -32,7 +32,7 @@ const refreshToken = async (refreshToken: string) => {
     });
     return res;
   } catch (error) {
-    // console.log('refreshToken', error);
+    console.error('refreshToken error:', error);
     throw new Error('There was something wrong');
   }
 };

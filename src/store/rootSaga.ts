@@ -7,6 +7,6 @@ import documentSagas from "store/document/sagas";
 export default function* rootSaga() {
   yield all([
     authenticationSaga(),
-
+    documentSagas(),
   ]);
 }

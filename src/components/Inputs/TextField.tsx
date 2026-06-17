@@ -1,4 +1,4 @@
-import { FormControl, FormHelperText, FormLabel, TextField as MuiTextField, TextFieldProps } from "@mui/material";
+import { FormControl, FormHelperText, TextField as MuiTextField, TextFieldProps } from "@mui/material";
 import inputStyles from "./styles";
 import React from "react";
 import Label from "./Label";

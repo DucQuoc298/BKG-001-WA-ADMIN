@@ -14,7 +14,7 @@ import { handlerDrawerOpen, useGetMenuMaster } from 'hooks/useMenu';
 import { DRAWER_WIDTH, HEADER_HEIGHT, TOOLBAR_HEIGHT } from 'themes/config';
 import { useAuth, useBroadcastChannel, useLocalStorage, useUser } from 'hooks';
 import { BroadcastEventTypes, redirectToLogin } from 'services';
-import { AuthNameRoutes, CAPTCHA_ACTION } from 'types';
+import { CAPTCHA_ACTION } from 'types';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { setAuthToken } from 'utils';
 
@@ -29,7 +29,6 @@ export default function DashboardLayout() {
   const { getConfig } = useUser();
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [hasFetchedConfig, setHasFetchedConfig] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useBroadcastChannel((message) => {
     if (message.type === BroadcastEventTypes.AUTH_LOGOUT) {
@@ -58,7 +57,6 @@ export default function DashboardLayout() {
         }
       }
       getConfig({ accessToken: authToken, captcha }, (res) => {
-        setLoading(false);
         if (!res || !res.login) {
           redirectToLogin(true)
         }

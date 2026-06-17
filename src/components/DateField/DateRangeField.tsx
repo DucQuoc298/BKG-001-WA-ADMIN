@@ -15,6 +15,7 @@ import { styled } from "@mui/material/styles";
 
 const SafeFieldRoot = styled(
   React.forwardRef<HTMLDivElement, any>(function SafeFieldRoot(props, ref) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { alignItems, ...rest } = props;
     return <Stack ref={ref} sx={{ gap: 2, direction: "row", alignItems: "center" }} {...rest} />;
   }),
