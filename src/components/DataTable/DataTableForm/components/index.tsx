@@ -1,5 +1,5 @@
-import CellEditAutocomplete from './Celleditautocomplete';
-import CellEditText from './Celledittext';
-import CellEditNumber from './Celleditnumber';
+import CellEditAutocomplete from './CelleditAutocomplete';
+import CellEditText from './CelleditText';
+import CellEditNumber from './CelleditNumber';
 
 export { CellEditAutocomplete, CellEditText, CellEditNumber };
