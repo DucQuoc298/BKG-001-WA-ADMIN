@@ -1,4 +1,4 @@
-import MaintenanceWrapper from "sections/maintenance/MaintenanceWrapper";
+import MaintenanceWrapper from "sections/maintenance/Maintenancewrapper";
 import React from "react";
 import Error403Image from 'assets/images/maintenance/Error403.png';
 import styles from './styles';

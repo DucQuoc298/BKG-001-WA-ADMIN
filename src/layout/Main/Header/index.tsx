@@ -6,7 +6,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 
 // project imports
-import AppBarStyled from './AppBarStyled';
+import AppBarStyled from './AppbarStyled';
 import HeaderContent from './HeaderContent';
 import IconButton from 'components/@extended/IconButton';
 
@@ -31,7 +31,7 @@ export default function Header() {
 
   // common header
   const mainHeader = (
-    <Toolbar sx={{p: 0, px: '12px !important', pl: '16px !important', minHeight: HEADER_HEIGHT, color: 'text.primary'}}>
+    <Toolbar sx={{ p: 0, px: '12px !important', pl: '16px !important', minHeight: HEADER_HEIGHT, color: 'text.primary' }}>
       <IconButton
         aria-label="open drawer"
         onClick={() => handlerDrawerOpen(!drawerOpen)}
@@ -54,9 +54,9 @@ export default function Header() {
     elevation: 0,
     sx: (theme) => ({
       zIndex: 1200,
-      width: { 
-        xs: '100%', 
-        lg: drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : `calc(100% - ${MINI_DRAWER_WIDTH}px)`, 
+      width: {
+        xs: '100%',
+        lg: drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : `calc(100% - ${MINI_DRAWER_WIDTH}px)`,
         position: 'fixed',
         color: 'inherit',
       },
@@ -71,7 +71,7 @@ export default function Header() {
           <Box sx={{
             backgroundColor: 'zone.header',
           }}
-            >
+          >
             {mainHeader}
           </Box>
         </AppBarStyled>

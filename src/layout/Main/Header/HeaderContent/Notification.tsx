@@ -17,7 +17,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 // project imports
-import MainCard from 'components/Card/MainCard';
+import MainCard from 'components/Card/Maincard';
 import IconButton from 'components/@extended/IconButton';
 import Transitions from 'components/@extended/Transitions';
 

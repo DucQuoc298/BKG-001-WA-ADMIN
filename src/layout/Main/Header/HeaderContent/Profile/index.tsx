@@ -14,7 +14,7 @@ import Box from '@mui/material/Box';
 
 // project imports
 import Avatar from 'components/@extended/Avatar';
-import MainCard from 'components/Card/MainCard';
+import MainCard from 'components/Card/Maincard';
 import Transitions from 'components/@extended/Transitions';
 
 // assets

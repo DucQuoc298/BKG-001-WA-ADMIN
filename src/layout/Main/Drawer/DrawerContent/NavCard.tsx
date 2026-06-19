@@ -3,7 +3,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Stack from '@mui/material/Stack';
 import React from 'react';
 // project imports
-import MainCard from 'components/Card/MainCard';
+import MainCard from 'components/Card/Maincard';
 
 // assets
 import avatar from 'assets/images/users/avatar-group.png';
