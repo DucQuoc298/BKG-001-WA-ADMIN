@@ -21,8 +21,9 @@ export default () => {
       },
     },
     button: {
+      
       // textTransform: "none",
-      // height: "36px",
+      // height: "30px",
       // maxHeight: "36px",
       // minHeight: "36px",
       // borderRadius: '8px',

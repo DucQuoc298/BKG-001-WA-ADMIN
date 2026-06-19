@@ -1,0 +1,17 @@
+{
+  "name": "plugin-form-builder",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-plugin.mjs",
+    "watch": "node scripts/build-plugin.mjs --watch",
+    "publish:local": "node scripts/publish-local.mjs",
+    "build:all": "esbuild src/plugins/*/index.tsx --bundle --format=esm --target=es2020 --jsx-factory=React.createElement --jsx-fragment=React.Fragment --outdir=dist --entry-names=[dir] --out-extension:.js=.mjs"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "esbuild": "^0.25.6",
+    "typescript": "^5.8.3"
+  }
+}

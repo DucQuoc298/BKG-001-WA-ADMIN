@@ -14,12 +14,16 @@ import '@fontsource/public-sans/700.css';
 // project imports
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { AuthProvider, MainProvider, AppRuntimeProvider } from 'hooks';
+import { AuthProvider, MainProvider } from 'hooks';
 import { authConfig, mainConfig, KEY_CONTEXT } from 'themes/config';
 import ThemeCustomization from 'themes';
 import { CssBaseline } from '@mui/material';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
+import { Provider } from 'react-redux';
+import { store } from 'store/createStore';
+import { Snackbar } from 'components';
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -28,8 +32,8 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-
-    <AuthProvider
+    <Provider store={store}>
+      <AuthProvider
         storageKey={KEY_CONTEXT.AUTH}
         initialState={authConfig}
       >
@@ -37,16 +41,16 @@ root.render(
           storageKey={KEY_CONTEXT.MAIN}
           initialState={mainConfig}
         >
-        <AppRuntimeProvider>
-            <ThemeCustomization>
-              <I18nextProvider i18n={i18n}>
-                <CssBaseline />
-                <App />
-              </I18nextProvider>
+          <ThemeCustomization>
+            <I18nextProvider i18n={i18n}>
+              <CssBaseline />
+              <App />
+              <Snackbar />
+            </I18nextProvider>
           </ThemeCustomization>
-        </AppRuntimeProvider>
         </MainProvider>
       </AuthProvider>
-    </React.StrictMode>
+    </Provider>
+  </React.StrictMode>
 );
 reportWebVitals();

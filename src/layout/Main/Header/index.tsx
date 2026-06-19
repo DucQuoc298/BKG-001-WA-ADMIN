@@ -10,8 +10,8 @@ import AppBarStyled from './AppBarStyled';
 import HeaderContent from './HeaderContent';
 import IconButton from 'components/@extended/IconButton';
 
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
-import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from 'themes/config';
+import { handlerDrawerOpen, useGetMenuMaster } from 'hooks/useMenu';
+import { DRAWER_WIDTH, HEADER_HEIGHT, MINI_DRAWER_WIDTH } from 'themes/config';
 
 // assets
 import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined';
@@ -31,7 +31,7 @@ export default function Header() {
 
   // common header
   const mainHeader = (
-    <Toolbar sx={{p: 0, minHeight: 50, pr: '10px !important', color: 'text.primary'}}>
+    <Toolbar sx={{p: 0, px: '12px !important', pl: '16px !important', minHeight: HEADER_HEIGHT, color: 'text.primary'}}>
       <IconButton
         aria-label="open drawer"
         onClick={() => handlerDrawerOpen(!drawerOpen)}
@@ -52,7 +52,7 @@ export default function Header() {
   // app-bar params
   const appBar = {
     elevation: 0,
-    sx: {
+    sx: (theme) => ({
       zIndex: 1200,
       width: { 
         xs: '100%', 
@@ -60,8 +60,8 @@ export default function Header() {
         position: 'fixed',
         color: 'inherit',
       },
-      backgroundColor: 'transparent !important',
-    }
+      backgroundColor: theme.palette.background.paper,
+    })
   };
 
   return (

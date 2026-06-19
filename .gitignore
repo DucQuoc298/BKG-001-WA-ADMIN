@@ -111,3 +111,9 @@ dist
 **/._*
 package-lock.json
 yarn.lock
+
+.cert
+.idea
+.vscode/
+.cursor/
+.env

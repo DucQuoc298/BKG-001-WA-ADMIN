@@ -1,6 +1,6 @@
 // project import
 import { icons } from './icons';
-
+import { IFormKey, MainNameRoutes } from 'types';
 // ==============================|| MENU ITEMS ||============================== //
 
 
@@ -20,27 +20,43 @@ const menuItems : ISideBarMenuItem = {
   type: 'group',
   children: [
     {
-      id: 'dashboard',
-      title: 'Dashboard',
+      id: IFormKey.HOME,
+      title: IFormKey.HOME,
       type: 'item',
-      url: '/dashboard',
-      icon: icons.Dashboard,
-      breadcrumbs: false
-    },
-    {
-      id: 'home',
-      title: 'Home',
-      type: 'item',
-      url: '/home',
+      url: MainNameRoutes.HOME,
       icon: icons.Home,
       breadcrumbs: false
     },
     {
-      id: 'invoice',
-      title: 'Invoice',
+      id: IFormKey.INVOICE,
+      title: IFormKey.INVOICE,
       type: 'item',
       url: '/invoice',
       icon: icons.Invoice,
+      breadcrumbs: false
+    },
+    {
+      id: IFormKey.BILL,
+      title: IFormKey.BILL,
+      type: 'item',
+      url: '/bill',
+      icon: icons.Bill,
+      breadcrumbs: false
+    },
+    {
+      id: 'COMPONENTS',
+      title: 'COMPONENTS',
+      type: 'item',
+      url: MainNameRoutes.COMPONENTS,
+      icon: icons.Components,
+      breadcrumbs: false
+    },
+    {
+      id: 'EMAIL',
+      title: 'EMAIL',
+      type: 'item',
+      url: MainNameRoutes.EMAIL,
+      icon: icons.Email,
       breadcrumbs: false
     },
   ]

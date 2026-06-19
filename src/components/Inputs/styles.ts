@@ -1,10 +1,11 @@
+
 export default () => {
   return {
     autocomplete: {
-      "& .MuiAutocomplete-input":{
+      "& .MuiAutocomplete-input": {
         padding: '10px 10px !important'
       },
-      "& .MuiOutlinedInput-root":{
+      "& .MuiOutlinedInput-root": {
         padding: '0px !important'
       }
     },
@@ -15,10 +16,23 @@ export default () => {
         color: "red",
       },
       "& .MuiInputBase-input": {
-        padding: "10px 10px",
+        padding: "0px 10px !important",
+        height: '38px !important',
+        boxSizing: 'border-box',
       },
-      "& .MuiOutlinedInput-root":{
+      "& .MuiOutlinedInput-root": {
         borderRadius: '8px',
+        height: '38px !important',
+        boxSizing: 'border-box',
+        padding: '0px !important',
+      },
+      "& .MuiSelect-select": {
+        padding: "0px 10px !important",
+        height: '38px !important',
+        lineHeight: '38px',
+        display: 'flex',
+        alignItems: 'center',
+        boxSizing: 'border-box',
       },
     },
     labelDefault: {
@@ -32,16 +46,33 @@ export default () => {
       // mb: "4px",
     },
     searchfield: {
-      width: "270px",
-      height: '38px !important',
-      "& .MuiInputBase-root": { 
+      width: "100%",
+      minWidth: "200px",
+      maxWidth: "300px",
+      "& .MuiInputBase-root": {
+        height: '34px !important',
         px: "6px !important",
-        borderRadius: "8px", },
+        borderRadius: "8px",
+      },
       "& input": {
         "&::placeholder": { fontSize: "12px" },
         fontSize: "14px",
         lineHeight: "22px",
         p: "8px",
+      },
+    },
+    clearButton: {
+      padding: "0px !important",
+      marginRight: "4px",
+      borderRadius: "8px",
+      "& .clear-range-btn": {
+        opacity: 0,
+        pointerEvents: "none",
+        transition: "opacity 0.15s ease",
+      },
+      "&:hover .clear-range-btn, & .Mui-focused .clear-range-btn": {
+        opacity: 1,
+        pointerEvents: "auto",
       },
     }
   };

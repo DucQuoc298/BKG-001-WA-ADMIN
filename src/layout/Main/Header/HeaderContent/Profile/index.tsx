@@ -14,25 +14,25 @@ import Box from '@mui/material/Box';
 
 // project imports
 import Avatar from 'components/@extended/Avatar';
-import MainCard from 'components/MainCard';
+import MainCard from 'components/Card/MainCard';
 import Transitions from 'components/@extended/Transitions';
 
 // assets
 import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
 import avatar1 from 'assets/images/users/avatar-1.png';
-import { Divider, Grid, ListItem, Menu, MenuItem} from '@mui/material';
+import { Divider, Grid, ListItem, Menu, MenuItem } from '@mui/material';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import styles from './styles';
 import { ArrowForwardIosOutlined, CameraAltOutlined, CheckOutlined, DarkModeOutlined, LightModeOutlined, TranslateOutlined } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { ILanguage, IThemeMode } from 'types';
-import { useMain } from 'hooks';
+import { AuthNameRoutes, ILanguage, IThemeMode } from 'types';
+import { useMain, useAuth, useBroadcastChannel } from 'hooks';
 import { FLAG_ICONS } from 'assets/images/icons/flags';
 import { languages } from 'utils';
-import { AuthNameRoutes } from 'routes/AuthRoutes';
 import { useNavigate } from 'react-router-dom';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { BroadcastEventTypes } from 'services';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -51,7 +51,9 @@ export default function Profile() {
   const [anchorRef, setAnchorRef] = useState<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
   const { t, i18n } = useTranslation();
-  const { state: mainState, setField } = useMain()
+  const { state: mainState, setField } = useMain();
+  const { resetState: resetAuthState } = useAuth();
+  const { postMessage } = useBroadcastChannel();
   const navigate = useNavigate();
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -107,12 +109,10 @@ export default function Profile() {
   const handleThemeClose = () => {
     setUIState({ ...uiState, expandTheme: null });
   }
-    const handleLogout = () => {
-    // logout(() => {
-    //   setState({ ...state, token: '', refreshToken: '', loginStatus: false, user: null });
-    //   setAuthToken('', '');
-      navigate(AuthNameRoutes.LOGIN);
-    // });
+  const handleLogout = () => {
+    resetAuthState();
+    postMessage(BroadcastEventTypes.AUTH_LOGOUT);
+    navigate(AuthNameRoutes.LOGIN);
   }
   return (
     <Box sx={{ flexShrink: 0 }}>
@@ -130,7 +130,7 @@ export default function Profile() {
           onClick={handleToggle}
         >
           <Avatar alt="profile user" type="circular" src={avatar1} size="sm" sx={{ '&:hover': { outline: '1px solid', outlineColor: 'primary.main' } }} >
-              JD
+            JD
           </Avatar>
         </ButtonBase>
       </Tooltip>
@@ -156,20 +156,20 @@ export default function Profile() {
           <Transitions ref={undefined} type="grow" position="top-right" in={open} {...TransitionProps}>
             <Paper sx={(theme) => ({ borderRadius: theme.shape.borderRadius, width: 290, minWidth: 240, maxWidth: { xs: 250, md: 290 } })}>
               <ClickAwayListener onClickAway={handleClose}>
-                <MainCard elevation={0} border={false} content={false} sx={{p: 0}}>
+                <MainCard elevation={0} border={false} content={false} sx={{ p: 0 }}>
                   <CardContent sx={{ p: 2 }}>
                     <Grid container sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
                       <Grid>
-                      <Stack direction="row" sx={{ gap: 1.25, alignItems: 'center' }}>
-                          <Box sx={{ position: 'relative', display: 'inline-flex' }} 
-                              onClick={() => fileInputRef.current?.click()}>
+                        <Stack direction="row" sx={{ gap: 1.25, alignItems: 'center' }}>
+                          <Box sx={{ position: 'relative', display: 'inline-flex' }}
+                            onClick={() => fileInputRef.current?.click()}>
                             <Avatar
                               size="lg"
                               sx={{ '&:hover': { outline: '1px solid', outlineColor: 'primary.main' } }}
                               type="circular"
                               src={avatarUrl}
                             >
-                             Q
+                              Q
                             </Avatar>
                             <Box
                               sx={{
@@ -197,7 +197,7 @@ export default function Profile() {
                               hidden
                               onChange={handleAvatarFileChange}
                             />
-                          </Box> 
+                          </Box>
                           <Stack>
                             <Typography variant="h6">Trương Đức Quốc</Typography>
                             <Typography variant="body2" color="text.secondary">
@@ -222,9 +222,9 @@ export default function Profile() {
                           <Typography variant="body1" sx={styles.label}>
                             {t('text.language')}
                           </Typography>
-                          <ArrowForwardIosOutlined sx={{fontSize: '14px', ml: 'auto'}}/>
+                          <ArrowForwardIosOutlined sx={{ fontSize: '14px', ml: 'auto' }} />
                         </ListItemButton>
-                        <Menu 
+                        <Menu
                           id={'language-popover'}
                           open={Boolean(uiState.expandLang)}
                           anchorEl={uiState.expandLang}
@@ -239,15 +239,15 @@ export default function Profile() {
                           }}
                         >
                           {languages.map((language) => (
-                            <MenuItem 
+                            <MenuItem
                               onClick={() => {
                                 handleChangeLanguage(language.id as ILanguage)
-                              }} 
-                              key={language.id} 
-                              sx={{display: 'flex', alignItems: 'center', p: 1, cursor: 'pointer', '&:hover': {backgroundColor: 'action.hover'}}}>
-                              <img src={FLAG_ICONS[language.id === ILanguage.VN ? 'vn' : 'us']} alt={language.id} width={20} style={{marginRight: 8}} />
+                              }}
+                              key={language.id}
+                              sx={{ display: 'flex', alignItems: 'center', p: 1, cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}>
+                              <img src={FLAG_ICONS[language.id === ILanguage.VN ? 'vn' : 'us']} alt={language.id} width={20} style={{ marginRight: 8 }} />
                               <Typography variant='body1'>{t(language.text)}</Typography>
-                              {mainState?.lang === (language.id === ILanguage.VN ? 'vi' : 'en') ? <CheckOutlined sx={{ml: 1}} fontSize='small'/>: null}
+                              {mainState?.lang === (language.id === ILanguage.VN ? 'vi' : 'en') ? <CheckOutlined sx={{ ml: 1 }} fontSize='small' /> : null}
                             </MenuItem>
                           ))}
                         </Menu>
@@ -266,7 +266,7 @@ export default function Profile() {
                           <Typography variant="body1" sx={styles.label}>
                             {t('text.theme_mode')}
                           </Typography>
-                          <ArrowForwardIosOutlined sx={{fontSize: '14px', ml: 'auto'}}/>
+                          <ArrowForwardIosOutlined sx={{ fontSize: '14px', ml: 'auto' }} />
                         </ListItemButton>
                         <Menu
                           id={'theme-popover'}
@@ -282,30 +282,30 @@ export default function Profile() {
                             horizontal: 'right',
                           }}
                         >
-                          <MenuItem 
+                          <MenuItem
                             onClick={() => {
                               handleChangeTheme(IThemeMode.LIGHT)
                             }}
                             sx={styles.menu_item}>
-                            <LightModeOutlined sx={{ ...styles.icon, mr: 1 }} /> 
+                            <LightModeOutlined sx={{ ...styles.icon, mr: 1 }} />
                             <Typography variant='body1'>{t("theme_mode.light")}</Typography>
-                            {mainState?.themeMode === IThemeMode.LIGHT ? <CheckOutlined sx={{ml: 1}} fontSize='small'/>: null}
+                            {mainState?.themeMode === IThemeMode.LIGHT ? <CheckOutlined sx={{ ml: 1 }} fontSize='small' /> : null}
                           </MenuItem>
-                          <MenuItem 
+                          <MenuItem
                             onClick={() => {
                               handleChangeTheme(IThemeMode.DARK)
                             }}
                             sx={styles.menu_item}>
-                            <DarkModeOutlined sx={{ ...styles.icon, mr: 1 }} /> 
+                            <DarkModeOutlined sx={{ ...styles.icon, mr: 1 }} />
                             <Typography variant='body1'>{t("theme_mode.dark")}</Typography>
-                            {mainState?.themeMode === IThemeMode.DARK ? <CheckOutlined sx={{ml: 1}} fontSize='small'/>: null}
+                            {mainState?.themeMode === IThemeMode.DARK ? <CheckOutlined sx={{ ml: 1 }} fontSize='small' /> : null}
                           </MenuItem>
                         </Menu>
                       </ListItem>
                       <ListItem disablePadding>
                         <ListItemButton
-                          // onClick={() =>{console.log('help');
-                          // }}
+                        // onClick={() =>{console.log('help');
+                        // }}
                         >
                           <QuestionCircleOutlined style={styles.icon} />
                           <Typography variant="body1" sx={styles.label}>

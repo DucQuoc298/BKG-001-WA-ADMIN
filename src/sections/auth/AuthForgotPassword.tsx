@@ -11,8 +11,7 @@ import { Formik } from 'formik';
 
 import { useTranslation } from 'react-i18next';
 import { Button, TextField } from 'components';
-import { AuthNameRoutes } from 'routes/AuthRoutes';
-
+import { AuthNameRoutes } from 'types';
 // ============================|| JWT - FORGOT PASSWORD ||============================ //
 interface IAuthForgotPasswordProps {
   handleForgotPassword: (values: { userid: string; email: string }, callback?: (data: any) => void) => void;

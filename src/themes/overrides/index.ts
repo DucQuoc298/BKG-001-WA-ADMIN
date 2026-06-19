@@ -4,10 +4,11 @@ import { merge } from 'lodash-es';
 // project imports
 import Badge from './Badge';
 import Button from './Button';
-import ButtonBase from './ButtonBase';
+
 import CardContent from './CardContent';
 import Checkbox from './Checkbox';
 import Chip from './Chip';
+import DataGridPro from './DataGridPro';
 import Drawer from './Drawer';
 import FormHelperText from './FormHelperText';
 import IconButton from './IconButton';
@@ -32,10 +33,11 @@ export default function ComponentsOverrides(theme) {
   return merge(
     Badge(theme),
     Button(theme),
-    ButtonBase(),
+    // ButtonBase(),
     CardContent(),
     Checkbox(theme),
     Chip(theme),
+    DataGridPro(theme),
     Drawer(theme),
     FormHelperText(),
     IconButton(theme),

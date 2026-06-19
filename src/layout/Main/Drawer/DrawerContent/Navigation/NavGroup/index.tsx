@@ -5,7 +5,7 @@ import List from '@mui/material/List';
 
 // project import
 import NavItem from '../NavItem';
-import { useGetMenuMaster } from 'api/menu';
+import { useGetMenuMaster } from 'hooks/useMenu';
 import { ISideBarMenuItem } from 'menu-items';
 import NavCollapse from '../NavCollapse';
 
