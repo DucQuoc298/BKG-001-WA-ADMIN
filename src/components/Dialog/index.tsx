@@ -1,4 +1,3 @@
-import { Close } from '@mui/icons-material';
 import { Dialog as MuiDialog, DialogTitle, DialogContent, DialogActions, IconButton, DialogProps as MuiDialogProps } from '@mui/material';
 import Icons, { IconName } from 'assets/Icon';
 import React from 'react';

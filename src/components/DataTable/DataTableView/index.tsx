@@ -3,7 +3,6 @@ import { DataGridPro, DataGridProProps, useGridApiRef, GridActionsCellItem, Grid
 import { useMemo, useState } from 'react';
 import useStyles from '../styles';
 import { Pagination } from '../components';
-import { getDefaultGridHeight } from 'utils'
 import { DataTableProps } from '..';
 import { DataTableMode, ROW_HEIGHT, getGridColumns } from 'types';
 import { useTranslation } from 'react-i18next';

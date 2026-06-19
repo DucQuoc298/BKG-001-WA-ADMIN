@@ -41,14 +41,6 @@ import i18n from './i18n';
 import { Provider } from 'react-redux';
 import { store } from 'store/createStore';
 import { Snackbar } from 'components';
-import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
-// import { LicenseInfo } from "@mui/x-license-pro";
-
-
-const siteKey = import.meta.env.VITE_CAPTCHA_SITE_KEY;
-const isGoogleSiteKey = typeof siteKey === 'string' && siteKey.startsWith('6') && siteKey.length >= 30;
-// const licenseKey = import.meta.env.VITE_MUI_TABLE_LICENSE;
-// LicenseInfo.setLicenseKey(licenseKey as string);
 
 
 const root = ReactDOM.createRoot(
@@ -56,16 +48,6 @@ const root = ReactDOM.createRoot(
 );
 // ==============================|| MAIN - REACT DOM RENDER ||============================== //
 
-const renderApp = () => {
-  if (isGoogleSiteKey) {
-    return (
-      <GoogleReCaptchaProvider reCaptchaKey={siteKey}>
-        <App />
-      </GoogleReCaptchaProvider>
-    );
-  }
-  return <App />;
-};
 root.render(
   <React.StrictMode>
     <Provider store={store}>
@@ -80,7 +62,7 @@ root.render(
           <ThemeCustomization>
             <I18nextProvider i18n={i18n}>
               <CssBaseline />
-              {renderApp()}
+              <App />
               <Snackbar />
             </I18nextProvider>
           </ThemeCustomization>
