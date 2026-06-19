@@ -1,4 +1,4 @@
-import MaintenanceWrapper from "sections/maintenance/Maintenancewrapper";
+import MaintenanceWrapper from "sections/maintenance/MaintenanceWrapper";
 import React from "react";
 import Error500Image from 'assets/images/maintenance/Error500.png';
 import styles from './styles';
