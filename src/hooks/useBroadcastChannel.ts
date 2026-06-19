@@ -4,7 +4,7 @@ import {
   BroadcastMessage,
   BROADCAST_CHANNEL_NAME,
   CURRENT_SESSION_ID,
-} from 'services/broadcast';
+} from 'services/utils/broadcast';
 
 export interface UseBroadcastChannelOptions {
   channelName?: string;

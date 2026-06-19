@@ -76,11 +76,9 @@ const NumberField = forwardRef<HTMLInputElement, INumberFieldProps>(function Num
         onChange?.(event as any);
         handleChange?.(event);
       }}
-      slotProps={{
-        input: {
-          autoFocus,
-          endAdornment,
-        }
+      inputprops={{
+        autoFocus,
+        endAdornment,
       }}
     />
   )

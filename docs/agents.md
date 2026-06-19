@@ -58,11 +58,14 @@ react-template/ (Host App)
 │   │   ├── auth/              # Các trang Login, Register...
 │   │   └── main/              # Các trang chính như Home, Bill, Invoice...
 │   ├── routes/                # Cấu hình định tuyến (React Router)
-│   ├── runtime/               # Engine chạy plugin động (Plugin Loader, SDK, Declarations)
+│   ├── runtime/               # Engine chạy plugin động (Plugin Loader, SDK)
 │   │   ├── LoadFormRuntime/   # Component xử lý tải plugin & render dynamic component
-│   │   ├── AppPlugin.tsx      # Điểm đăng ký và map `plugin.id` với SDK Runtime tương ứng
-│   │   ├── services/          # Các service hỗ trợ runtime
-│   │   └── types/             # Định nghĩa SDK và API được cung cấp cho plugin (MUI, utils, components)
+│   │   ├── AppPlugin.tsx      # createAppRuntime(pluginId) — entry point duy nhất, dùng generic runtime
+│   │   ├── services/          # Các service hỗ trợ runtime (manifest loader, plugin importer)
+│   │   └── types/             # Type definitions + genericRuntime.ts (factory tạo SDK cho mọi plugin)
+│   ├── services/              # Các service của ứng dụng (API & Client-side Utils)
+│   │   ├── api/               # Các business API services (authorization.ts, ...)
+│   │   └── utils/             # Các utility services (axios.ts, signalr.ts, broadcast.ts, navigation.ts)
 │   ├── store/                 # Cấu hình Redux Store, Middleware, Root Saga
 │   ├── themes/                # Định nghĩa theme tùy chỉnh cho Material UI
 │   ├── types/                 # Các TypeScript interface dùng chung toàn app
@@ -82,28 +85,44 @@ react-template/ (Host App)
 
 ## 4. Cơ chế hoạt động của Runtime Plugin
 
+> Xem tài liệu chi tiết về kiến trúc, SDK API reference và sequence diagrams tại [runtime_plugin_flow.md](/docs/runtime_plugin_flow.md).
+
 ```mermaid
 sequenceDiagram
     participant User as Người dùng
     participant Host as Host App (React Router)
-    participant Loader as Runtime Loader
+    participant Loader as LoadFormRuntime
     participant Manifest as manifest.json
+    participant Factory as createGenericRuntime(pluginId)
     participant Module as Plugin Module (.mjs)
+    participant Redux as pluginForms slice
     
     User->>Host: Truy cập /user-forms/:plugin-name
     Host->>Loader: Chuyển hướng tới LoadFormRuntime
     Loader->>Manifest: Tải danh sách plugin từ public/plugins/manifest.json
     Manifest-->>Loader: Trả về danh sách plugin
     Loader->>Loader: Tìm đối sánh plugin qua routePath
+    Loader->>Factory: Tạo SDK generic (scoped by plugin.id)
+    Factory-->>Loader: sdk (form, hooks, store, components, http, broadcast)
     Loader->>Module: Dynamic Import file .mjs tương ứng
-    Module-->>Loader: Export React component / createPluginComponent
-    Loader->>Host: Khởi tạo SDK (theo plugin.id) & render Component
-    Host-->>User: Hiển thị giao diện Form động
+    Module-->>Loader: Export createPluginComponent
+    Loader->>Module: createPluginComponent({ react: React, sdk })
+    Module-->>Loader: PluginComponent
+    Loader->>User: Render <PluginComponent />
+    
+    Note over Module,Redux: Plugin dùng sdk.store.* để persist form state
+    Module->>Redux: sdk.store.updatePluginForm(data)
+    Note over Redux: pluginForms.forms[pluginId] = data
 ```
 
 Để một Plugin Module được xem là hợp lệ, nó phải xuất bản (export) theo một trong hai cách:
 1. `export default`: Trả về một React Component trực tiếp.
-2. `export const createPluginComponent`: Một factory function nhận vào `sdk` và trả về một React Component.
+2. `export const createPluginComponent`: Một factory function nhận vào `{ react, sdk }` và trả về một React Component.
+
+**Nguyên tắc quan trọng:**
+- Host sử dụng **1 generic runtime duy nhất** (`src/runtime/types/genericRuntime.ts`) cho mọi plugin.
+- **Không cần** tạo runtime declaration riêng hay sửa `AppPlugin.tsx` khi thêm plugin mới.
+- Plugin truy cập form, hooks, store, components thông qua `sdk` — không import trực tiếp.
 
 ---
 
@@ -130,16 +149,21 @@ Khi đó, lệnh `resetForm(IFormKey.BILL)` sẽ tự động tạo và dispatch
 ### 5.2 Phát triển Plugin mới
 Khi tạo một plugin mới, hãy đảm bảo tuân thủ các bước:
 1. **Tạo mã nguồn:** Đặt tại `plugin-form-builder/src/plugins/<tên-plugin>/index.tsx`.
-2. **Sử dụng SDK:** Hạn chế import trực tiếp từ các thư viện ngoài. Hãy ưu tiên sử dụng các component và API được tiêm (inject) qua `sdk` (ví dụ: `const { Box, Typography } = sdk.components;`).
+2. **Sử dụng SDK:** Hạn chế import trực tiếp từ các thư viện ngoài. Sử dụng các API được tiêm qua `sdk`:
+   - `sdk.components` — UI components (Box, Button, TextField, NumberField, DropDownList, DateField...)
+   - `sdk.form` — react-hook-form (useForm, FormProvider, Controller, useFormContext, useWatch)
+   - `sdk.hooks` — Custom hooks (useReduxFormSync)
+   - `sdk.store` — Redux state scoped (getPluginFormState, updatePluginForm, resetPluginForm)
 3. **Build & Publish local:** Chạy các lệnh đóng gói để kiểm tra.
 4. **Khai báo Manifest:** Thêm đầy đủ thông tin định tuyến vào `public/plugins/manifest.json`.
+5. **Không cần sửa host app:** Generic runtime tự động tạo SDK cho mọi plugin dựa trên `pluginId`.
 
 ### 5.3 Giao tiếp chéo tab bằng BroadcastChannel
 Hệ thống tích hợp API `BroadcastChannel` cho phép trao đổi dữ liệu chéo tab (ví dụ: tự động đăng xuất các tab khi một tab chọn đăng xuất, đồng bộ theme, v.v.).
 1. **Sử dụng Hook `useBroadcastChannel`:**
    - Nếu vừa lắng nghe vừa gửi message: `const { postMessage } = useBroadcastChannel((msg) => { ... })`.
    - Nếu **chỉ gửi message**, không truyền callback: `const { postMessage } = useBroadcastChannel()`. Việc này tránh kích hoạt Event Listener ẩn trên tab hiện tại.
-2. **Khai báo Event Types:** Mọi loại sự kiện phải nằm trong `BroadcastEventTypes` thuộc `src/services/broadcast.ts`.
+2. **Khai báo Event Types:** Mọi loại sự kiện phải nằm trong `BroadcastEventTypes` thuộc `src/services/utils/broadcast.ts`.
 3. **Gọi từ dynamic plugins:** Sử dụng qua SDK thông qua `sdk.broadcast` (`postMessage` và `subscribe`).
 
 ---
@@ -195,7 +219,7 @@ Hệ thống tích hợp API `BroadcastChannel` cho phép trao đổi dữ liệ
 | **`Cannot load plugin manifest`** | File `manifest.json` không tồn tại, sai cú pháp JSON hoặc lỗi cổng mạng. | Kiểm tra file tại `public/plugins/manifest.json`. Xem lại biến cấu hình `VITE_PLUGIN_MANIFEST_URL`. |
 | **`No plugin found for route...`** | Chưa khai báo plugin trong manifest hoặc trường `routePath` bị sai lệch. | Kiểm tra thuộc tính `routePath` trong manifest xem có khớp với URL đang mở không, đảm bảo `enabled: true`. |
 | **`Plugin <id> has no valid exported component`** | Plugin không export đúng chuẩn `default` hoặc `createPluginComponent`. | Kiểm tra file nguồn của plugin. Mở file `.mjs` sau khi build để đảm bảo phần export hợp lệ. |
-| **Plugin hiển thị không đúng giao diện/SDK** | Chưa định cấu hình map SDK cho Plugin ID mới nên hệ thống fallback. | Mở file `src/runtime/AppPlugin.tsx` và đăng ký SDK Declaration mới khớp với `id` của plugin. |
+| **Plugin form state không persist** | Plugin chưa sử dụng `sdk.hooks.useReduxFormSync` hoặc `sdk.store.updatePluginForm`. | Kiểm tra plugin code có gọi `useReduxFormSync` với `onSave` callback đúng cách không. Xem [runtime_plugin_flow.md](/docs/runtime_plugin_flow.md). |
 
 ---
 
@@ -204,6 +228,6 @@ Hệ thống tích hợp API `BroadcastChannel` cho phép trao đổi dữ liệ
 Để duy trì chất lượng mã nguồn và tự động hóa các tác vụ phát triển, hệ thống đã trang bị bộ quy tắc và kỹ năng (skills) chuyên biệt:
 
 1. **Bộ Quy tắc Dự án**:
-   - Vui lòng xem [project_rules.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_rules.md) để biết các quy ước cụ thể về lập trình Redux, DataTable, chỉnh sửa ô lưới và phát triển Runtime Plugins.
+   - Vui lòng xem [project_rules.md](/docs/project_rules.md) để biết các quy ước cụ thể về lập trình Redux, DataTable, chỉnh sửa ô lưới và phát triển Runtime Plugins.
 2. **Kỹ năng Phát triển Dự án (Project Development Skill)**:
-   - Một bộ skill hướng dẫn từng bước đã được lưu trữ tại [project_development_skill.md](file:///Volumes/KINGSTON/Code/react-template/docs/project_development_skill.md). Các tác nhân AI khi hoạt động trong workspace này nên tham khảo skill này trước khi thực thi viết mã để đảm bảo tuân thủ đúng quy trình.
+   - Một bộ skill hướng dẫn từng bước đã được lưu trữ tại [project_development_skill.md](/docs/project_development_skill.md). Các tác nhân AI khi hoạt động trong workspace này nên tham khảo skill này trước khi thực thi viết mã để đảm bảo tuân thủ đúng quy trình.

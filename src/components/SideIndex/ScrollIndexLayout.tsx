@@ -9,12 +9,63 @@ interface IScrollIndexLayout {
   items: ISectionTab[];
   stickyTop?: number;
   children: React.ReactNode;
+  activeId?: string;
+  onActiveIdChange?: (id: string) => void;
+  defaultActiveId?: string;
 }
 
-const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLayout) => {
-  const [activeId, setActiveId] = React.useState(items[0].id);
-  const isScrollingRef = useRef(false);
+const ScrollIndexLayout = ({
+  items,
+  stickyTop = 114,
+  children,
+  activeId: controlledActiveId,
+  onActiveIdChange,
+  defaultActiveId
+}: IScrollIndexLayout) => {
+  const [internalActiveId, setInternalActiveId] = React.useState(defaultActiveId || items[0]?.id);
+
+  const activeId = controlledActiveId !== undefined ? controlledActiveId : internalActiveId;
+
+  const setActiveId = useCallback((id: string) => {
+    setInternalActiveId(id);
+    onActiveIdChange?.(id);
+  }, [onActiveIdChange]);
+
+  // Scroll to initial active ID on mount if provided
+  const initialActiveRef = useRef(controlledActiveId || defaultActiveId);
+  const stickyTopRef = useRef(stickyTop);
+
+  const isScrollingRef = useRef(!!(controlledActiveId || defaultActiveId));
   const timerRef = useRef<any>(null);
+
+  React.useEffect(() => {
+    const initialActiveId = initialActiveRef.current;
+    if (initialActiveId) {
+      const timer = setTimeout(() => {
+        const el = document.getElementById(initialActiveId);
+        if (el) {
+          isScrollingRef.current = true;
+          const elementPosition = el.getBoundingClientRect().top + window.scrollY;
+          const offsetPosition = elementPosition - stickyTopRef.current;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+
+          if (timerRef.current) {
+            clearTimeout(timerRef.current);
+          }
+          timerRef.current = setTimeout(() => {
+            isScrollingRef.current = false;
+          }, 800);
+        } else {
+          isScrollingRef.current = false;
+        }
+      }, 50);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const handleSelect = useCallback((id) => {
     isScrollingRef.current = true;
@@ -22,7 +73,12 @@ const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLay
 
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      const elementPosition = el.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - stickyTop; // 24px extra margin
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
     }
 
     // Sau khi scroll xong (~600ms) mới để IntersectionObserver tiếp quản
@@ -32,7 +88,7 @@ const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLay
     timerRef.current = setTimeout(() => {
       isScrollingRef.current = false;
     }, 700);
-  }, []);
+  }, [stickyTop, setActiveId]);
 
   // IntersectionObserver: tự động highlight tab khi scroll bằng chuột/tay
   React.useEffect(() => {
@@ -48,7 +104,10 @@ const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLay
             setActiveId(id);
           }
         },
-        { threshold: 0.4 }
+        {
+          rootMargin: `-${stickyTop}px 0px -75% 0px`,
+          threshold: 0
+        }
       );
 
       obs.observe(el);
@@ -61,7 +120,7 @@ const ScrollIndexLayout = ({ items, stickyTop = 114, children }: IScrollIndexLay
         clearTimeout(timerRef.current);
       }
     };
-  }, [items]);
+  }, [items, stickyTop, setActiveId]);
 
   return (
     <Box sx={styles.container}>

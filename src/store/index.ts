@@ -3,15 +3,21 @@ import snackbar from "./snackbar/reducer";
 import home from "./home/reducer";
 import invoice from "./invoice/reducer";
 import bill from "./bill/reducer";
-
+import authentication from "./authentication/reducer"
+import document from "./document/reducer"
+import pluginForms from "./pluginForms/reducer";
 
 export const RESET_APP = "RESET_APP";
 
 const appReducer = combineReducers({
   snackbar,
+  authentication,
+  document,
+
   invoice,
   home,
   bill,
+  pluginForms,
 });
 const rootReducer = (state: any, action: any) => {
   if (action.type === RESET_APP) {

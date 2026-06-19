@@ -178,7 +178,7 @@ export default function HeaderContent() {
     if(openedForm !== undefined && openedForm.length === 1){
       if(activeForm === IFormKey.HOME) return;
         handlerActiveForm(IFormKey.HOME);
-        handlerFormOpened([{ path: 'home', label: 'home' }]);
+        handlerFormOpened([{ path: '/home', label: 'HOME' }]);
         return;
     }
     removeOpenedFormTab(tab.path);

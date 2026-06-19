@@ -17,13 +17,13 @@ export type InvoiceFilters = {
 
 export interface ListState<TFilters = Record<string, any>> {
   activeTab: string;
+  activeId?: string;
   searchKeyword: string;
   filters: TFilters;
 }
 
 export interface FormState<TFormData> {
   mode: EFormMode;
-  activeId: string | number | null;
   formData: TFormData;
   loading: boolean;
   saving: boolean;
@@ -39,12 +39,12 @@ export interface IInvoiceState {
 const initialState: IInvoiceState = {
   list: {
     activeTab: 'view',
+    activeId: 'section-2',
     searchKeyword: '',
     filters: {},
   },
   form: {
     mode: EFormMode.LIST,
-    activeId: null,
     formData: {
       customerName: '',
       product: null,
@@ -80,10 +80,10 @@ const invoiceSlice = createSlice({
     // Actions cho trang Form
     openInvoiceForm: (
       state,
-      action: PayloadAction<{ mode: EFormMode; activeId?: string | number | null; data?: InvoiceFormData }>
+      action: PayloadAction<{ mode: EFormMode; activeId?: string; data?: InvoiceFormData }>
     ) => {
       state.form.mode = action.payload.mode;
-      state.form.activeId = action.payload.activeId ?? null;
+      state.list.activeId = action.payload.activeId;
       if (action.payload.data) {
         state.form.formData = action.payload.data;
       } else if (action.payload.mode === EFormMode.FORM) {

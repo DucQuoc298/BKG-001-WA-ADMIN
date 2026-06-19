@@ -37,7 +37,7 @@ export const useInvoice = () => {
   );
 
   const openForm = useCallback(
-    (mode: EFormMode, activeId?: string | number | null, data?: InvoiceFormData) => {
+    (mode: EFormMode, activeId?: string, data?: InvoiceFormData) => {
       dispatch(openInvoiceForm({ mode, activeId, data }));
     },
     [dispatch]

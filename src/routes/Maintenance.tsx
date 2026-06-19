@@ -37,6 +37,10 @@ const MaintenanceRoutes = {
     {
       path: MaintenanceNameRoutes.ERROR_503,
       element: <Error503 />
+    },
+    {
+      path: '*',
+      element: <Error404 />
     }
   ]
 };

@@ -15,6 +15,9 @@ export default () => {
       "& .MuiFormLabel-asterisk": {
         color: "red",
       },
+      "& .MuiIconButton-root": {
+        marginRight: "0px !important",
+      },
       "& .MuiInputBase-input": {
         padding: "0px 10px !important",
         height: '38px !important',

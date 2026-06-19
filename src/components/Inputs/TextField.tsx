@@ -1,6 +1,7 @@
-import { FormControl, FormHelperText, FormLabel, TextField as MuiTextField, TextFieldProps } from "@mui/material";
+import { FormControl, FormHelperText, TextField as MuiTextField, TextFieldProps } from "@mui/material";
 import inputStyles from "./styles";
 import React from "react";
+import Label from "./Label";
 interface ITextFieldProps {
   value?: string;
   label?: string;
@@ -8,23 +9,28 @@ interface ITextFieldProps {
   errors?: string
 }
 
-const TextField: React.FC<ITextFieldProps & TextFieldProps> = ({label, value, onChange, errors, required, multiline, ...props}) => {
+const TextField: React.FC<ITextFieldProps & TextFieldProps> = ({ label, value, onChange, errors, required, multiline, ...props }) => {
   const iStyles = inputStyles();
   return (
     <FormControl fullWidth >
-      <FormLabel sx={{...iStyles.labelDefault}}>{label}{required && '*'}</FormLabel>
-      <MuiTextField 
+      <Label required={required} label={label} />
+      <MuiTextField
         label={undefined}
         sx={{
           ...iStyles.textfield,
-          ...(multiline && 
-            {
-              '& .MuiInputBase-input':{
-                overflowY: 'auto !important',
-                minHeight: '40px !important',
-                padding: "0px"
-            }}
-          )
+          ...(multiline &&
+          {
+            '& .MuiInputBase-input': {
+              // overflowY: 'auto !important',
+              minHeight: '40px !important',
+              padding: "0px",
+              // height: 'auto !important',
+            },
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '8px',
+              height: 'auto !important',
+            }
+          })
         }}
         value={value}
         placeholder={label}
@@ -38,7 +44,7 @@ const TextField: React.FC<ITextFieldProps & TextFieldProps> = ({label, value, on
         </FormHelperText>
       )}
     </FormControl>
-  )};
+  )
+};
 
 export default TextField;
-  

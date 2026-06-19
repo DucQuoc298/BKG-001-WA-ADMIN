@@ -1,4 +1,4 @@
-import { Tabs as MuiTabs, Tab, SxProps, Typography } from "@mui/material";
+import { Tabs as MuiTabs, Tab, SxProps, Typography, Box, Badge } from "@mui/material";
 import React, { memo } from "react";
 import styles from "./styles";
 import { ITab } from "types";
@@ -34,10 +34,32 @@ const Tabs = ({
         tabs.map((tab) => (
           <Tab
             key={tab.key}
-            label={<Typography
-              sx={{ ...styles.label }}>{tab.label}
-              {tab.count && tab.count > 0 ? <Typography sx={styles.count}>{tab.count}</Typography> : null}
-            </Typography>}
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography sx={{ ...styles.label }}>{tab.label}</Typography>
+                {tab.count && tab.count > 0 ? (
+                  <Badge
+                    badgeContent={tab.count}
+                    max={99999}
+                    sx={{
+                      '& .MuiBadge-badge': {
+                        position: 'static',
+                        transform: 'none',
+                        backgroundColor: '#E5E7EB',
+                        color: '#374151',
+                        border: 'none',
+                        height: '20px',
+                        minWidth: '20px',
+                        borderRadius: '10px',
+                        fontSize: '0.75rem',
+                        fontWeight: 500,
+                        lineHeight: '20px',
+                      },
+                    }}
+                  />
+                ) : null}
+              </Box>
+            }
             value={tab.key}
             sx={{ ...styles.tab }}
           />

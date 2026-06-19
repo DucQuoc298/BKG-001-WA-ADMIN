@@ -1,4 +1,4 @@
-import { DashboardOutlined, HomeOutlined, ReceiptOutlined, WidgetsOutlined, MailOutlined } from "@mui/icons-material";
+import { DashboardOutlined, HomeOutlined, ReceiptOutlined, WidgetsOutlined, MailOutlined, DescriptionOutlined } from "@mui/icons-material";
 
 export const icons = {
   Dashboard: DashboardOutlined,
@@ -7,4 +7,5 @@ export const icons = {
   Bill: ReceiptOutlined,
   Components: WidgetsOutlined,
   Email: MailOutlined,
+  Form: DescriptionOutlined,
 };

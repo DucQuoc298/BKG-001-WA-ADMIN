@@ -154,18 +154,18 @@ const paletteDarkColor = {
   mode: 'dark',
   background: {
     default: "#121212",
-    paper: "#272e41"
+    paper: "#191e2e"
   },
   primary: {
     main: "#46a0f4ff",
     light: "#70AFEB",
     lighter: "#283e7a",
     dark: "#70AFEB",
-    light1: "#2b2b2c"
+    light1: "#aaaab7ff"
   },
   zone: {
-    header: "#272e41",
-    sidebar: "#272e41",
+    header: "#191e2e",
+    sidebar: "#191e2e",
     content: "rgba(255,255,255,0.75)",
     footer: "#f0f4f8",
   } as any,

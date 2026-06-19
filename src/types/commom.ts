@@ -1,4 +1,4 @@
-import { IToolbarButton } from "./toolbarLocal";
+import { IToolbarButton } from "./components";
 
 export enum IThemeMode {
   LIGHT = "light",

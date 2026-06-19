@@ -8,7 +8,7 @@ import { DataTableProps } from '..';
 import { DataTableMode, ROW_HEIGHT, getGridColumns } from 'types';
 import { useTranslation } from 'react-i18next';
 import Icons from 'assets/Icon';
-import { useDataTable } from 'hooks';
+import { useDataTable, useWindowSize } from 'hooks';
 
 const DataTableView = ({
   height,
@@ -30,6 +30,8 @@ const DataTableView = ({
   const defaultApiRef = useGridApiRef();
   const apiRef = props.apiRef ?? defaultApiRef;
   const { t } = useTranslation();
+  const { height: windowHeight } = useWindowSize();
+  const tableHeight = height ?? (windowHeight - 280);
 
   // 1. Integrate useDataTable hook
   const {
@@ -180,14 +182,14 @@ const DataTableView = ({
   return (
     <Grid container size={12}
       sx={{
-        height: height ?? getDefaultGridHeight(),
+        height: tableHeight,
       }}
     >
       <Grid size={12}>
         <DataGridPro
           apiRef={apiRef}
           sx={{
-            height: height ?? getDefaultGridHeight(),
+            height: tableHeight,
             ...dataGridStyles
           }}
           columns={gridColumns as any}

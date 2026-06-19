@@ -2,11 +2,10 @@ import { Button, Chip, ContainerWrapper, MainCard, NumberField, TextField, Email
 import React, { useCallback, useEffect } from 'react';
 import { useHome, useReduxFormSync, useEmail, useSnackbar, EmailFormFields } from 'hooks';
 import { useForm, FormProvider } from 'react-hook-form';
-import DateField from 'components/DateField/DateField';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { HomeFormFields, initialHomeFormFields } from 'store/home/reducer';
-import { DateRangeField } from 'components/DateField';
+import { DateRangeField, DateField } from 'components';
 import { Box } from '@mui/material';
 
 // ==============================|| DASHBOARD - DEFAULT ||============================== //
@@ -48,7 +47,7 @@ export default function Home() {
     },
   } = methods;
   // eslint-disable-next-line react-hooks/incompatible-library
-  const role = watch('role')
+  const formValues = watch();
   /**
    * useReduxFormSync đồng bộ hóa dữ liệu React Hook Form ↔ Redux.
    */
@@ -56,7 +55,7 @@ export default function Home() {
     methods,
     values: {
       ...(formState?.data ?? {}),
-      role,
+      role: formState?.data?.role ?? formValues.role,
       dirtyFields: formState?.dirtyFields,
     },
     onSave: (snapshot) => {
@@ -106,23 +105,23 @@ export default function Home() {
               text='Submit'
             />
           </Box>
-          <TextField label={'test'} {...register('note')} />
+          <TextField label={'test'} {...register('note')} multiline />
           <NumberField
             label='Số'
             required
             {...register('number')}
-            value={formState?.data?.number}
+            value={formValues.number}
             error={!!errors.number}
             helperText={errors.number?.message}
           />
           <DateField
             label="Chose month"
-            value={formState?.data?.date}
+            value={formValues.date}
             {...register('date')}
           />
           <DateRangeField
             label="Chose month range"
-            value={[formState?.data?.fromDate, formState?.data?.toDate]}
+            value={[formValues.fromDate, formValues.toDate]}
             {...register('fromDate', {
               onChange: (event) => {
                 // DateRangeField emit [startDate, endDate] qua event.target.value
@@ -138,7 +137,7 @@ export default function Home() {
             multiple
             // forceSelect
             {...register('role')}
-            value={role ?? undefined}
+            value={formValues.role ?? undefined}
             data={[
               { text: 'Admin', id: 'admin' },
               { text: 'User', id: 'user' },

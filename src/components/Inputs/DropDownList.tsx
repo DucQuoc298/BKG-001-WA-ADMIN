@@ -1,8 +1,9 @@
-import { FormControl, FormLabel, MenuItem, Select, SelectProps, IconButton, InputAdornment, Typography, Box, Chip } from "@mui/material";
+import { FormControl, MenuItem, Select, SelectProps, IconButton, InputAdornment, Box, Chip } from "@mui/material";
 import inputStyles from "./styles";
 import { UseFormRegister } from "react-hook-form";
 import { forwardRef, useEffect, useState } from "react";
 import Icons, { IconName } from "assets/Icon";
+import Label from "./Label";
 
 type IValue = {
   id: string;
@@ -15,15 +16,17 @@ type IDropDownListProps = Omit<SelectProps<string | string[]>, "variant"> &
     data: IValue[];
     forceSelect?: boolean;
     helperText?: string;
+    placeholder?: string;
   };
 
 const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function DropDownList({
   label,
   data,
-  forceSelect,
+  forceSelect: _forceSelect,
   value,
   onChange,
   onBlur,
+  placeholder,
   ...props
 }, ref) {
   const iStyles = inputStyles();
@@ -38,6 +41,10 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
   useEffect(() => {
     setSelectedValue(props.multiple ? (Array.isArray(value) ? value : (value ? [value] : [])) : (value ?? ""));
   }, [value, props.multiple]);
+
+  const hasValue = props.multiple
+    ? Array.isArray(selectedValue) && selectedValue.length > 0
+    : !!selectedValue;
 
   const handleToggleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -57,10 +64,7 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
   return (
     <>
       <FormControl variant="outlined" fullWidth>
-        <FormLabel sx={{ ...iStyles.labelDefault }}>
-          {label}
-          {forceSelect && <Typography sx={{ color: "error.main", height: '100%' }}>*</Typography>}
-        </FormLabel>
+        <Label required={props.required} label={label} />
         <Select
           ref={ref}
           {...props}
@@ -74,6 +78,7 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
             setOpen(false);
             onChange?.(event);
           }}
+          displayEmpty
           sx={{
             ...iStyles.textfield,
             padding: '0px !important',
@@ -91,13 +96,42 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
           }}
           multiple={props.multiple}
           renderValue={(selected) => {
-            if (Array.isArray(selected)) {
+            if (props.multiple) {
+              if (!Array.isArray(selected) || selected.length === 0) {
+                return (
+                  <Box sx={{ color: 'text.secondary', opacity: 0.6, height: '32px', display: 'flex', alignItems: 'center' }}>
+                    {placeholder || label}
+                  </Box>
+                );
+              }
               return (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {selected.map((value) => {
                     const item = data.find((d) => d.id === value);
-                    return <Chip key={value} label={item ? item.text : value} />;
+                    return (
+                      <Chip
+                        key={value}
+                        label={item ? item.text : value}
+                        onDelete={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          const newValue = selected.filter((v) => v !== value);
+                          setSelectedValue(newValue);
+                          onChange?.({ target: { name: props.name, value: newValue }, type: "change" } as any);
+                        }}
+                        onMouseDown={(event) => {
+                          event.stopPropagation();
+                        }}
+                      />
+                    );
                   })}
+                </Box>
+              );
+            }
+            if (selected === "" || selected === undefined || selected === null) {
+              return (
+                <Box sx={{ color: 'text.secondary', opacity: 0.6 }}>
+                  {placeholder || label}
                 </Box>
               );
             }
@@ -107,7 +141,7 @@ const DropDownList = forwardRef<HTMLDivElement, IDropDownListProps>(function Dro
           onBlur={onBlur}
           endAdornment={
             <InputAdornment position="end">
-              {!forceSelect && !!selectedValue ? (
+              {hasValue ? (
                 <IconButton
                   sx={{ ...iStyles.clearButton, marginRight: "4px" }}
                   onMouseDown={(event) => {

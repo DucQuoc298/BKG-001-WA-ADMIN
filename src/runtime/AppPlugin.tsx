@@ -1,20 +1,13 @@
 import { AppRuntime } from 'runtime/types';
-import demoFormRuntime from 'runtime/types/default';
-import invoiceFormRuntime from 'runtime/types/invoice';
+import { createGenericRuntime } from 'runtime/types/genericRuntime';
 
-const runtimeDeclarations = [demoFormRuntime, invoiceFormRuntime] as const;
-
-const runtimeRegistry: Record<string, AppRuntime> = runtimeDeclarations.reduce<Record<string, AppRuntime>>((acc, declaration) => {
-  acc[declaration.id] = declaration.runtime;
-  return acc;
-}, {});
-
-const fallbackRuntime = demoFormRuntime.runtime;
-
-export const createAppRuntime = (id?: string): AppRuntime => {
-  if (!id) {
-    return fallbackRuntime;
-  }
-
-  return runtimeRegistry[id] ?? fallbackRuntime;
+/**
+ * Tạo runtime cho plugin.
+ *
+ * Sử dụng generic runtime duy nhất — không cần khai báo runtime riêng
+ * cho từng plugin/khách hàng. pluginId được closure vào sdk.store.*
+ * để mỗi plugin có scope riêng trong Redux.
+ */
+export const createAppRuntime = (pluginId?: string): AppRuntime => {
+  return createGenericRuntime(pluginId ?? 'unknown');
 };

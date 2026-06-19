@@ -24,7 +24,7 @@ graph TD
 
 ## 2. Kiểu dữ liệu & Trạng thái (Data Types & State)
 
-Chi tiết khai báo tại [useEmail.ts](file:///Volumes/KINGSTON/Code/react-template/src/hooks/useEmail.ts):
+Chi tiết khai báo tại [useEmail.ts](/src/hooks/useEmail.ts):
 
 ### 2.1 `EmailFormFields` (Trường dữ liệu form)
 Chỉ chứa các giá trị thực tế của form soạn thảo email, phù hợp làm kiểu Generic cho React Hook Form:
@@ -83,7 +83,7 @@ Mỗi khi component gọi `useEmail`, nó sẽ tự động đăng ký một hà
 
 ## 4. Component `EmailBox`
 
-Component [EmailBox](file:///Volumes/KINGSTON/Code/react-template/src/components/EmailBox/index.tsx) chịu trách nhiệm render và xử lý sự kiện cho từng thực thể soạn thảo.
+Component [EmailBox](/src/components/EmailBox/index.tsx) chịu trách nhiệm render và xử lý sự kiện cho từng thực thể soạn thảo.
 
 ### 4.1 Khởi tạo Form và Đồng bộ dữ liệu
 Form được khởi tạo độc lập cho mỗi cửa sổ bằng React Hook Form:

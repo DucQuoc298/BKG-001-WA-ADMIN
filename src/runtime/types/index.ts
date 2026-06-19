@@ -33,9 +33,49 @@ export interface RuntimeBroadcast {
   };
 }
 
+// ── Form API (react-hook-form) ──────────────────────────────
+export interface RuntimeFormApi {
+  useForm: (...args: any[]) => any;
+  FormProvider: ComponentType<any>;
+  Controller: ComponentType<any>;
+  useFormContext: () => any;
+  useWatch: (...args: any[]) => any;
+}
+
+// ── Custom Hooks ────────────────────────────────────────────
+export interface RuntimeHooksApi {
+  useReduxFormSync: (options: {
+    methods: any;
+    values?: any;
+    onSave: (values: any) => void;
+    enabled?: boolean;
+    restoreDirtyFields?: boolean;
+    saveDirtyFields?: boolean;
+  }) => void;
+}
+
+// ── Plugin Store (scoped by pluginId) ───────────────────────
+export interface RuntimePluginStoreApi {
+  useSelector: <TResult = any>(selector: (state: any) => TResult) => TResult;
+  useDispatch: () => any;
+  /** Lấy form state của plugin hiện tại (pluginId đã closure sẵn) */
+  getPluginFormState: () => any;
+  /** Cập nhật form state của plugin hiện tại */
+  updatePluginForm: (data: any) => void;
+  /** Reset form state của plugin hiện tại */
+  resetPluginForm: () => void;
+}
+
+// ── Plugin Extensions (form + hooks + store) ────────────────
+export interface RuntimePluginExtensions {
+  form: RuntimeFormApi;
+  hooks: RuntimeHooksApi;
+  store: RuntimePluginStoreApi;
+}
+
 export interface RuntimeBaseRule extends RuntimeHttpClient, RuntimeSharedComponents, RuntimeBroadcast {}
 
-export type AppRuntime<TExtra extends object = object> = RuntimeBaseRule & TExtra;
+export type AppRuntime<TExtra extends object = object> = RuntimeBaseRule & RuntimePluginExtensions & TExtra;
 
 export interface RuntimePluginContext {
   react: typeof import('react');
@@ -64,3 +104,4 @@ export const defineFormRuntime = <TExtra extends object = object>(id: string, ru
 });
 
 export type AppRuntimeFactory = (pluginId?: string) => AppRuntime;
+
