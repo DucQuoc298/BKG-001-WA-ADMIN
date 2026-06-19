@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { AppBar, Grid, Toolbar, Typography, useMediaQuery } from "@mui/material";
 import styles from './styles';
-import AppBarStyled from 'layout/Main/Header/AppbarStyled';
+import AppBarStyled from 'layout/Main/Header/AppBarStyled';
 import { useGetMenuMaster } from 'hooks/useMenu';
 import { HEADER_HEIGHT, TOOLBAR_HEIGHT } from 'themes/config';
 import { actionButtons, IAction, IActionAndSub, IToolbarButton } from 'types';
