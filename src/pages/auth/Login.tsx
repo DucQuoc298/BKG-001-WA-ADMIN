@@ -19,20 +19,20 @@ export default function Login() {
   const { t } = useTranslation()
   return (
     <AuthWrapper>
-      <Grid container sx={{ maxWidth: 400  }}>
-        
+      <Grid container sx={{ maxWidth: 400 }}>
+
         <Grid container spacing={3} size={12}>
           <Grid size={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <img src={Logo} alt="Logo" style={{ width: '70px', height: 'auto', }} />
-              </Box>
-              <Typography variant="h3" textAlign={'center'}>{t('page.LOGIN')}</Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <img src={Logo} alt="Logo" style={{ width: '70px', height: 'auto', }} />
+            </Box>
+            <Typography variant="h3" sx={{ textAlign: 'center' }}>{t('page.LOGIN')}</Typography>
           </Grid>
           <Grid size={12}>
             <AuthLogin />
-            <Typography textAlign={'center'} mt={1}> {t('AUTH.signup_prompt')}
+            <Typography sx={{ textAlign: 'center', mt: 1 }}> {t('AUTH.signup_prompt')}
               <Typography component={Link} to={'/register'} variant="body1" sx={{ textDecoration: 'none' }} color="primary">
-                { t('AUTH.signup_link')}
+                {t('AUTH.signup_link')}
               </Typography>
             </Typography>
           </Grid>
@@ -51,7 +51,7 @@ export default function Login() {
             />
           </Grid> */}
         </Grid>
-        </Grid>
+      </Grid>
     </AuthWrapper>
   );
 }
