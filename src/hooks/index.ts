@@ -7,7 +7,7 @@ export * from './useForm';
 export * from './useReduxFormSync';
 export * from './features';
 export * from './useAutocomplete';
-export * from './useDatatable';
+export * from './useDataTable';
 export * from './useEmail';
 export * from './useBroadcastChannel';
 export * from './useWindowSize';

@@ -1,4 +1,4 @@
-import { createStorageContext } from "contexts/Configcontext";
+import { createStorageContext } from "contexts/ConfigContext";
 export const {
   Provider: AuthProvider,
   useStore: useAuth

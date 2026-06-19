@@ -1,5 +1,5 @@
 import { Box, Typography, List, ListItemButton, ListItemText } from '@mui/material';
-import MainCard from 'components/Card/Maincard';
+import MainCard from 'components/Card/MainCard';
 import React from 'react';
 import { ISectionTab } from 'types';
 
